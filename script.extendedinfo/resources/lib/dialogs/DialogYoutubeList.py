@@ -1,20 +1,16 @@
 # -*- coding: utf8 -*-
 
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
+# Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
 import datetime
 
 import xbmcgui
 
+from kutils import (ActionHandler, DialogBaseList, addon, busy, utils, windows,
+                    youtube)
 from resources.lib.WindowManager import wm
-
-from kodi65 import youtube
-from kodi65 import addon
-from kodi65 import windows
-from kodi65 import busy
-from kodi65 import DialogBaseList
-from kodi65 import ActionHandler
 
 ch = ActionHandler()
 
@@ -94,7 +90,7 @@ def get_window(window_type):
             if media_type == "channel":
                 filter_ = [{"id": youtube_id,
                             "type": "channelId",
-                            "label": listitem.getLabel().decode("utf-8")}]
+                            "label": listitem.getLabel()}]
                 wm.open_youtube_list(filters=filter_)
             else:
                 wm.play_youtube_video(youtube_id=youtube_id,
@@ -179,7 +175,8 @@ def get_window(window_type):
             if self.type == "video":
                 more_vids = "{} [B]{}[/B]".format(addon.LANG(32081),
                                                   listitem.getProperty("channel_title"))
-                index = xbmcgui.Dialog().contextmenu(list=[addon.LANG(32069), more_vids])
+                index = xbmcgui.Dialog().contextmenu(
+                    list=[addon.LANG(32069), more_vids])
                 if index < 0:
                     return None
                 elif index == 0:
@@ -213,13 +210,17 @@ def get_window(window_type):
         def fetch_data(self, force=False):
             self.set_filter_label()
             if self.search_str:
-                self.filter_label = addon.LANG(32146) % (self.search_str) + "  " + self.filter_label
+                self.filter_label = addon.LANG(32146) % (
+                    self.search_str) + "  " + self.filter_label
+            user_key = addon.setting("Youtube API Key")
             return youtube.search(search_str=self.search_str,
                                   orderby=self.sort,
                                   extended=True,
-                                  filters={item["type"]: item["id"] for item in self.filters},
+                                  filters={item["type"]: item["id"]
+                                           for item in self.filters},
                                   media_type=self.type,
-                                  page=self.page_token)
+                                  page=self.page_token,
+                                  api_key=user_key)
 
     return DialogYoutubeList
 
@@ -229,7 +230,7 @@ def open(self, search_str="", filters=None, sort="relevance", filter_label="", m
     open video list, deal with window stack
     """
     YouTube = get_window(windows.DialogXML)
-    dialog = YouTube(u'script-%s-YoutubeList.xml' % addon.NAME, addon.PATH,
+    dialog = YouTube('script-%s-YoutubeList.xml' % addon.NAME, addon.PATH,
                      search_str=search_str,
                      filters=[] if not filters else filters,
                      filter_label=filter_label,

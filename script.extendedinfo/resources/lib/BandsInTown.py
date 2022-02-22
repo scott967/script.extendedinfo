@@ -1,16 +1,23 @@
 # -*- coding: utf8 -*-
 
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
+# Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
+"""Obtains local events from BandsInTown
 
-import urllib
+The current API TOU does not permit getting an API key for this addon.  This 
+module is inop, but retained in case there is a change in the future.
 
-from kodi65 import utils
-from kodi65 import ItemList
-from kodi65 import VideoItem
+"""
+
+import urllib.error
+import urllib.parse
+import urllib.request
+
+from kutils import ItemList, VideoItem, utils
 
 # TVRAGE_KEY = 'VBp9BuIr5iOiBeWCFRMG'
-API_KEY = 'xbmc_open_source_media_center'
+API_KEY = ''
 BASE_URL = "http://api.bandsintown.com/events/search?format=json&api_version=2.0&app_id=%s&" % API_KEY
 
 
@@ -33,9 +40,11 @@ def handle_events(results):
 
 
 def get_near_events(artists):  # not possible with api 2.0
-    arts = [urllib.quote(art['artist'].encode("utf-8")) for art in artists[:50]]
+    arts = [urllib.parse.quote(art['artist'].encode("utf-8"))
+            for art in artists[:50]]
     artist_str = 'artists[]=' + '&artists[]='.join(arts)
-    url = BASE_URL + 'location=use_geoip&radius=50&per_page=100&%s' % (artist_str)
+    url = BASE_URL + \
+        'location=use_geoip&radius=50&per_page=100&%s' % (artist_str)
     results = utils.get_JSON_response(url, folder="BandsInTown")
     if results:
         return handle_events(results)

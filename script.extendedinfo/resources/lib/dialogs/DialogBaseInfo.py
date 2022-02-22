@@ -1,26 +1,17 @@
 # -*- coding: utf8 -*-
 
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
+# Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
-
-from __future__ import absolute_import
-from __future__ import unicode_literals
 
 import xbmc
 import xbmcgui
 
+from kutils import (ActionHandler, VideoItem, addon, kodijson, selectdialog,
+                    slideshow, utils, windows, youtube)
+
 from resources.lib import TheMovieDB as tmdb
 from resources.lib.WindowManager import wm
-
-from kodi65 import youtube
-from kodi65 import addon
-from kodi65 import utils
-from kodi65 import kodijson
-from kodi65 import selectdialog
-from kodi65 import slideshow
-from kodi65 import VideoItem
-from kodi65 import ActionHandler
-from kodi65 import windows
 
 ch = ActionHandler()
 
@@ -55,13 +46,15 @@ class DialogBaseInfo(windows.DialogXML):
                 self.getControl(container_id).reset()
                 items = [i.get_listitem() for i in self.lists[key]]
                 self.getControl(container_id).addItems(items)
-            except Exception:
-                utils.log("Notice: No container with id %i available" % container_id)
+            except Exception as err:
+                utils.log('Notice: No container with id {0} available and {1}'.format(
+                    container_id, err))
         if self.last_control:
             self.setFocusId(self.last_control)
         if self.last_control and self.last_position:
             try:
-                self.getControl(self.last_control).selectItem(self.last_position)
+                self.getControl(self.last_control).selectItem(
+                    self.last_position)
             except Exception:
                 pass
         addon.set_global("ImageColor", self.info.get_property('ImageColor'))
@@ -107,7 +100,8 @@ class DialogBaseInfo(windows.DialogXML):
     @ch.click_by_type("music")
     # hack: use "music" until "pictures" got added to core
     def open_image(self, control_id):
-        key = [key for container_id, key in self.LISTS if container_id == control_id][0]
+        key = [key for container_id,
+               key in self.LISTS if container_id == control_id][0]
         pos = slideshow.open(listitems=self.lists[key],
                              index=self.getControl(control_id).getSelectedPosition())
         self.getControl(control_id).selectItem(pos)
@@ -119,7 +113,8 @@ class DialogBaseInfo(windows.DialogXML):
 
     @ch.click_by_type("artist")
     def open_actor_info(self, control_id):
-        wm.open_actor_info(actor_id=self.FocusedItem(control_id).getProperty("id"))
+        wm.open_actor_info(actor_id=self.FocusedItem(
+            control_id).getProperty("id"))
 
     @ch.click_by_type("movie")
     def open_movie_info(self, control_id):
@@ -166,7 +161,8 @@ class DialogBaseInfo(windows.DialogXML):
     def video_context_menu(self, control_id):
         index = xbmcgui.Dialog().contextmenu(list=[addon.LANG(33003)])
         if index == 0:
-            utils.download_video(self.FocusedItem(control_id).getProperty("youtube_id"))
+            utils.download_video(self.FocusedItem(
+                control_id).getProperty("youtube_id"))
 
     @ch.context("movie")
     def movie_context_menu(self, control_id):
@@ -191,7 +187,8 @@ class DialogBaseInfo(windows.DialogXML):
             account_lists = tmdb.get_account_lists()
             if not account_lists:
                 return False
-            listitems = ["%s (%i)" % (i["name"], i["item_count"]) for i in account_lists]
+            listitems = ["%s (%i)" % (i["name"], i["item_count"])
+                         for i in account_lists]
             i = xbmcgui.Dialog().select(addon.LANG(32136), listitems)
             if i > -1:
                 tmdb.change_list_status(list_id=account_lists[i]["id"],
@@ -211,7 +208,7 @@ class DialogBaseInfo(windows.DialogXML):
         if index == 1:
             filters = [{"id": listitem.getProperty("id"),
                         "type": "with_people",
-                        "label": listitem.getLabel().decode("utf-8")}]
+                        "label": listitem.getLabel()}]
             wm.open_video_list(filters=filters)
         if index == 2:
             self.open_credit_dialog(credit_id)
@@ -249,7 +246,7 @@ class DialogBaseInfo(windows.DialogXML):
             self.close()
 
     @ch.action("previousmenu", "*")
-    def exit_script(self, control_id):
+    def exit_script(self, *args):
         self.exit()
 
     @utils.run_async
@@ -259,12 +256,16 @@ class DialogBaseInfo(windows.DialogXML):
         except Exception:
             return None
         if not self.yt_listitems:
-            self.yt_listitems = youtube.search(search_str, limit=15)
+            user_key = addon.setting("Youtube API Key")
+            self.yt_listitems = youtube.search(
+                search_str, limit=15, api_key=user_key)
         if not self.yt_listitems:
             return None
-        vid_ids = [item.get_property("key") for item in self.lists["videos"]] if "videos" in self.lists else []
+        vid_ids = [item.get_property(
+            "key") for item in self.lists["videos"]] if "videos" in self.lists else []
         youtube_list.reset()
-        youtube_list.addItems([i.get_listitem() for i in self.yt_listitems if i.get_property("youtube_id") not in vid_ids])
+        youtube_list.addItems(
+            [i.get_listitem() for i in self.yt_listitems if i.get_property("youtube_id") not in vid_ids])
 
     def open_credit_dialog(self, credit_id):
         info = tmdb.get_credit_info(credit_id)

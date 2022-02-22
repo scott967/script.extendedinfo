@@ -704,3 +704,23 @@ msgstr "Издания"
 msgctxt "#32169"
 msgid "Rate TV show"
 msgstr "Оценете ТВ Сериал"
+
+msgctxt "#32170"
+msgid "Add to Trakt Watchlist"
+msgstr ""
+
+msgctxt "#32171"
+msgid "TheMovieDB"
+msgstr ""
+
+msgctxt "#32172"
+msgid "Youtube API Key"
+msgstr ""
+
+msgctxt "#32173"
+msgid "TADB API Key"
+msgstr ""
+
+msgctxt "#32174"
+msgid "OMDb API Key"
+msgstr ""

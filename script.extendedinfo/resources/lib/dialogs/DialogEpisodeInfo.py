@@ -1,18 +1,16 @@
 # -*- coding: utf8 -*-
 
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
+# Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
 import xbmc
 
+from kutils import ActionHandler, addon, busy, imagetools
 from resources.lib import TheMovieDB as tmdb
 from resources.lib.WindowManager import wm
-from DialogVideoInfo import DialogVideoInfo
 
-from kodi65 import imagetools
-from kodi65 import busy
-from kodi65 import addon
-from kodi65 import ActionHandler
+from .DialogVideoInfo import DialogVideoInfo
 
 ID_BUTTON_RATED = 6006
 
@@ -45,7 +43,8 @@ class DialogEpisodeInfo(DialogVideoInfo):
     def onInit(self):
         super(DialogEpisodeInfo, self).onInit()
         search_str = '{} "Season {}" "Episode {}"'.format(self.info.get_info("tvshowtitle"),
-                                                          self.info.get_info('season'),
+                                                          self.info.get_info(
+                                                              'season'),
                                                           self.info.get_info('episode'))
         self.get_youtube_vids(search_str)
         super(DialogEpisodeInfo, self).update_states()

@@ -1,19 +1,16 @@
 # -*- coding: utf8 -*-
 
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
+# Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
-import xbmcgui
 import xbmc
+import xbmcgui
 
-
+from kutils import ActionHandler, addon, utils
 from resources.lib import TheMovieDB as tmdb
-from DialogBaseInfo import DialogBaseInfo
 
-from kodi65 import addon
-from kodi65 import utils
-from kodi65 import ActionHandler
-
+from .DialogBaseInfo import DialogBaseInfo
 
 BUTTONS = {8, 9, 10, 6001, 6002, 6003, 6005, 6006}
 
@@ -68,7 +65,8 @@ class DialogVideoInfo(DialogBaseInfo):
 
     @ch.click(ID_BUTTON_SETRATING)
     def set_rating_dialog(self, control_id):
-        preselect = int(self.states["rated"]["value"]) if (self.states and self.states.get("rated")) else -1
+        preselect = int(self.states["rated"]["value"]) if (
+            self.states and self.states.get("rated")) else -1
         rating = utils.input_userrating(preselect=preselect)
         if rating == -1:
             return None

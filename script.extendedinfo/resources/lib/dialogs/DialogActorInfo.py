@@ -1,19 +1,14 @@
 # -*- coding: utf8 -*-
 
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
+# Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 import xbmcgui
-
+from kutils import ActionHandler, addon, imagetools
 from resources.lib import TheMovieDB as tmdb
-from resources.lib.dialogs.DialogBaseInfo import DialogBaseInfo
 
-from kodi65 import imagetools
-from kodi65 import addon
-from kodi65 import ActionHandler
+from .DialogBaseInfo import DialogBaseInfo
 
 ID_CONTROL_PLOT = 132
 
@@ -35,7 +30,8 @@ class DialogActorInfo(DialogBaseInfo):
         if not data:
             return None
         self.info, self.lists = data
-        self.info.update_properties(imagetools.blur(self.info.get_art("thumb")))
+        self.info.update_properties(
+            imagetools.blur(self.info.get_art("thumb")))
 
     def onInit(self):
         self.get_youtube_vids(self.info.label)

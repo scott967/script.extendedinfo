@@ -1,25 +1,38 @@
 # -*- coding: utf8 -*-
 
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
+# Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
+"""Modules with get_* functions to query TADB
 
-import urllib
+Requires user API key (subscription basis) to access
+TODO:  handle user api key 
+
+"""
+
+import urllib.error
+import urllib.parse
+import urllib.request
+from typing import Union
 
 import xbmc
 
-from kodi65 import utils
-from kodi65 import addon
-from kodi65 import local_db
-from kodi65 import AudioItem, VideoItem
-from kodi65 import ItemList
+from kutils import AudioItem, ItemList, VideoItem, addon, local_db, utils
 
-
-AUDIO_DB_KEY = '58353d43204d68753987fl'
-BASE_URL = 'http://www.theaudiodb.com/api/v1/json/%s/' % (AUDIO_DB_KEY)
+AUDIO_DB_KEY = '58353d43204d68753987fl'  #key no longer accepted
+BASE_URL = 'https://www.theaudiodb.com/api/v1/json'
 PLUGIN_BASE = 'plugin://script.extendedinfo/?info='
 
 
-def handle_albums(results):
+def _handle_albums(results):
+    """[summary]
+
+    Args:
+        results ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
     albums = ItemList(content_type="albums")
     if not results.get('album'):
         return albums
@@ -33,7 +46,8 @@ def handle_albums(results):
         elif item.get('strDescription'):
             desc = item['strDescription']
         if item.get('strReview'):
-            desc += "[CR][CR][B]%s:[/B][CR][CR]%s" % (addon.LANG(185), item['strReview'])
+            desc += "[CR][CR][B]%s:[/B][CR][CR]%s" % (
+                addon.LANG(185), item['strReview'])
         album = AudioItem(label=item['strAlbum'],
                           path="")
         album.set_infos({'artist': item['strArtist'],
@@ -63,7 +77,7 @@ def handle_albums(results):
     return local_db.compare_album_with_library(albums)
 
 
-def handle_tracks(results):
+def _handle_tracks(results: dict) -> ItemList:
     tracks = ItemList(content_type="songs")
     if not results.get('track'):
         return tracks
@@ -76,12 +90,13 @@ def handle_tracks(results):
                          'artist': item['strArtist'],
                          'mediatype': "song"})
         track.set_properties({'mbid': item['strMusicBrainzID']})
-        track.set_artwork({'thumb': "http://i.ytimg.com/vi/%s/0.jpg" % youtube_id})
+        track.set_artwork(
+            {'thumb': "http://i.ytimg.com/vi/%s/0.jpg" % youtube_id})
         tracks.append(track)
     return tracks
 
 
-def handle_musicvideos(results):
+def _handle_musicvideos(results):
     mvids = ItemList(content_type="musicvideos")
     if not results.get('mvids'):
         return mvids
@@ -93,12 +108,13 @@ def handle_musicvideos(results):
                         'plot': item['strDescriptionEN'],
                         'mediatype': "musicvideo"})
         mvid.set_properties({'id': item['idTrack']})
-        mvid.set_artwork({'thumb': "http://i.ytimg.com/vi/%s/0.jpg" % youtube_id})
+        mvid.set_artwork(
+            {'thumb': "http://i.ytimg.com/vi/%s/0.jpg" % youtube_id})
         mvids.append(mvid)
     return mvids
 
 
-def extended_artist_info(results):
+def extended_artist_info(results: dict) -> dict:
     if not results.get('artists'):
         return {}
     local_bio = 'strBiography' + addon.setting("LanguageID").upper()
@@ -143,15 +159,31 @@ def extended_artist_info(results):
     return artist
 
 
-def get_artist_discography(search_str):
+def get_artist_discography(search_str) -> ItemList:
+    """returns artist's discography
+
+    Args:
+        search_str (str): Artist name
+
+    Returns:
+        [ItemList]: Kutils list instance of AudioItems
+    """
     if not search_str:
         return ItemList(content_type="albums")
-    params = {"s": search_str}
-    results = get_data("searchalbum", params)
-    return handle_albums(results)
+    params: dict = {"s": search_str}
+    results: dict = get_data("searchalbum", params)
+    return _handle_albums(results)
 
 
-def get_artist_details(search_str):
+def get_artist_details(search_str) -> Union[ItemList, dict]:
+    """gets artist details from TADB
+
+    Args:
+        search_str [str]: artist name
+
+    Returns:
+        Union[ItemList, dict]: the extended artist info
+    """
     if not search_str:
         return ItemList(content_type="artists")
     params = {"s": search_str}
@@ -159,7 +191,16 @@ def get_artist_details(search_str):
     return extended_artist_info(results)
 
 
-def get_most_loved_tracks(search_str="", mbid=""):
+def get_most_loved_tracks(search_str="", mbid="") -> Union[ItemList, list]:
+    """ highest rated TADB soings for artist
+
+    Args:
+        search_str (str, optional): artist name. Defaults to "".
+        mbid (str, optional): musicbrainz artist id. Defaults to "".
+
+    Returns:
+        Union[ItemList, list]: list of songs
+    """
     if mbid:
         url = 'track-top10-mb'
         params = {"s": mbid}
@@ -169,7 +210,7 @@ def get_most_loved_tracks(search_str="", mbid=""):
     else:
         return []
     results = get_data(url, params)
-    return handle_tracks(results)
+    return _handle_tracks(results)
 
 
 def get_album_details(audiodb_id="", mbid=""):
@@ -182,7 +223,7 @@ def get_album_details(audiodb_id="", mbid=""):
     else:
         return []
     results = get_data(url, params)
-    return handle_albums(results)[0]
+    return _handle_albums(results)[0]
 
 
 def get_musicvideos(audiodb_id):
@@ -190,19 +231,38 @@ def get_musicvideos(audiodb_id):
         return ItemList(content_type="musicvideos")
     params = {"i": audiodb_id}
     results = get_data("mvid", params)
-    return handle_musicvideos(results)
+    return _handle_musicvideos(results)
 
 
-def get_track_details(audiodb_id):
+def get_track_details(audiodb_id: str) -> Union[ItemList, list]:
+    """gets TADB info for a track
+
+    Args:
+        audiodb_id (str): The TADB id
+
+    Returns:
+        Union[ItemList, list]: List of track details
+    """
     if not audiodb_id:
         return ItemList(content_type="songs")
     params = {"m": audiodb_id}
     results = get_data("track", params)
-    return handle_tracks(results)
+    return _handle_tracks(results)
 
 
-def get_data(url, params):
-    params = {k: unicode(v).encode('utf-8') for k, v in params.iteritems() if v}
-    url = "%s%s.php?%s" % (BASE_URL, url, urllib.urlencode(params))
+def get_data(url: str, params: dict) -> dict:
+    """returns a dict from TADB api query
+
+    Args:
+        url (str): the TADB GET query
+        params (dict): TADB query pamaeters
+
+    Returns:
+        dict: TADB api response
+    """
+    tadb_key: str = addon.setting('TADB API Key')
+    params: dict = {k: str(v) for k, v in params.items() if v}
+    url: str = "{0}/{1}/{2}.php?{3}".format(BASE_URL,
+                                            tadb_key, url, urllib.parse.urlencode(params))
     return utils.get_JSON_response(url=url,
                                    folder="TheAudioDB")

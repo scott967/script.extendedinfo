@@ -759,3 +759,19 @@ msgstr "Hodnotit seriál"
 msgctxt "#32170"
 msgid "Add to Trakt Watchlist"
 msgstr "Přidat do seznamu sledování Trakt"
+
+msgctxt "#32171"
+msgid "TheMovieDB"
+msgstr ""
+
+msgctxt "#32172"
+msgid "Youtube API Key"
+msgstr ""
+
+msgctxt "#32173"
+msgid "TADB API Key"
+msgstr ""
+
+msgctxt "#32174"
+msgid "OMDb API Key"
+msgstr ""
