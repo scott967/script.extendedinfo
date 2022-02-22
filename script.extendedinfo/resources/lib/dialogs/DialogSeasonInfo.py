@@ -1,15 +1,13 @@
 # -*- coding: utf8 -*-
 
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
+# Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
+from kutils import ActionHandler, addon, imagetools, utils
 from resources.lib import TheMovieDB as tmdb
-from DialogVideoInfo import DialogVideoInfo
 
-from kodi65 import imagetools
-from kodi65 import utils
-from kodi65 import addon
-from kodi65 import ActionHandler
+from .DialogVideoInfo import DialogVideoInfo
 
 ch = ActionHandler()
 
@@ -34,10 +32,12 @@ class DialogSeasonInfo(DialogVideoInfo):
         if not self.info.get_info("dbid"):  # need to add comparing for seasons
             poster = utils.get_file(url=self.info.get_art("poster"))
             self.info.set_art("poster", poster)
-        self.info.update_properties(imagetools.blur(self.info.get_art("poster")))
+        self.info.update_properties(
+            imagetools.blur(self.info.get_art("poster")))
 
     def onInit(self):
-        self.get_youtube_vids("%s %s tv" % (self.info.get_info("tvshowtitle"), self.info.get_info('title')))
+        self.get_youtube_vids("%s %s tv" % (self.info.get_info(
+            "tvshowtitle"), self.info.get_info('title')))
         super(DialogSeasonInfo, self).onInit()
 
     def onClick(self, control_id):
