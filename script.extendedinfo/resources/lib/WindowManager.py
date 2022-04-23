@@ -47,6 +47,7 @@ class WindowManager:
         self.saved_dialogstate = xbmc.getCondVisibility(
             "Window.IsActive(Movieinformation)")
         # self.monitor = SettingsMonitor()
+        self.monitor = xbmc.Monitor()
 
     def open_movie_info(self, movie_id=None, dbid=None, name=None, imdb_id=None):
         """
@@ -112,7 +113,7 @@ class WindowManager:
             if response["results"]:
                 tvshow_id = str(response['results'][0]['id'])
             else:
-                params = {"query": re.sub('\(.*?\)', '', tvshow),
+                params = {"query": re.sub(r'\(.*?\)', '', tvshow),
                           "language": addon.setting("language")}
                 response = tmdb.get_data(url="search/tv",
                                          params=params,
@@ -233,15 +234,21 @@ class WindowManager:
             xbmcgui.Dialog().ok(heading=addon.NAME,
                                 message=addon.LANG(32140) + '[CR]' + addon.LANG(32141))
         self.active_dialog = dialog
-        dialog.doModal()
+        try:
+            dialog.doModal()
+        except SystemExit:
+            pass
 #        if dialog.canceled:
 #            addon.set_global("infobackground", self.saved_background)
 #            self.window_stack = []
 #            return None
-        if self.window_stack:
+        if self.window_stack and not self.monitor.abortRequested():
             self.active_dialog = self.window_stack.pop()
             xbmc.sleep(300)
-            self.active_dialog.doModal()
+            try:
+                self.active_dialog.doModal()
+            except SystemExit:
+                pass
         else:
             addon.set_global("infobackground", self.saved_background)
 
