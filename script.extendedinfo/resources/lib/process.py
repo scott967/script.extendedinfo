@@ -28,7 +28,7 @@ from resources.lib import Trakt
 from resources.lib.WindowManager import wm
 
 
-def start_info_actions(info: str, params: Dict[str, str]) -> list:
+def start_info_actions(info: str, params: Dict[str, str]):
     """executes an action from infos (info= list) using any params
 
     See README for list of possible actions
