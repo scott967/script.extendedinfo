@@ -23,6 +23,7 @@ DialogBaseInfo.py			add/update docstrings
 
 Trakt.py	add docstrings
 		fix get_episodes getting more than 20 episodes
+
 v6.0.1
 - Move codebase to python3
 - Kodi Matrix / Nexus changes

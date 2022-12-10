@@ -100,7 +100,6 @@ def get_episodes(content):
                                  'id': ep["ids"]["tvdb"],
                                  'imdb_id': ep["ids"]["imdb"],
                                  'homepage': tv["homepage"]})
-            utils.log(f'Trakt.get_episodes for content {content} VideoItem {show}')
             if tv["ids"].get("tmdb"):
                 utils.log(f'Trakt.get_episodes get art from tmdb {tv["ids"]["tmdb"]}')
                 art_info = tmdb.get_tvshow(tv["ids"]["tmdb"], light=True)

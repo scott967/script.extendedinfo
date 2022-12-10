@@ -39,6 +39,7 @@ class DialogActorInfo(DialogBaseInfo):
             *args: dialog xml filename
                 this addon path (for cache)
             **kwargs: id(int): the tmdb actor id
+
         Returns:
             None: if no tmdb extended actor info available
             self.info and self.lists are set from extended actor info
