@@ -1,3 +1,28 @@
+v6.0.2 (beta)
+-addon.xml bump ver 6.0.2
+-default.py  switch to f-strings	
+						add/update docstrings
+						wrap try/finally to clear state property on exception
+- plugin.py	fix exception V19 ListItem args deprecated
+- process.py	add/update docstrings
+						make import paths absolute
+						wrap try/finally to clear state property on exception
+theAdioDB.py		add/update docstrings
+								remove dead TADB api key (patreon subscription now required) 
+theMovieDB.py	add/update docstrings
+								add/update PEP 484 type annotations
+								debug logging message changes
+								switch to f-strings
+								fix exception due to key missing in dict (use .get method)
+WindowManager.py		make import paths absolute
+											add/update docstrings
+											add a "hidebusy" function call to clear stuck busy dialog
+DialogActorInfo.py		add/update docstrings
+											add/update PEP 484 type annotations
+DialogBaseInfo.py			add/update docstrings
+
+Trakt.py	add docstrings
+		fix get_episodes getting more than 20 episodes
 v6.0.1
 - Move codebase to python3
 - Kodi Matrix / Nexus changes

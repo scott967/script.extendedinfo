@@ -14,7 +14,7 @@ import xbmcvfs
 
 from kutils import addon, busy, local_db, player, utils, windows
 
-from . import TheMovieDB as tmdb
+from resources.lib import TheMovieDB as tmdb
 
 INFO_XML_CLASSIC = 'script-%s-DialogVideoInfo.xml' % (addon.ID)
 LIST_XML_CLASSIC = 'script-%s-VideoList.xml' % (addon.ID)
@@ -147,25 +147,38 @@ class WindowManager:
                                    dbid=int(dbid) if dbid and int(dbid) > 0 else None)
         self.open_infodialog(dialog)
 
-    def open_actor_info(self, actor_id=None, name=None):
+    def open_actor_info(self, actor_id: str=None, name: str=None):
+        """opens info dialog window for an actor, deals with window stack
+        A new dialog instance of DialogActorInfo class is created and the xml
+        window (default skin DialogInfo.xml) is opened with wm.open_infodialog 
+        instance method
+
+        Args:
+            actor_id (str, optional): tmdb actor id. Defaults to None.
+            name (str, optional): a string of name or name[ separator name]. 
+            if name is a multiple a select dialog is presented to user to
+            get a single actor.  If name is provided, attempts to get a tmdb
+            for it.  Defaults to None.
+
+        Returns:
+            None: if no tmdb actor id could be found
         """
-        open actor info, deal with window stack
-        """
-        from .dialogs.DialogActorInfo import DialogActorInfo
+        from resources.lib.dialogs.DialogActorInfo import DialogActorInfo
         if not actor_id:
-            name = name.split(" %s " % addon.LANG(20347))
+            name = name.split(f" {addon.LANG(20347)} ")
             names = name[0].strip().split(" / ")
             if len(names) > 1:
                 ret = xbmcgui.Dialog().select(heading=addon.LANG(32027),
-                                              list=names)
+                                              list=names) #"Select person"
                 if ret == -1:
                     return None
                 name = names[ret]
             else:
                 name = names[0]
             busy.show_busy()
-            actor_info = tmdb.get_person_info(name)
+            actor_info = tmdb.get_person_info(name) # a dict of info or False
             if not actor_info:
+                busy.hide_busy()
                 return None
             actor_id = actor_info["id"]
         else:

@@ -16,6 +16,11 @@ ch = ActionHandler()
 
 
 class DialogActorInfo(DialogBaseInfo):
+    """creates a dialog window for actor info
+
+    Args:
+        DialogBaseInfo (_type_): handles common window details
+    """
     TYPE = "Actor"
     LISTS = [(150, "movie_roles"),
              (250, "tvshow_roles"),
@@ -25,8 +30,21 @@ class DialogActorInfo(DialogBaseInfo):
              (750, "tagged_images")]
 
     def __init__(self, *args, **kwargs):
+        """Constructs the dialog window with actor info from tmdb
+        self.info is a ListItem for the actor
+        self.lists is a list of ListItems for the actor's movies and tv shows
+        if TMDB actor id is provided, gets extended info from TMDB 
+
+        Arguments:
+            *args: dialog xml filename
+                this addon path (for cache)
+            **kwargs: id(int): the tmdb actor id
+        Returns:
+            None: if no tmdb extended actor info available
+            self.info and self.lists are set from extended actor info
+        """
         super(DialogActorInfo, self).__init__(*args, **kwargs)
-        data = tmdb.extended_actor_info(actor_id=kwargs.get('id'))
+        data: tuple = tmdb.extended_actor_info(actor_id=kwargs.get('id'))
         if not data:
             return None
         self.info, self.lists = data

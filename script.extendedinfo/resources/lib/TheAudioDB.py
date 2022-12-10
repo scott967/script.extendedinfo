@@ -3,10 +3,9 @@
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
 # Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
-"""Modules with get_* functions to query TADB
+"""Module with get_* functions to query TADB
 
 Requires user API key (subscription basis) to access
-TODO:  handle user api key 
 
 """
 
@@ -19,7 +18,7 @@ import xbmc
 
 from kutils import AudioItem, ItemList, VideoItem, addon, local_db, utils
 
-AUDIO_DB_KEY = '58353d43204d68753987fl'  #key no longer accepted
+AUDIO_DB_KEY = '2'  #key no longer accepted - this is demo key
 BASE_URL = 'https://www.theaudiodb.com/api/v1/json'
 PLUGIN_BASE = 'plugin://script.extendedinfo/?info='
 
@@ -261,6 +260,8 @@ def get_data(url: str, params: dict) -> dict:
         dict: TADB api response
     """
     tadb_key: str = addon.setting('TADB API Key')
+    if tadb_key is None or tadb_key == '':
+        tadb_key = AUDIO_DB_KEY #limited function key
     params: dict = {k: str(v) for k, v in params.items() if v}
     url: str = "{0}/{1}/{2}.php?{3}".format(BASE_URL,
                                             tadb_key, url, urllib.parse.urlencode(params))

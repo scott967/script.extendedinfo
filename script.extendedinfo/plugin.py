@@ -77,8 +77,8 @@ def tmdb():
     if addon.setting("tmdb_username") and addon.setting("tmdb_password"):
         items += login
     for key, value in items:
-        li = xbmcgui.ListItem(label=value,
-                              thumbnailImage="DefaultFolder.png")
+        li = xbmcgui.ListItem(label=value)
+        li.setArt({'thumb': 'DefaultFolder.png'})
         url = 'plugin://script.extendedinfo?info=%s' % key
         xbmcplugin.addDirectoryItem(handle=plugin.handle,
                                     url=url,
@@ -107,8 +107,8 @@ def trakt():
              ("airingepisodes", addon.LANG(32028)),
              ("premiereepisodes", addon.LANG(32029))]
     for key, value in items:
-        li = xbmcgui.ListItem(label=value,
-                              thumbnailImage="DefaultFolder.png")
+        li = xbmcgui.ListItem(label=value)
+        li.setArt({'thumb': 'DefaultFolder.png'})
         url = 'plugin://script.extendedinfo?info=%s' % key
         xbmcplugin.addDirectoryItem(handle=plugin.handle,
                                     url=url,
@@ -120,11 +120,13 @@ def trakt():
 
 @plugin.route('/')
 def root():
+    traktitem = xbmcgui.ListItem(label="Trakt")
+    traktitem.setArt({'thumb': TRAKT_IMAGE})
+    tmdbitem = xbmcgui.ListItem(label="TheMovieDB")
+    tmdbitem.setArt({'thumb': MOVIEDB_IMAGE})
     items = [
-        (plugin.url_for(trakt), xbmcgui.ListItem(label="Trakt",
-                                                 thumbnailImage=TRAKT_IMAGE), True),
-        (plugin.url_for(tmdb), xbmcgui.ListItem(label="TheMovieDB",
-                                                thumbnailImage=MOVIEDB_IMAGE), True),
+        (plugin.url_for(trakt), traktitem, True),
+        (plugin.url_for(tmdb), tmdbitem, True),
     ]
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_LABEL)
     xbmcplugin.addDirectoryItems(plugin.handle, items)

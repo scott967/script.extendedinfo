@@ -19,13 +19,15 @@ def pass_list_to_skin(name, data, prefix="", limit: Optional[int] = False) -> No
     limit number of items in data 
 
     Args:
-        name (str): Type of data being returned.  Used to construct
-            the skin window property key eg. topratedmovies from invocation
-            parameter info=
+        name (str): Type of data being returned derived from runscript info
+            parameter.  Used to construct the skin window property key
+            eg. topratedmovies from invocation parameter info=
         data (kutils.itemlist.ItemList): collection of ListItems 
             (Video or Audio)
-        prefix (str, optional):  Optional prefix for the name.  Defaults to "".
-        limit (int, optional):  Number of items to return. Defaults to False.
+        prefix (str, optional):  Optional prefix for the name.  May be set
+            as a param in runscript.  Defaults to "".
+        limit (int, optional):  Number of items to return. May be set as a param
+            in runscript.  Defaults to False.
 
     Returns:
         None
@@ -33,31 +35,32 @@ def pass_list_to_skin(name, data, prefix="", limit: Optional[int] = False) -> No
     if data and limit and int(limit) < len(data):
         data = data[:int(limit)]
     if not data:
-        addon.set_global('%s%s.Count' % (prefix, name), '0')
+        addon.set_global(f'{prefix}{name}.Count', '0')
         return None
     for (count, result) in enumerate(data):
         for (key, value) in result.get_infos().items():
-            addon.set_global('%s%s.%i.%s' %
-                             (prefix, name, count + 1, key), str(value))
+            addon.set_global(f'{prefix}{name}.{count + 1}.{key}', str(value))
         for key, value in result.get("properties", {}).items():
             if not value:
                 continue
-            addon.set_global('%s%s.%i.%s' %
-                             (prefix, name, count + 1, key), str(value))
-    addon.set_global('%s%s.Count' % (prefix, name), str(len(data)))
+            addon.set_global(f'{prefix}{name}.{count + 1}.{key}', str(value))
+    addon.set_global(f'{prefix}{name}.Count', str(len(data)))
 
 
 class Main:
+    """When called by Runscript provides all functionality.  Multiple instances
+    of Main can be created.  No class attributes or methods are provided 
+    """
 
     def __init__(self):
-        """Provides the main process when called by RunScript.
+        """Constructs the main process as object
 
         Parse the invocation argument strings to create self.infos (called with
         info= args) list and self.params dict  (called with param=value pairs)
         If started with no parameters, opens the video list dialog with movies
         from TMDB retrieved by popularity.
         """
-        utils.log("version {} started".format(addon.VERSION))
+        utils.log(f"version {addon.VERSION} started")
         addon.set_global("extendedinfo_running", "true")
         self._parse_argv()
         for info in self.infos:
@@ -68,12 +71,18 @@ class Main:
                               limit=self.params.get("limit", 20))
         if not self.infos:
             addon.set_global('infodialogs.active', "true")
-            from resources.lib.WindowManager import wm
-            wm.open_video_list()
-            addon.clear_global('infodialogs.active')
+            try:
+                from resources.lib.WindowManager import wm
+                wm.open_video_list()
+            finally:
+                addon.clear_global('infodialogs.active')
         addon.clear_global("extendedinfo_running")
 
     def _parse_argv(self) -> None:
+        """gets arguments passed by Runscript call and passes them as
+        instance attributes of self.infos list (invoked with info=)
+        and self.params dict
+        """
         self.infos: List[str] = []
         self.params: Dict[str, str] = {"handle": None}
         for arg in sys.argv[1:]:
