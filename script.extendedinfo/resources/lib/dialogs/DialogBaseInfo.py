@@ -22,33 +22,43 @@ ID_BUTTON_BOUNCEDOWN = 20001
 
 
 class DialogBaseInfo(windows.DialogXML):
+    """Class constructs a basic dialog xml window.   Subclasses augment for different
+    dialog types (eg actor info or movie info)
+
+    Args:
+        windows.DialogXML (DialogXML): a kutils class derived from xbmcgui.WindowXMLDialog
+        and kutils WindowMixin classes
+
+    Returns:
+        _type_: _description_
+    """
     ACTION_PREVIOUS_MENU = [92, 9]
     ACTION_EXIT_SCRIPT = [13, 10]
 
     def __init__(self, *args, **kwargs):
         super(DialogBaseInfo, self).__init__(*args, **kwargs)
-        self.logged_in = tmdb.Login.check_login()
+        self.logged_in: bool = tmdb.Login.check_login()
         self.bouncing = False
         self.last_focus = None
         self.lists = None
         self.states = False
         self.yt_listitems = []
-        self.info = VideoItem()
+        self.info = VideoItem() # kutils listitem
         self.last_control = None
         self.last_position = None
 
     def onInit(self, *args, **kwargs):
         super(DialogBaseInfo, self).onInit()
         # self.set_buttons()
-        self.info.to_windowprops(window_id=self.window_id)
+        self.info.to_windowprops(window_id=self.window_id)  #kutils sets home window 
+            #properties from the info listitem  
         for container_id, key in self.LISTS:
             try:
                 self.getControl(container_id).reset()
                 items = [i.get_listitem() for i in self.lists[key]]
                 self.getControl(container_id).addItems(items)
             except Exception as err:
-                utils.log('Notice: No container with id {0} available and {1}'.format(
-                    container_id, err))
+                utils.log(f'Notice: No container with id {container_id} available and {err}')
         if self.last_control:
             self.setFocusId(self.last_control)
         if self.last_control and self.last_position:

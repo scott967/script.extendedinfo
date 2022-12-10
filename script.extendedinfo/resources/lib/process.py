@@ -5,7 +5,9 @@
 # This program is Free Software see LICENSE file for details
 """When addon is called with RunScript, executes required action
 
-Action to run is passed in the call, along with any associated parameters
+Public functions:
+    start_info_actions(info, params):  takes in invocation info action
+        and optional param key/value pairs and exexutes the info action
 
 """
 
@@ -23,21 +25,20 @@ from resources.lib import LastFM
 from resources.lib import TheAudioDB as AudioDB
 from resources.lib import TheMovieDB as tmdb
 from resources.lib import Trakt
-
-from .WindowManager import wm
+from resources.lib.WindowManager import wm
 
 
 def start_info_actions(info: str, params: Dict[str, str]) -> list:
-    """executes an action from info using any params
+    """executes an action from infos (info= list) using any params
 
     See README for list of possible actions
 
     Args:
-        info (str): one of a defined list of possible actions
+        info (str): one of a defined infos list of possible actions
         params (Dict[str,str]): Optional parameters for the action
 
     Returns:
-        [type]: [description]
+        [ItemList]: a kodi utils ItemList of VideoItems/Music
     """
     if "artistname" in params:
         params["artistname"] = params.get(
@@ -45,7 +46,7 @@ def start_info_actions(info: str, params: Dict[str, str]) -> list:
         if not params.get("artist_mbid"):
             params["artist_mbid"] = utils.fetch_musicbrainz_id(
                 params["artistname"])
-    utils.log('start_info_actions: ' + info)
+    utils.log(f'start_info_actions: {info}')
     utils.pp(params)
     if "prefix" in params and not params["prefix"].endswith('.'):
         params["prefix"] = params["prefix"] + '.'
@@ -344,62 +345,74 @@ def start_info_actions(info: str, params: Dict[str, str]) -> list:
         if addon.get_global('infodialogs.active'):
             return None
         addon.set_global('infodialogs.active', "true")
-        search_str = params.get("id", "")
-        if not search_str and params.get("search"):
-            result = xbmcgui.Dialog().input(heading=addon.LANG(16017),
-                                            type=xbmcgui.INPUT_ALPHANUM)
-            if result and result > -1:
-                search_str = result
-            else:
-                addon.clear_global('infodialogs.active')
-                return None
-        wm.open_video_list(search_str=search_str,
-                           mode="search")
-        addon.clear_global('infodialogs.active')
+        try:
+            search_str = params.get("id", "")
+            if not search_str and params.get("search"):
+                result = xbmcgui.Dialog().input(heading=addon.LANG(16017),
+                                                type=xbmcgui.INPUT_ALPHANUM)
+                if result and result > -1:
+                    search_str = result
+                else:
+                    addon.clear_global('infodialogs.active')
+                    return None
+            wm.open_video_list(search_str=search_str,
+                            mode="search")
+        finally:
+            addon.clear_global('infodialogs.active')
     elif info == 'extendedinfo':
         if addon.get_global('infodialogs.active'):
             return None
         addon.set_global('infodialogs.active', "true")
-        wm.open_movie_info(movie_id=params.get("id"),
-                           dbid=params.get("dbid"),
-                           imdb_id=params.get("imdb_id"),
-                           name=params.get("name"))
-        addon.clear_global('infodialogs.active')
+        try:
+            wm.open_movie_info(movie_id=params.get("id"),
+                            dbid=params.get("dbid"),
+                            imdb_id=params.get("imdb_id"),
+                            name=params.get("name"))
+        finally:
+            addon.clear_global('infodialogs.active')
     elif info == 'extendedactorinfo':
         if addon.get_global('infodialogs.active'):
             return None
         addon.set_global('infodialogs.active', "true")
-        wm.open_actor_info(actor_id=params.get("id"),
-                           name=params.get("name"))
-        addon.clear_global('infodialogs.active')
+        try:
+            wm.open_actor_info(actor_id=params.get("id"),
+                            name=params.get("name"))
+        finally:
+            addon.clear_global('infodialogs.active')
     elif info == 'extendedtvinfo':
         if addon.get_global('infodialogs.active'):
             return None
         addon.set_global('infodialogs.active', "true")
-        wm.open_tvshow_info(tmdb_id=params.get("id"),
-                            tvdb_id=params.get("tvdb_id"),
-                            dbid=params.get("dbid"),
-                            imdb_id=params.get("imdb_id"),
-                            name=params.get("name"))
-        addon.clear_global('infodialogs.active')
+        try:
+            wm.open_tvshow_info(tmdb_id=params.get("id"),
+                                tvdb_id=params.get("tvdb_id"),
+                                dbid=params.get("dbid"),
+                                imdb_id=params.get("imdb_id"),
+                                name=params.get("name"))
+        finally:
+            addon.clear_global('infodialogs.active')
     elif info == 'seasoninfo':
         if addon.get_global('infodialogs.active'):
             return None
         addon.set_global('infodialogs.active', "true")
-        wm.open_season_info(tvshow=params.get("tvshow"),
-                            dbid=params.get("dbid"),
-                            season=params.get("season"))
-        addon.clear_global('infodialogs.active')
+        try:
+            wm.open_season_info(tvshow=params.get("tvshow"),
+                                dbid=params.get("dbid"),
+                                season=params.get("season"))
+        finally:
+            addon.clear_global('infodialogs.active')
     elif info == 'extendedepisodeinfo':
         if addon.get_global('infodialogs.active'):
             return None
         addon.set_global('infodialogs.active', "true")
-        wm.open_episode_info(tvshow=params.get("tvshow"),
-                             tvshow_id=params.get("tvshow_id"),
-                             dbid=params.get("dbid"),
-                             episode=params.get("episode"),
-                             season=int(params.get("season")))
-        addon.clear_global('infodialogs.active')
+        try:
+            wm.open_episode_info(tvshow=params.get("tvshow"),
+                                tvshow_id=params.get("tvshow_id"),
+                                dbid=params.get("dbid"),
+                                episode=params.get("episode"),
+                                season=int(params.get("season")))
+        finally:
+            addon.clear_global('infodialogs.active')
     elif info == 'albuminfo':
         if params.get("id"):
             album_details = AudioDB.get_album_details(params.get("id"))
