@@ -129,8 +129,8 @@ class DialogBaseInfo(windows.DialogXML):
 
     @ch.click_by_type("artist")
     def open_actor_info(self, control_id):
-        wm.open_actor_info(actor_id=self.FocusedItem(
-            control_id).getProperty("id"))
+        wm.open_actor_info(actor_id=self.FocusedItem(control_id).getProperty("id"),
+                            name=self.FocusedItem(control_id).getLabel())
 
     @ch.click_by_type("movie")
     def open_movie_info(self, control_id):
