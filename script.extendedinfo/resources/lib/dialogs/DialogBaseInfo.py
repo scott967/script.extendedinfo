@@ -177,8 +177,9 @@ class DialogBaseInfo(windows.DialogXML):
     def video_context_menu(self, control_id):
         index = xbmcgui.Dialog().contextmenu(list=[addon.LANG(33003)])
         if index == 0:
-            utils.download_video(self.FocusedItem(
-                control_id).getProperty("youtube_id"))
+            #utils.download_video(self.FocusedItem(
+            #    control_id).getProperty("youtube_id"))
+            pass
 
     @ch.context("movie")
     def movie_context_menu(self, control_id):
