@@ -9,21 +9,21 @@ User must supply api key via addon settings
 
 """
 
-from typing import Optional
+from __future__ import annotations
 
 from kutils import addon, utils
 
 BASE_URL = "http://www.omdbapi.com/?tomatoes=true&plot=full&r=json&"
 
 
-def get_movie_info(imdb_id: str) -> Optional[dict]:
+def get_movie_info(imdb_id: str) -> dict | None:
     """gets tomato data from OMDb
 
     Args:
         imdb_id (str): imbd id
 
     Returns:
-        Optional[dict]: Json.loads response from OMDb
+        dict | None: Json.loads response from OMDb or None if not available
     """
     omdb_key: str = addon.setting('OMDb API Key')
     url = 'apikey={0}&i={1}'.format(omdb_key, imdb_id)

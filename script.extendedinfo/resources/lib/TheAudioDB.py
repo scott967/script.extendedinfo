@@ -9,10 +9,10 @@ Requires user API key (subscription basis) to access
 
 """
 
+from __future__ import annotations
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Union
 
 import xbmc
 
@@ -174,7 +174,7 @@ def get_artist_discography(search_str) -> ItemList:
     return _handle_albums(results)
 
 
-def get_artist_details(search_str) -> Union[ItemList, dict]:
+def get_artist_details(search_str) -> ItemList | dict:
     """gets artist details from TADB
 
     Args:
@@ -190,7 +190,7 @@ def get_artist_details(search_str) -> Union[ItemList, dict]:
     return extended_artist_info(results)
 
 
-def get_most_loved_tracks(search_str="", mbid="") -> Union[ItemList, list]:
+def get_most_loved_tracks(search_str="", mbid="") -> ItemList | list:
     """ highest rated TADB soings for artist
 
     Args:
@@ -233,7 +233,7 @@ def get_musicvideos(audiodb_id):
     return _handle_musicvideos(results)
 
 
-def get_track_details(audiodb_id: str) -> Union[ItemList, list]:
+def get_track_details(audiodb_id: str) -> ItemList | list:
     """gets TADB info for a track
 
     Args:

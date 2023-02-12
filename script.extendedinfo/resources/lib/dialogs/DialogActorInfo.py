@@ -4,6 +4,26 @@
 # Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
+"""Provides the DialogActorInfo class that implements a dialog
+XML window.  The Actor Info is added to the window properties
+from a kutils VideoItem.  Panels of VideoItems are added from
+kutils ItemLists and a Youtube list.
+
+The class hierarchy is:
+    xbmcgui.Window
+    --------------
+    xbmcgui.WindowXML / xbmcgui.WindowDialogMixin
+    ---------------
+    xbmc.WindowDialogXML / kutils.windows.WindowMixin
+    ---------------
+    kutils.windows.DialogXML
+    ---------------
+    DialogBaseInfo
+    ---------------
+    DialogActorInfo
+
+"""
+
 import xbmcgui
 from kutils import ActionHandler, addon, imagetools
 from resources.lib import TheMovieDB as tmdb
@@ -16,10 +36,10 @@ ch = ActionHandler()
 
 
 class DialogActorInfo(DialogBaseInfo):
-    """creates a dialog window for actor info
+    """creates a dialog XML window for actor info
 
     Args:
-        DialogBaseInfo (_type_): handles common window details
+        DialogBaseInfo: handles common window details
     """
     TYPE = "Actor"
     LISTS = [(150, "movie_roles"),
@@ -39,7 +59,6 @@ class DialogActorInfo(DialogBaseInfo):
             *args: dialog xml filename
                 this addon path (for cache)
             **kwargs: id(int): the tmdb actor id
-
         Returns:
             None: if no tmdb extended actor info available
             self.info and self.lists are set from extended actor info
@@ -53,14 +72,29 @@ class DialogActorInfo(DialogBaseInfo):
             imagetools.blur(self.info.get_art("thumb")))
 
     def onInit(self):
+        """callback function from Kodi when window is opened
+        Also calls onInit in parent classes to set all info in the
+        dialog window
+        """
         self.get_youtube_vids(self.info.label)
         super(DialogActorInfo, self).onInit()
 
     def onClick(self, control_id):
+        """callback function from Kodi when control in window is
+        clicked
+
+        Args:
+            control_id (int): id of window control that was clicked
+        """
         super(DialogActorInfo, self).onClick(control_id)
         ch.serve(control_id, self)
 
     @ch.click(ID_CONTROL_PLOT)
     def show_plot(self, control_id):
+        """Opens info dialog textbox in a textviewer
+
+        Args:
+            control_id (int): window control id that was clicked
+        """
         xbmcgui.Dialog().textviewer(heading=addon.LANG(32037),
                                     text=self.info.get_property("biography"))

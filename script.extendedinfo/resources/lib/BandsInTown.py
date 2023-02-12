@@ -5,7 +5,7 @@
 # This program is Free Software see LICENSE file for details
 """Obtains local events from BandsInTown
 
-The current API TOU does not permit getting an API key for this addon.  This 
+The current API TOU does not permit getting an API key for this addon.  This
 module is inop, but retained in case there is a change in the future.
 
 """

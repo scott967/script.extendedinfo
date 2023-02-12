@@ -4,6 +4,7 @@
 # Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
 """When addon is called with RunScript, executes required action
+When called as plugin, sets listitems to container
 
 Public functions:
     start_info_actions(info, params):  takes in invocation info action
@@ -11,10 +12,10 @@ Public functions:
 
 """
 
+from __future__ import annotations
 import os
 import shutil
 import time
-from typing import Dict
 
 import xbmc
 import xbmcgui
@@ -28,14 +29,14 @@ from resources.lib import Trakt
 from resources.lib.WindowManager import wm
 
 
-def start_info_actions(info: str, params: Dict[str, str]):
+def start_info_actions(info: str, params: dict[str, str]):
     """executes an action from infos (info= list) using any params
 
     See README for list of possible actions
 
     Args:
         info (str): one of a defined infos list of possible actions
-        params (Dict[str,str]): Optional parameters for the action
+        params (dict[str,str]): Optional parameters for the action
 
     Returns:
         [ItemList]: a kodi utils ItemList of VideoItems/Music
@@ -359,7 +360,7 @@ def start_info_actions(info: str, params: Dict[str, str]):
                             mode="search")
         finally:
             addon.clear_global('infodialogs.active')
-    elif info == 'extendedinfo':
+    elif info == 'extendedinfo': # called with movie
         if addon.get_global('infodialogs.active'):
             return None
         addon.set_global('infodialogs.active', "true")

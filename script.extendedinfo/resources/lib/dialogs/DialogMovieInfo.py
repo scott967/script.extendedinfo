@@ -4,8 +4,9 @@
 # Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
+from __future__ import annotations
+
 import threading
-from typing import Optional, Union
 
 import xbmc
 import xbmcgui
@@ -44,6 +45,14 @@ ch = ActionHandler()
 
 
 class DialogMovieInfo(DialogVideoInfo):
+    """ Class that creates a new movie info dialog
+
+    Args:
+        DialogVideoInfo: The super class
+
+    Returns:
+        DialogMmovieInfo: an instance
+    """
     TYPE = "Movie"
     TYPE_ALT = "movie"
     LISTS = [(ID_LIST_ACTORS, "actors"),
@@ -64,8 +73,16 @@ class DialogMovieInfo(DialogVideoInfo):
     #            ID_BUTTON_ADDTOLIST]
 
     def __init__(self, *args, **kwargs):
+        """Creates a new instance of DialogMovieInfo
+
+        kwargs:
+            id(int): the tmdb movie id
+            dbid(int): the local Kodi dbid
+
+        Returns:  dialogmovieinfo
+        """
         super(DialogMovieInfo, self).__init__(*args, **kwargs)
-        data: Optional[dict] = tmdb.extended_movie_info(movie_id=kwargs.get('id'),
+        data: tuple | None = tmdb.extended_movie_info(movie_id=kwargs.get('id'),
                                                         dbid=kwargs.get('dbid'))
         if not data:
             return None
@@ -261,8 +278,16 @@ class DialogMovieInfo(DialogVideoInfo):
 
 
 class SetItemsThread(threading.Thread):
+    """Thread fetches movies in set from tmdb
 
-    def __init__(self, set_id=""):
+    Args:
+        threading.Thead (super class): python thread class
+    """
+
+    def __init__(self, set_id="") -> SetItemsThread:
+        """Creates a new SetItemsThread instance to run async
+            returns: SetItemsThread instance
+        """
         threading.Thread.__init__(self)
         self.set_id = set_id
 
