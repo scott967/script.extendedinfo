@@ -785,7 +785,7 @@ def get_person_info(person_label:str, skip_dialog=False) -> dict:
             'popularity' : float
             'profile_path' : str of image path/filename
         False:  if no response
-              
+
     """
     if not person_label:
         return False
@@ -1006,7 +1006,7 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> tuple[VideoI
         mpaa = us_cert['release_dates'][0]["certification"]
     elif info['release_dates']['results']:
         mpaa = info['release_dates']['results'][0]['release_dates'][0]['certification']
-    movie_set = info.get("belongs_to_collection")
+    movie_set:dict = info.get("belongs_to_collection")
     movie = VideoItem(label=info.get('title'),
                       path=PLUGIN_BASE + 'youtubevideo&&id=%s' % info.get("id", ""))
     movie.set_infos({'title': info.get('title'),
