@@ -733,7 +733,7 @@ def search_companies(company_name):
     if response and "results" in response:
         return handle_companies(response["results"])
     else:
-        utils.log("TheMovieDB.searchcompanies Could not find company ID for %s" % company_name)
+        utils.log(f"TheMovieDB.searchcompanies Could not find company ID for {company_name}")
         return None
 
 
@@ -853,8 +853,8 @@ def get_data(url: str = "", params: dict = None, cache_days: float = 14) -> dict
     if not response:
         utils.log("tmdb.get_data No response from TMDB")
         return None
-    elif "status_code" in response:
-        utils.log("tmdb.get_data TMDB status code: %s" % response.get("status_code"))
+    if "status_code" in response:
+        utils.log(f'tmdb.get_data TMDB status code: {response.get("status_code")}')
     return response
 
 
@@ -1460,7 +1460,7 @@ def get_movies(movie_type: str) -> list | dict:
     Returns:
         list: [description]
     """
-    response = get_data(url="movie/%s" % (movie_type),
+    response = get_data(url=f'movie/{movie_type}',
                         params={"language": addon.setting("LanguageID")},
                         cache_days=0.3)
     if not response.get("results"):
