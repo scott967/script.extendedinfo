@@ -933,10 +933,10 @@ def get_movie_tmdb_id(imdb_id:str=None, name:str=None, dbid:int=None):
         or fall back to title
     """
     if dbid and (int(dbid) > 0):
-        movie_id = local_db.get_imdb_id("movie", dbid)
-        if movie_id:
-            utils.log("IMDB Id from local DB: %s" % (movie_id))
-            return movie_id
+        imdb_id = local_db.get_imdb_id("movie", dbid)
+        if imdb_id:
+            utils.log(f"IMDB Id from local DB: {imdb_id}")
+            #return movie_id
     if imdb_id:
         params = {"external_source": "imdb_id",
                   "language": addon.setting("LanguageID")}
