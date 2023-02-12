@@ -296,7 +296,8 @@ def get_window(window_type):
                 ret = confirmdialog.open(header=addon.LANG(32151),
                                          text=addon.LANG(32106),
                                          nolabel=addon.LANG(32150),
-                                         yeslabel=addon.LANG(32149))
+                                         yeslabel=addon.LANG(32149),
+                                         path=addon.PATH)
             if ret == -1:
                 return None
             result = xbmcgui.Dialog().input(heading=addon.LANG(32111),
@@ -311,7 +312,8 @@ def get_window(window_type):
             ret = confirmdialog.open(header=addon.LANG(32151),
                                      text=addon.LANG(32106),
                                      nolabel=addon.LANG(32150),
-                                     yeslabel=addon.LANG(32149))
+                                     yeslabel=addon.LANG(32149),
+                                     path=addon.PATH)
             if ret == -1:
                 return None
             result = xbmcgui.Dialog().input(heading=addon.LANG(345),
@@ -329,7 +331,8 @@ def get_window(window_type):
             ret = confirmdialog.open(header=addon.LANG(32151),
                                      text=addon.LANG(32106),
                                      nolabel=addon.LANG(32150),
-                                     yeslabel=addon.LANG(32149))
+                                     yeslabel=addon.LANG(32149),
+                                     path=addon.PATH)
             if ret == -1:
                 return None
             result = xbmcgui.Dialog().input(heading=xbmc.getLocalizedString(2050),
