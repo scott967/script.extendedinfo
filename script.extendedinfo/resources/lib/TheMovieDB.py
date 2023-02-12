@@ -991,9 +991,9 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> tuple[VideoI
         return None
     info: dict | None = get_movie(
         movie_id=movie_id, cache_days=cache_days)
-    if not info:
-        utils.notify("Could not get movie information")
-        return {}
+    if not info or info.get('success') is False:
+        utils.notify("Could not get tmdb movie information")
+        return (None, None, None)
     mpaa = ""
     studio = [i["name"] for i in info.get("production_companies")]
     authors = [i["name"] for i in info['credits']
