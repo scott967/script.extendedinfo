@@ -143,7 +143,6 @@ def extended_artist_info(results: dict) -> dict:
               'Artist_Formed': artist.get('intFormedYear'),
               'Artist_Died': artist.get('intDiedYear'),
               'Artist_Disbanded': artist.get('strDisbanded'),
-              'Artist_Mood': artist.get('strMood'),
               'Artist_Description': description,
               'Artist_Genre': artist.get('strGenre'),
               'Artist_Style': artist.get('strStyle'),
