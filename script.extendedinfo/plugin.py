@@ -32,7 +32,7 @@ class Main:
         """Constructor gets actions from args to create the
         plugin list
         """
-        utils.log("version %s started" % addon.VERSION)
+        utils.log(f"version {addon.VERSION} started")
         addon.set_global("extendedinfo_running", "true")
         self._parse_argv()
         for info in self.infos:
@@ -89,7 +89,7 @@ def tmdb():
     for key, value in items:
         li = xbmcgui.ListItem(label=value)
         li.setArt({'thumb': 'DefaultFolder.png'})
-        url = 'plugin://script.extendedinfo?info=%s' % key
+        url = f'plugin://script.extendedinfo?info={key}'
         xbmcplugin.addDirectoryItem(handle=plugin.handle,
                                     url=url,
                                     listitem=li,
@@ -121,7 +121,7 @@ def trakt():
     for key, value in items:
         li = xbmcgui.ListItem(label=value)
         li.setArt({'thumb': 'DefaultFolder.png'})
-        url = 'plugin://script.extendedinfo?info=%s' % key
+        url = f'plugin://script.extendedinfo?info={key}'
         xbmcplugin.addDirectoryItem(handle=plugin.handle,
                                     url=url,
                                     listitem=li,
