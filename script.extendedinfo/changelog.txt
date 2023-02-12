@@ -1,5 +1,6 @@
-v6.0.2 (beta)
--addon.xml bump ver 6.0.2
+v6.0.3
+-context.py new file used as a context menu item for actors and directors
+-addon.xml bump ver 6.0.3
 -default.py  switch to f-strings	
 						add/update docstrings
 						wrap try/finally to clear state property on exception
