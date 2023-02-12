@@ -131,7 +131,7 @@
 						<height>25</height>
 						<textcolor>FF999999</textcolor>
 						<font>font12</font>
-						<label>$INFO[Window.Property(Birthday),$ADDON[script.extendedinfo 32012]: [COLOR=FFFAFAFA],[/COLOR]] $INFO[Window.Property(Age),$ADDON[script.extendedinfo 32020]: [COLOR=FFFAFAFA],[/COLOR]]</label>
+							<label>$INFO[Window.Property(Birthday),$ADDON[script.extendedinfo 32012]: [COLOR=FFFAFAFA],[/COLOR]] $INFO[Window.Property(Age),$ADDON[script.extendedinfo 32020]: [COLOR=FFFAFAFA],     [/COLOR]]$INFO[Window.Property(Deathday),$ADDON[script.extendedinfo 32013]: [COLOR=FFFAFAFA],[/COLOR]]</label>
 						<visible>!String.isEmpty(Window.Property(Birthday))</visible>
 					</control>
 					<control type="label">
@@ -182,7 +182,7 @@
 						<label>$INFO[Window.Property(Homepage),$ADDON[script.extendedinfo 32017]: [COLOR=FFFAFAFA],[/COLOR]]</label>
 						<visible>!String.isEmpty(Window.Property(Homepage))</visible>
 					</control>
-					<control type="label">
+					<!-- <control type="label">
 						<align>left</align>
 						<aligny>center</aligny>
 						<left>40</left>
@@ -193,7 +193,7 @@
 						<font>font12</font>
 						<label>$INFO[Window.Property(Deathday),$ADDON[script.extendedinfo 32013]: [COLOR=FFFAFAFA],[/COLOR]]</label>
 						<visible>!String.isEmpty(Window.Property(Deathday))</visible>
-					</control>
+					</control> -->
 					<control type="group" id="140">
 						<height>255</height>
 						<control type="button" id="132">
