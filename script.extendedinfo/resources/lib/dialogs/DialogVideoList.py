@@ -257,11 +257,10 @@ def get_window(window_type):
                 self.reset("favorites")
             else:
                 self.close()
-                dialog = wm.open_video_list(filters=[],
+                wm.open_video_list(filters=[],
                                             mode="list",
                                             list_id=account_lists[index - 2]["id"],
                                             filter_label=account_lists[index - 2]["name"])
-                dialog.doModal()
 
         @ch.click(ID_BUTTON_GENREFILTER)
         def set_genre_filter(self, control_id):
