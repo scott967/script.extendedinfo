@@ -1283,6 +1283,7 @@ def extended_actor_info(actor_id: int) -> tuple[VideoItem, dict[str, ItemList]]:
                          'deathday': data.get('deathday'),
                          'placeofbirth': data.get('place_of_birth'),
                          'homepage': data.get('homepage'),
+                         'totalmovies': len(lists["movie_roles"]),
                          "DBMovies": len([d for d in lists["movie_roles"] if "dbid" in d])})
     info.set_artwork(get_image_urls(profile=data.get("profile_path")))
     return (info, lists)
