@@ -101,8 +101,9 @@ class DialogMovieInfo(DialogVideoInfo):
         self.info.update_properties(
                 {f"set.{k}": v for k, v in list(sets_thread.setinfo.items())})
         set_ids = [item.get_property("id") for item in sets_thread.listitems]
-        self.lists["similar"] = [i for i in self.lists["similar"]
-                                 if i.get_property("id") not in set_ids]
+        if self.lists and self.lists.get('similar'):
+            self.lists["similar"] = [i for i in self.lists["similar"]
+                                     if i.get_property("id") not in set_ids]
         self.lists["sets"] = sets_thread.listitems
 
     def onInit(self):
@@ -292,7 +293,7 @@ class SetItemsThread(threading.Thread):
         self.set_id = set_id
 
     def run(self):
-        if self.set_id:
+        if self.set_id and self.set_id != 0:
             self.listitems, self.setinfo = tmdb.get_set_movies(self.set_id)
         else:
             self.listitems = []
