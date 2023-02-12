@@ -12,6 +12,14 @@
 	<extension point="xbmc.python.pluginsource" library="plugin.py">
 		<provides>video</provides>
 	</extension>
+	<extension point="kodi.context.item">
+		<menu id="kodi.core.main">
+			<item library="context.py">
+				<label>$ADDON[script.extendedinfo 32184]</label>
+				<visible>String.IsEqual(ListItem.dbtype,actor) | String.IsEqual(ListItem.dbtype,director)</visible>
+			</item>
+		</menu>
+	</extension>
 	<extension point="xbmc.addon.metadata">
 		<language/>
 		<summary lang="en_GB">ExtendedInfo Script</summary>
