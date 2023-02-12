@@ -63,7 +63,7 @@ class DialogActorInfo(DialogBaseInfo):
             None: if no tmdb extended actor info available
             self.info and self.lists are set from extended actor info
         """
-        super(DialogActorInfo, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         data: tuple = tmdb.extended_actor_info(actor_id=kwargs.get('id'))
         if not data:
             return None
@@ -77,7 +77,7 @@ class DialogActorInfo(DialogBaseInfo):
         dialog window
         """
         self.get_youtube_vids(self.info.label)
-        super(DialogActorInfo, self).onInit()
+        super().onInit()
 
     def onClick(self, control_id):
         """callback function from Kodi when control in window is
@@ -87,7 +87,7 @@ class DialogActorInfo(DialogBaseInfo):
             control_id (int): id of window control that was clicked
         """
         #utils.log(f'DialogActorInfo onclick called with control id {control_id}')
-        super(DialogActorInfo, self).onClick(control_id)
+        super().onClick(control_id)
         ch.serve(control_id, self)
 
     @ch.click(ID_CONTROL_PLOT)

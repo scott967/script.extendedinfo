@@ -38,7 +38,7 @@ class DialogBaseInfo(windows.DialogXML):
     ACTION_EXIT_SCRIPT = [13, 10]
 
     def __init__(self, *args, **kwargs):
-        super(DialogBaseInfo, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.logged_in: bool = tmdb.Login.check_login()
         self.bouncing = False
         self.last_focus = None
@@ -50,7 +50,7 @@ class DialogBaseInfo(windows.DialogXML):
         self.last_position = None
 
     def onInit(self, *args, **kwargs):
-        super(DialogBaseInfo, self).onInit()
+        super().onInit()
         # self.set_buttons()
         self.info.to_windowprops(window_id=self.window_id)  #kutils sets dialog window
         #properties from the info VideoItem(listitem)
