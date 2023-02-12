@@ -12,8 +12,8 @@ Public variables:
         creation
 
 Public functions:
-    set_rating:  sets local videodb userrating or TMDB user rating
-    change_fav_status:  sets TMDB user favorite
+    set_rating:  sets local videodb userrating or TMDB user rating (called from button in dialogvideoinfo)
+    change_fav_status:  sets TMDB user favorite (called from button in dialogvideoinfo)
     create_list:  creates a new user list on TMDB
     remove_list_dialog:  opens a Kodi select dialog to allow user to select
         a TMDB list for removal
@@ -26,7 +26,7 @@ Public functions:
     handle_lists:  adds user TMDB lists to kutils ItemList instance for display
         in Kodi cantainer content
     handle_seasons:  adds seasons to kutils ItemList instance
-    handle_videos:  adds video kutils VideoItems to kutils ItemList instance
+    handle_videos:  adds video clips as kutils VideoItems to kutils ItemList instance
     search_companies:  gets the TMDB company ID for company (studio) name string
     multi_search:  performs TMDB multisearch "Multi search currently supports
         searching for movies, tv shows and people in a single request."
@@ -75,11 +75,11 @@ Public functions:
 
 """
 
+from __future__ import annotations
 import re
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import List, Optional, Union, Tuple
 
 from kutils import (ItemList, VideoItem, addon, kodijson, local_db,
                     selectdialog, utils)
@@ -129,7 +129,12 @@ class LoginProvider:
     logs into TMDB for user or guest and gets corresponding session or guest session id
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> LoginProvider:
+        """Creates a new session for user at tmdb
+
+        Returns:
+            LoginProvider: session for user
+        """
         self.session_id = None
         self.logged_in = False
         self.account_id = None
@@ -329,13 +334,22 @@ def get_account_lists(cache_days=0):
     return response["results"]
 
 
-def get_certification_list(media_type):
+def get_certification_list(media_type:str):
     response = get_data(url="certification/%s/list" % media_type,
                         cache_days=999999)
     return response.get("certifications")
 
 
-def merge_with_cert_desc(input_list, media_type):
+def merge_with_cert_desc(input_list: ItemList, media_type: str) -> ItemList:
+    """_summary_
+
+    Args:
+        input_list (ItemList): _description_
+        media_type (str): _description_
+
+    Returns:
+        ItemList: _description_
+    """
     cert_list = get_certification_list(media_type)
     for item in input_list:
         iso = item.get_property("iso_3166_1").upper()
@@ -361,7 +375,7 @@ def handle_multi_search(results):
     return listitems
 
 
-def handle_movies(results: List[dict], local_first=True, sortkey="year") ->ItemList:
+def handle_movies(results: list[dict], local_first=True, sortkey="year") ->ItemList:
     """takes a list of movies (dicts) and adds local db data and then sorts as an ItemList
     The tmdb movie keys are converted to extendedinfo keys and genre ids converted
     to localized text strings, then a VideoItem is created for each movie.  The
@@ -379,8 +393,8 @@ def handle_movies(results: List[dict], local_first=True, sortkey="year") ->ItemL
     response: dict = get_data(url="genre/movie/list",
                               params={"language": addon.setting("LanguageID")},
                               cache_days=30)
-    ids: List[int] = [item["id"] for item in response["genres"]]
-    labels: List[str] = [item["name"] for item in response["genres"]]
+    ids: list[int] = [item["id"] for item in response["genres"]]
+    labels: list[str] = [item["name"] for item in response["genres"]]
     movies = ItemList(content_type="movies")
     path = 'extendedinfo&&id=%s' if addon.bool_setting(
         "infodialog_onclick") else "playtrailer&&id=%s"
@@ -490,10 +504,18 @@ def handle_episodes(results):
     return listitems
 
 
-def handle_release_dates(results):
+def handle_release_dates(results:list[dict]) -> ItemList:
+    """Creates ItemList of video mpaa cert and dates as VideoItems
+
+    Args:
+        results (list[dict]): a list of dicts with TMDB results
+
+    Returns:
+        ItemList: ItemList of releases/certs
+    """
     listitems = ItemList()
     for item in results:
-        ref = item["release_dates"][0]
+        ref:dict = item["release_dates"][0]
         if not ref.get("certification"):
             continue
         listitem = VideoItem(label=item.get('name'))
@@ -529,7 +551,15 @@ def handle_reviews(results):
     return listitems
 
 
-def handle_text(results):
+def handle_text(results:list[dict]) -> ItemList[VideoItem]:
+    """Converts list of textual info (genres, countries) to ItemList
+
+    Args:
+        results (list[dict]): a list of related text info
+
+    Returns:
+        ItemList: an ItemList of the text info as VideoItems
+    """
     listitems = ItemList()
     for item in results:
         listitem = VideoItem(label=item.get('name'))
@@ -538,7 +568,15 @@ def handle_text(results):
     return listitems
 
 
-def handle_lists(results):
+def handle_lists(results:list[dict]) -> ItemList[VideoItem]:
+    """Converts various tmdb user movie lists to ItemList
+
+    Args:
+        results (list[dict]): list of user movie collections each item is a collection
+
+    Returns:
+        ItemList: ItemList of collections as VideoItems type of 'set'
+    """
     listitems = ItemList(content_type="sets")
     for item in results:
         listitem = VideoItem(label=item.get('name'),
@@ -571,7 +609,15 @@ def handle_seasons(results):
     return listitems
 
 
-def handle_videos(results):
+def handle_videos(results:list[dict]) -> ItemList[VideoItem]:
+    """Creates an ItemList of video clips/trailers as VideoItems
+
+    Args:
+        results (list[dict]): list of clips/trailers
+
+    Returns:
+        ItemList: ItemList of VideoItems of the clips/trailers
+    """
     listitems = ItemList(content_type="videos")
     for item in results:
         listitem = VideoItem(label=item.get('name'),
@@ -588,7 +634,17 @@ def handle_videos(results):
     return listitems
 
 
-def handle_people(results):
+def handle_people(results: list[dict], select: bool = False) -> ItemList[VideoItem]:
+    """converts list of tmdb people into kutils videoitems
+    The VideoItem properties are tmdb query results
+
+    Args:
+        results (list[dict]): a list of dicts, each dict is tmdb data for a person
+        select (bool): True if people are to be added to select dialog listing
+
+    Returns:
+        ItemList: A kutils ItemList of VideoItems for tmdb persons
+    """
     people = ItemList(content_type="actors")
     for item in results:
         person = VideoItem(label=item['name'],
@@ -614,10 +670,18 @@ def handle_people(results):
     return people
 
 
-def handle_images(results):
+def handle_images(results:list[dict]) -> ItemList[VideoItem]:
+    """creates VideoItems of images and returns an ItemList
+
+    Args:
+        results (list[dict]): image list
+
+    Returns:
+        ItemList: kutils itemlist of the images as VideoItems type 'music'?
+    """
     images = ItemList(content_type="images")
     for item in results:
-        artwork = get_image_urls(poster=item.get("file_path"))
+        artwork = get_image_urls(poster=item.get("file_path"))  #artwork is a dict key imagetype value path to image
         image = VideoItem(artwork=artwork)
         image.set_properties({'aspectratio': item['aspect_ratio'],
                               'type': "poster" if item['aspect_ratio'] < 0.7 else "fanart",
@@ -636,7 +700,15 @@ def handle_images(results):
     return images
 
 
-def handle_companies(results):
+def handle_companies(results:list[dict]) -> ItemList[VideoItem]:
+    """Converts list of studios from tmdb to ItemList of VideoItems
+
+    Args:
+        results (list[dict]): tmdb "production comapnies" list
+
+    Returns:
+        ItemList: ItemList of studio VideoItems
+    """
     companies = ItemList(content_type="studios")
     for item in results:
         company = VideoItem(label=item['name'],
@@ -693,7 +765,7 @@ def get_list_movies(list_id, force):
     return itemlist
 
 
-def get_person_info(person_label, skip_dialog=False) -> dict:
+def get_person_info(person_label:str, skip_dialog=False) -> dict:
     """takes an actor name and returns actor info for it
 
     Args:
@@ -724,7 +796,7 @@ def get_person_info(person_label, skip_dialog=False) -> dict:
                         cache_days=30)
     if not response or "results" not in response:
         return False
-    people = [i for i in response["results"] if i["name"] == person_label]
+    people: list[dict] = [i for i in response["results"] if i["name"] == person_label]
     if len(people) > 1 and not skip_dialog:
         index = selectdialog.open(header=f'{addon.LANG(32151)} TMDB People',
                                   listitems=handle_people(people))
@@ -759,18 +831,18 @@ def get_set_id(set_name):
     return response["results"][0]["id"]
 
 
-def get_data(url: str = "", params: Optional[dict] = None, cache_days: float = 14) -> Optional[dict]:
+def get_data(url: str = "", params: dict = None, cache_days: float = 14) -> dict:
     """Queries tmdb api v3 or local cache
 
     Args:
         url (str, optional): tmdb query terms for the search apiv3. Defaults to "".
-        params (Optional[dict], optional): Dict of optional parameters for 
+        params (dict, None): Dict of optional parameters for
                                            query. Defaults to None.
         cache_days (float, optional): Days to check for cached values.
                                       Defaults to 14.
 
     Returns:
-        response(dict): A dict of JSON.loads response from TMDB or None if no 
+        response(dict): A dict of JSON.loads response from TMDB or None if no
         TMDB response
     """
     params = params if params else {}
@@ -811,7 +883,7 @@ def get_account_props(states) -> dict:
             "watchlist": states["watchlist"] if "watchlist" in states else ""}
 
 
-def get_image_urls(poster=None, still=None, fanart=None, profile=None):
+def get_image_urls(poster=None, still=None, fanart=None, profile: str =None) -> dict:
     '''
     get a dict with all available images for given image types
     '''
@@ -840,7 +912,19 @@ def get_image_urls(poster=None, still=None, fanart=None, profile=None):
     return images
 
 
-def get_movie_tmdb_id(imdb_id=None, name=None, dbid=None):
+def get_movie_tmdb_id(imdb_id:str=None, name:str=None, dbid:int=None):
+    """Gets tmdb id for movie
+
+
+    Args:
+        imdb_id (str, optional): the movie imbd id. Defaults to None.
+        name (str, optional): the movie title. Defaults to None.
+        dbid (int, optional): the kodi db movie id should be > 0. Defaults to None.
+
+    Returns:
+        str: tmdb id for local movie get local imdb_id and use for query
+        or fall back to title
+    """
     if dbid and (int(dbid) > 0):
         movie_id = local_db.get_imdb_id("movie", dbid)
         if movie_id:
@@ -889,7 +973,7 @@ def get_movie_videos(movie_id):
     return None
 
 
-def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> Optional[dict]:
+def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> tuple[VideoItem, dict[str, ItemList], dict] | None:
     """get listitem with extended info for movie with *movie_id
     merge in info from *dbid if available
 
@@ -899,11 +983,13 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> Optional[dic
         cache_days (int, optional): Days to use cached info. Defaults to 14.
 
     Returns:
-        Optional[dict]: A dict of movie information
+        tuple:  kutils VideoItem of movie info
+                dict of key str value kutils ItemList
+                dict of account states
     """
     if not movie_id:
         return None
-    info: Union[dict, None] = get_movie(
+    info: dict | None = get_movie(
         movie_id=movie_id, cache_days=cache_days)
     if not info:
         utils.notify("Could not get movie information")
@@ -953,9 +1039,9 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> Optional[dic
                                      fanart=info.get("backdrop_path")))
     videos = handle_videos(info["videos"]["results"]
                            ) if "videos" in info else []
-    account_states = info.get("account_states")
+    account_states: dict = info.get("account_states")
     if dbid:
-        local_item = local_db.get_movie(dbid)
+        local_item: dict = local_db.get_movie(dbid)
         movie.update_from_listitem(local_item)
     else:
         movie = local_db.merge_with_local("movie", [movie])[0]
@@ -964,7 +1050,7 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> Optional[dic
         info['vote_average'], 1) if info.get('vote_average') else "")
     releases = merge_with_cert_desc(handle_release_dates(
         info["release_dates"]["results"]), "movie")
-    listitems = {"actors": handle_people(info["credits"]["cast"]),
+    listitems: dict[str, ItemList] = {"actors": handle_people(info["credits"]["cast"]),
                  "similar": handle_movies(info["similar"]["results"]),
                  "lists": sort_lists(handle_lists(info["lists"]["results"])),
                  "studios": handle_companies(info["production_companies"]),
@@ -1141,30 +1227,31 @@ def extended_episode_info(tvshow_id, season, episode, cache_days=7):
     return (handle_episodes([response])[0], answer, response.get("account_states"))
 
 
-def extended_actor_info(actor_id) -> Tuple[VideoItem, dict]:
+def extended_actor_info(actor_id: int) -> tuple[VideoItem, dict[str, ItemList]]:
     """gets ListItem and lists with extended info for actor with actor_id
     data is a dict from JSON returned by tmdb for an actor
     lists is a dict of "append_to_response" queries extracted from data
     info is a Kodi video listitem instance with properties set from data
 
     Args:
-        actor_id (str): the tmdb actor id
+        actor_id (int): the tmdb actor id
 
     Returns:
-        VideoItem: a populated Kodi listitem
-        dict: the lists of ListItems items for which actor has role and actor images
+        info[VideoItem]: a populated Kodi listitem
+        lists[dict]: a dict of kutils Itemlists (one per category) Itemlist is sequence
+                     of kutils VideoItems
         None: if no results from tmdb
     """
     if not actor_id:
         return None
-    data = get_data(url="person/%s" % (actor_id),
+    data: dict = get_data(url="person/%s" % (actor_id),
                         params={"append_to_response": ALL_ACTOR_PROPS},
                         cache_days=1)
     if not data:
         utils.notify("Could not find actor info")
         return None
     # extract info from data dict as list of ItemLists
-    lists = {"movie_roles": handle_movies(data["movie_credits"]["cast"]).reduce("character"),
+    lists: dict[str, ItemList] = {"movie_roles": handle_movies(data["movie_credits"]["cast"]).reduce("character"),
              "tvshow_roles": handle_tvshows(data["tv_credits"]["cast"]).reduce("character"),
              "movie_crew_roles": handle_movies(data["movie_credits"]["crew"]).reduce(),
              "tvshow_crew_roles": handle_tvshows(data["tv_credits"]["crew"]).reduce(),
@@ -1300,13 +1387,13 @@ def get_actor_credits(actor_id, media_type):
     return handle_movies(response["cast"])
 
 
-def get_movie(movie_id, light=False, cache_days=30) -> Union[dict, None]:
+def get_movie(movie_id, light=False, cache_days=30) -> dict | None:
     """gets details from tmdb for a moview with tmdb movie-id
 
     Args:
         movie_id (str): tmdb movie id
         light (bool, optional): return limited info. Defaults to False.
-        cache_days (int, optional):days to use cache vice new query. 
+        cache_days (int, None):days to use cache vice new query.
                                     Defaults to 30.
 
     Returns:
@@ -1364,7 +1451,7 @@ def get_tvshows(tvshow_type):
     return handle_tvshows(response["results"], False, None)
 
 
-def get_movies(movie_type: str) -> Union[list, dict]:
+def get_movies(movie_type: str) -> list | dict:
     """gets list with movies of movie_type from tmdb
 
     Args:
@@ -1381,10 +1468,16 @@ def get_movies(movie_type: str) -> Union[list, dict]:
     return handle_movies(response["results"], False, None)
 
 
-def get_set_movies(set_id):
-    '''
-    return list with movies which are part of set with *set_id
-    '''
+def get_set_movies(set_id:str) -> tuple[ItemList,dict]:
+    """Creates an ItemList of movie VideoItems for movies in set
+
+    Args:
+        set_id (str): the tmdb collection id
+
+    Returns:
+        tuple[ItemList,dict]: an ItemList of movies as VideoItems
+                              a dict of set info
+    """
     params = {"append_to_response": "images",
               "language": addon.setting("LanguageID"),
               "include_image_language": "en,null,%s" % addon.setting("LanguageID")}
@@ -1415,7 +1508,15 @@ def get_person_movies(person_id):
     return handle_movies(response["crew"])
 
 
-def sort_lists(lists):
+def sort_lists(lists: ItemList) -> ItemList:
+    """sorts an itemlist by finding tmdb movie in account list
+
+    Args:
+        lists (ItemList): an itemlist of movies
+
+    Returns:
+        ItemList: the itemlist ordered by account list first 
+    """
     if not Login.check_login():
         return lists
     ids = [i["id"] for i in get_account_lists(10)]

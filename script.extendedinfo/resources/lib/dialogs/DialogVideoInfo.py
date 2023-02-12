@@ -23,6 +23,11 @@ ch = ActionHandler()
 
 
 class DialogVideoInfo(DialogBaseInfo):
+    """
+
+    Args:
+        DialogBaseInfo (_type_): _description_
+    """
 
     def __init__(self, *args, **kwargs):
         super(DialogVideoInfo, self).__init__(*args, **kwargs)

@@ -4,6 +4,9 @@
 # Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
+"""Entry point when called as video plugin
+"""
+
 import os
 import sys
 
@@ -22,8 +25,13 @@ plugin = routing.Plugin()
 
 
 class Main:
+    """Handles plugin list / listitem creation
+    """
 
     def __init__(self):
+        """Constructor gets actions from args to create the
+        plugin list
+        """
         utils.log("version %s started" % addon.VERSION)
         addon.set_global("extendedinfo_running", "true")
         self._parse_argv()
@@ -59,6 +67,8 @@ class Main:
 
 @plugin.route('/tmdb')
 def tmdb():
+    """_sets category options for tmdb
+    """
     xbmcplugin.setPluginCategory(plugin.handle, "TheMovieDB")
     items = [("incinemamovies", addon.LANG(32042)),
              ("upcomingmovies", addon.LANG(32043)),
@@ -90,6 +100,8 @@ def tmdb():
 
 @plugin.route('/trakt')
 def trakt():
+    """sets category options form trakt
+    """
     xbmcplugin.setPluginCategory(plugin.handle, "Trakt")
     items = [("trendingmovies", addon.LANG(32047)),
              ("traktpopularmovies", addon.LANG(32044)),
@@ -120,6 +132,8 @@ def trakt():
 
 @plugin.route('/')
 def root():
+    """Sets root plugin folder for TMDB and Trakt
+    """
     traktitem = xbmcgui.ListItem(label="Trakt")
     traktitem.setArt({'thumb': TRAKT_IMAGE})
     tmdbitem = xbmcgui.ListItem(label="TheMovieDB")

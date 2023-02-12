@@ -4,6 +4,8 @@
 # Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
+from __future__ import annotations
+
 import xbmc
 import xbmcgui
 
@@ -30,10 +32,10 @@ include_adult: bool = addon.setting("include_adults").lower()
 
 
 def get_window(window_type):
-    """[summary]
+    """Wrapper gets new DialogVideoList instance
 
     Args:
-        window_type (class instance): xbmc XML dialog window or 
+        window_type (class instance): xbmc XML dialog window or
             xbmc XML window objects
 
     Returns:
@@ -41,6 +43,13 @@ def get_window(window_type):
     """
 
     class DialogVideoList(DialogBaseList, window_type):
+        """Dialog Video List class
+
+        Args:
+            DialogBaseList: Super class for dialog windows
+            window_type (kutils.windows class): Super class for Kodi xbmc.WindowXML
+
+        """
 
         TYPES = ["movie", "tv"]
 

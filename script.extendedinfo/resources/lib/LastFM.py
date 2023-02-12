@@ -3,7 +3,7 @@
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
 # Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
-"""Uses LastFM API  to query data from LastFM. 
+"""Uses LastFM API  to query data from LastFM.
 
 The get_* functions are called to query LastFM API.
 
@@ -59,7 +59,7 @@ def get_top_artists() -> ItemList:
     """Queries LastFM api chart.getTopArtists method for top 100 artists
 
     Returns:
-        ItemList: a kutils object that wraps a list of artist 
+        ItemList: a kutils object that wraps a list of artist
         info dicts
     """
     results: Optional[dict] = get_data(method="chart.getTopArtists",
@@ -76,7 +76,7 @@ def get_artist_albums(artist_mbid: str) -> ItemList:
         artist_mbid (str): The musicbrainz id for the artist
 
     Returns:
-        ItemList: a kutils object that wraps a list of albums 
+        ItemList: a kutils object that wraps a list of albums
         info dicts
     """
     if not artist_mbid:
@@ -108,7 +108,7 @@ def get_similar_artists(artist_mbid: str) -> ItemList:
 
 
 def get_track_info(artist_name="", track="") -> dict:
-    """ Queries LastFM api 
+    """ Queries LastFM api
 
     Args:
         artist_name (str, optional): The artist name. Defaults to "".

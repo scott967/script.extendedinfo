@@ -50,12 +50,12 @@ class DialogBaseInfo(windows.DialogXML):
     def onInit(self, *args, **kwargs):
         super(DialogBaseInfo, self).onInit()
         # self.set_buttons()
-        self.info.to_windowprops(window_id=self.window_id)  #kutils sets home window 
-            #properties from the info listitem  
+        self.info.to_windowprops(window_id=self.window_id)  #kutils sets dialog window
+        #properties from the info VideoItem(listitem)
         for container_id, key in self.LISTS:
             try:
                 self.getControl(container_id).reset()
-                items = [i.get_listitem() for i in self.lists[key]]
+                items = [i.get_listitem() for i in self.lists[key]] # lists is a dict of ItemList get_listitem gets xbmc listitem from VideoItem
                 self.getControl(container_id).addItems(items)
             except Exception as err:
                 utils.log(f'Notice: No container with id {container_id} available and {err}')

@@ -4,9 +4,15 @@
 # Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
+# pylint: disable=line-too-long,import-outside-toplevel
+
+"""Module handles all actions to display dialogs
+"""
+
+from __future__ import annotations
+
 import os
 import re
-from typing import Optional
 
 import xbmc
 import xbmcgui
@@ -38,6 +44,10 @@ else:
 
 
 class WindowManager:
+    """Class provides all operations to create/manage a Kodi dialog
+    window
+
+    """
     window_stack = []
 
     def __init__(self):
@@ -49,9 +59,9 @@ class WindowManager:
         # self.monitor = SettingsMonitor()
         self.monitor = xbmc.Monitor()
 
-    def open_movie_info(self, movie_id=None, dbid=None, name=None, imdb_id=None):
+    def open_movie_info(self, movie_id:str=None, dbid:str=None, name:str=None, imdb_id:str=None):
         """
-        opens movie info dialog, deal with window stack
+        opens movie video info dialog, deal with window stack
         """
         busy.show_busy()
         from .dialogs.DialogMovieInfo import DialogMovieInfo
@@ -97,7 +107,7 @@ class WindowManager:
         busy.hide_busy()
         self.open_infodialog(dialog)
 
-    def open_season_info(self, tvshow_id=None, season: Optional[int] = None, tvshow=None, dbid=None):
+    def open_season_info(self, tvshow_id=None, season: int = None, tvshow=None, dbid=None):
         """
         open season info, deal with window stack
         needs *season AND (*tvshow_id OR *tvshow)
@@ -147,15 +157,14 @@ class WindowManager:
                                    dbid=int(dbid) if dbid and int(dbid) > 0 else None)
         self.open_infodialog(dialog)
 
-    def open_actor_info(self, actor_id: str=None, name: str=None):
+    def open_actor_info(self, actor_id: int=None, name: str=None):
         """opens info dialog window for an actor, deals with window stack
-        A new dialog instance of DialogActorInfo class is created and the xml
-        window (default skin DialogInfo.xml) is opened with wm.open_infodialog 
-        instance method
+        If a tmdb actor_id is passed, it is passed to a new dialog instance of
+        DialogActorInfo class.  If actor name is passed, attempts to get the actor_id.
 
         Args:
             actor_id (str, optional): tmdb actor id. Defaults to None.
-            name (str, optional): a string of name or name[ separator name]. 
+            name (str, optional): a string of name or name [separator name]*.
             if name is a multiple a select dialog is presented to user to
             get a single actor.  If name is provided, attempts to get a tmdb
             for it.  Defaults to None.
@@ -177,6 +186,7 @@ class WindowManager:
                 name = names[0]
             busy.show_busy()
             actor_info = tmdb.get_person_info(name) # a dict of info or False
+            # no TMDB info
             if not actor_info:
                 busy.hide_busy()
                 return None
@@ -195,7 +205,7 @@ class WindowManager:
 
         Args:
             listitems (dict, optional): [description]. Defaults to None.
-            filters ([type], optional): [description]. Defaults to None.
+            filters (list, optional): [description]. Defaults to None.
             mode (str, optional): [description]. Defaults to "filter".
             list_id (bool, optional): [description]. Defaults to False.
             filter_label (str, optional): [description]. Defaults to "".
@@ -231,13 +241,24 @@ class WindowManager:
         self.open_dialog(dialog)
 
     def open_infodialog(self, dialog):
+        """opens the info dialog
+
+        Args:
+            dialog (DialogActorInfo): a DialogActorinfo instance of a Kodi dialog
+            self.info is a kutils.VideoItem or AudioItem to display in dialog
+        """
         if dialog.info:
             self.open_dialog(dialog)
         else:
             self.active_dialog = None
-            utils.notify(addon.LANG(32143))
+            utils.notify(addon.LANG(32143)) #Could not find item at MovieDB
 
     def open_dialog(self, dialog):
+        """Opens a Kodi dialog managing a stack of dialogs
+
+        Args:
+            dialog (DialogActorInfo): a Kodi xml dialog window
+        """
         if self.active_dialog:
             self.window_stack.append(self.active_dialog)
             self.active_dialog.close()
