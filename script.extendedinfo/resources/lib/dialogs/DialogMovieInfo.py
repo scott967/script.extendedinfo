@@ -81,7 +81,7 @@ class DialogMovieInfo(DialogVideoInfo):
 
         Returns:  dialogmovieinfo
         """
-        super(DialogMovieInfo, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         data: tuple | None = tmdb.extended_movie_info(movie_id=kwargs.get('id'),
                                                         dbid=kwargs.get('dbid'))
         if not data:
@@ -106,18 +106,18 @@ class DialogMovieInfo(DialogVideoInfo):
         self.lists["sets"] = sets_thread.listitems
 
     def onInit(self):
-        super(DialogMovieInfo, self).onInit()
-        super(DialogMovieInfo, self).update_states()
+        super().onInit()
+        super().update_states()
         self.get_youtube_vids("%s %s, movie" % (self.info.label,
                                                 self.info.get_info("year")))
         self.set_omdb_infos_async()
 
     def onClick(self, control_id):
-        super(DialogMovieInfo, self).onClick(control_id)
+        super().onClick(control_id)
         ch.serve(control_id, self)
 
     def set_buttons(self):
-        super(DialogMovieInfo, self).set_buttons()
+        super().set_buttons()
         condition = self.info.get_info("dbid") and int(
             self.info.get_property("percentplayed")) > 0
         self.set_visible(ID_BUTTON_PLAY_RESUME, condition)
@@ -265,7 +265,7 @@ class DialogMovieInfo(DialogVideoInfo):
         info = tmdb.get_movie(movie_id=self.info.get_property("id"),
                               cache_days=0)
         self.states = info.get("account_states")
-        super(DialogMovieInfo, self).update_states()
+        super().update_states()
 
     @utils.run_async
     def set_omdb_infos_async(self) -> None:
