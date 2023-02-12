@@ -3030,7 +3030,7 @@
 				<height>1100</height>
 				<aspectratio aligny="top">scale</aspectratio>
 				<texture background="true">common/black.png</texture>
-				<bordertexture colordiffuse="$INFO[Window(home).Property(ImageColor)]" border="10">thumbs/homewidget_shadow.png</bordertexture>
+				<bordertexture colordiffuse="$INFO[Window(home).Property(ImageColor)]" border="10">overlays/shadow.png</bordertexture>
 				<bordersize>10</bordersize>
 			</control>
 			<control type="image">
