@@ -187,7 +187,10 @@ def get_artist_details(search_str) -> ItemList | dict:
         return ItemList(content_type="artists")
     params = {"s": search_str}
     results = get_data("search", params)
-    return extended_artist_info(results)
+    if results:
+        return extended_artist_info(results)
+    else:
+        utils.notify("No artist info from TheAudioDb")
 
 
 def get_most_loved_tracks(search_str="", mbid="") -> ItemList | list:

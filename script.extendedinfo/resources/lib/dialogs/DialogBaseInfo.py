@@ -4,6 +4,8 @@
 # Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
+import traceback
+
 import xbmc
 import xbmcgui
 
@@ -57,8 +59,11 @@ class DialogBaseInfo(windows.DialogXML):
                 self.getControl(container_id).reset()
                 items = [i.get_listitem() for i in self.lists[key]] # lists is a dict of ItemList get_listitem gets xbmc listitem from VideoItem
                 self.getControl(container_id).addItems(items)
+            except IndexError as err:
+                utils.log(f'Notice: No container with id {container_id} key {key} available due to {err}')
             except Exception as err:
-                utils.log(f'Notice: No container with id {container_id} available and {err}')
+                utils.log(f'Notice: No container with id {container_id} key {key} available due to {err}')
+                utils.log(f'traceback for this exception\n{traceback.format_exc()}')
         if self.last_control:
             self.setFocusId(self.last_control)
         if self.last_control and self.last_position:
@@ -263,7 +268,8 @@ class DialogBaseInfo(windows.DialogXML):
     def get_youtube_vids(self, search_str):
         try:
             youtube_list = self.getControl(ID_LIST_YOUTUBE)
-        except Exception:
+        except Exception as err:
+            utils.log(f'DialogBaseInfo.get_youtube_vids threw exception {err}')
             return None
         if not self.yt_listitems:
             user_key = addon.setting("Youtube API Key")
