@@ -72,7 +72,7 @@ class DialogMovieInfo(DialogVideoInfo):
     # BUTTONS = [ID_BUTTON_OPENLIST,
     #            ID_BUTTON_ADDTOLIST]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> DialogMovieInfo:
         """Creates a new instance of DialogMovieInfo
 
         kwargs:
@@ -99,7 +99,7 @@ class DialogMovieInfo(DialogVideoInfo):
                 self.info.get_art("poster")))
         sets_thread.join()
         self.info.update_properties(
-            {"set.%s" % k: v for k, v in list(sets_thread.setinfo.items())})
+                {f"set.{k}": v for k, v in list(sets_thread.setinfo.items())})
         set_ids = [item.get_property("id") for item in sets_thread.listitems]
         self.lists["similar"] = [i for i in self.lists["similar"]
                                  if i.get_property("id") not in set_ids]

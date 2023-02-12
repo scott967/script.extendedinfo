@@ -22,14 +22,14 @@ from kutils import addon, busy, local_db, player, utils, windows
 
 from resources.lib import TheMovieDB as tmdb
 
-INFO_XML_CLASSIC = 'script-%s-DialogVideoInfo.xml' % (addon.ID)
-LIST_XML_CLASSIC = 'script-%s-VideoList.xml' % (addon.ID)
-ACTOR_XML_CLASSIC = 'script-%s-DialogInfo.xml' % (addon.ID)
+INFO_XML_CLASSIC = f'script-{addon.ID}-DialogVideoInfo.xml'
+LIST_XML_CLASSIC = f'script-{addon.ID}-VideoList.xml'
+ACTOR_XML_CLASSIC = f'script-{addon.ID}-DialogInfo.xml'
 if addon.bool_setting("force_native_layout") and addon.setting("xml_version") != addon.VERSION:
     addon.set_setting("xml_version", addon.VERSION)
-    INFO_XML = 'script-%s-DialogVideoInfo-classic.xml' % (addon.ID)
-    LIST_XML = 'script-%s-VideoList-classic.xml' % (addon.ID)
-    ACTOR_XML = 'script-%s-DialogInfo-classic.xml' % (addon.ID)
+    INFO_XML = f'script-{addon.ID}-DialogVideoInfo-classic.xml'
+    LIST_XML = f'script-{addon.ID}-VideoList-classic.xml'
+    ACTOR_XML = f'script-{addon.ID}-DialogInfo-classic.xml'
     path = os.path.join(addon.PATH, "resources", "skins", "Default", "1080i")
     xbmcvfs.copy(strSource=os.path.join(path, INFO_XML_CLASSIC),
                  strDestination=os.path.join(path, INFO_XML))
@@ -213,7 +213,7 @@ class WindowManager:
             media_type (str, optional): [description]. Defaults to "movie".
             search_str (str, optional): [description]. Defaults to "".
         """
-        # utils.log('wm open_video_list listitems: {}'.format(listitems))  #debug
+        #utils.log(f'wm open_video_list listitems: {listitems}, filters {filters}')  #debug
         from .dialogs import DialogVideoList
         Browser = DialogVideoList.get_window(windows.DialogXML)
         dialog = Browser(LIST_XML,
@@ -234,7 +234,8 @@ class WindowManager:
         """
         from .dialogs import DialogYoutubeList
         YouTube = DialogYoutubeList.get_window(windows.DialogXML)
-        dialog = YouTube('script-%s-YoutubeList.xml' % addon.ID, addon.PATH,
+        dialog = YouTube(f'script-{addon.ID}-YoutubeList.xml',
+                         addon.PATH,
                          search_str=search_str,
                          filters=[] if not filters else filters,
                          type=media_type)
