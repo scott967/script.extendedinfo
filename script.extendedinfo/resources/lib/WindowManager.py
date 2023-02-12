@@ -173,7 +173,7 @@ class WindowManager:
             None: if no tmdb actor id could be found
         """
         from resources.lib.dialogs.DialogActorInfo import DialogActorInfo
-        if not actor_id:
+        if name and not actor_id:  #use name to get person from tmdb for actor_id
             name = name.split(f" {addon.LANG(20347)} ")
             names = name[0].strip().split(" / ")
             if len(names) > 1:
