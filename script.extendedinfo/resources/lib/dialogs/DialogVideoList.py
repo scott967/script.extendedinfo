@@ -457,10 +457,10 @@ def get_window(window_type):
                 return tmdb.multi_search(search_str=self.search_str,
                                          page=self.page,
                                          cache_days=0 if force else 2)
-            elif self.mode == "list":
+            if self.mode == "list":
                 return tmdb.get_list_movies(list_id=self.list_id,
                                             force=force)
-            elif self.mode == "favorites":
+            if self.mode == "favorites":
                 self.filter_label = addon.LANG(
                     32144) if self.type == "tv" else addon.LANG(32134)
                 return tmdb.get_fav_items(media_type=temp,
@@ -473,14 +473,14 @@ def get_window(window_type):
                                                   sort_by=sort_by,
                                                   page=self.page,
                                                   cache_days=0)
-            else:
+            else:  #self.mode == "filter"
                 self.set_filter_label()
                 params = {"sort_by": sort_by,
                           "language": addon.setting("LanguageID"),
                           "page": self.page,
                           "include_adult": include_adult}
                 filters = {item["type"]: item["id"] for item in self.filters}
-                response = tmdb.get_data(url="discover/%s" % (self.type),
+                response = tmdb.get_data(url=f"discover/{self.type}",
                                          params=utils.merge_dicts(
                                              params, filters),
                                          cache_days=0 if force else 2)
