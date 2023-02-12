@@ -94,7 +94,7 @@ class Main:
                 self.infos.append(param[5:])
             else:
                 try:
-                    self.params[param.split("=")[0].lower()] = "=".join(
+                    self.params[param.split('=', maxsplit=1)[0].lower()] = "=".join(
                         param.split("=")[1:]).strip()
                 except Exception:
                     pass
