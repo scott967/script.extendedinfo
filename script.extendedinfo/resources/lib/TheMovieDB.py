@@ -647,9 +647,15 @@ def handle_people(results: list[dict], select: bool = False) -> ItemList[VideoIt
     """
     people = ItemList(content_type="actors")
     for item in results:
-        person = VideoItem(label=item['name'],
-                           path="%sextendedactorinfo&&id=%s" % (
-                               PLUGIN_BASE, item['id']),
+        name_ext: str = ''
+        if item.get('adult'):
+            name_ext = name_ext + ' Adult'
+        if item.get('known_for_department'):
+            name_ext = name_ext + f' {item["known_for_department"]}'
+        if name_ext != '':
+            name_ext = f' -{name_ext}'
+        person = VideoItem(label=item['name'] if not select else f'{item["name"]}{name_ext}',
+                           path=f"{PLUGIN_BASE}extendedactorinfo&&id={item['id']}",
                            infos={'mediatype': "artist"},
                            artwork=get_image_urls(profile=item.get("profile_path")))
         person.set_properties({'adult': item.get('adult'),
@@ -665,7 +671,8 @@ def handle_people(results: list[dict], select: bool = False) -> ItemList[VideoIt
                                'credit_id': item.get('credit_id'),
                                'deathday': item.get('deathday'),
                                'placeofbirth': item.get('place_of_birth'),
-                               'homepage': item.get('homepage')})
+                               'homepage': item.get('homepage'),
+                               'known_for_department': item.get('known_for_department')})
         people.append(person)
     return people
 
@@ -799,7 +806,7 @@ def get_person_info(person_label:str, skip_dialog=False) -> dict:
     people: list[dict] = [i for i in response["results"] if i["name"] == person_label]
     if len(people) > 1 and not skip_dialog:
         index = selectdialog.open(header=f'{addon.LANG(32151)} TMDB People',
-                                  listitems=handle_people(people))
+                                  listitems=handle_people(people, select=True))
         return people[index] if index > -1 else False
     elif people:
         return people[0]
