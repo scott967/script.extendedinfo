@@ -695,7 +695,7 @@ def handle_images(results:list[dict]) -> ItemList[VideoItem]:
                               'rating': item.get("vote_average"),
                               'votes': item.get("vote_count"),
                               'iso_639_1': item.get("iso_639_1")})
-        if item.get("media"):
+        if item.get("media") and item["media"].get("title"):  #tmdb has 2 media returns: movie and tv
             image.set_label(item["media"].get("title"))
             image.set_property("movie_id", item["media"].get("id"))
             poster_path = item["media"].get("poster_path")
