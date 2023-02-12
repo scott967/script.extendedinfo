@@ -24,7 +24,14 @@ ID_BUTTON_KEYWORDFILTER = 5009
 ID_BUTTON_COMPANYFILTER = 5010
 ID_BUTTON_RUNTIMEFILTER = 5011
 ID_BUTTON_VOTECOUNTFILTER = 5012
+ID_BUTTON_LANGUAGEFILTER = 5013
 ID_BUTTON_ACCOUNT = 7000
+
+LANGUAGES = ['en', 'ja', 'ko', 'de', 'es',
+             'ar', 'bn', 'bg', 'zh', 'da', 
+             'nl', 'fr', 'el', 'he', 'hu',
+             'it', 'kn', 'no', 'pl', 'pt',
+             'ru', 'sv', 'tr', 'uk']
 
 ch = ActionHandler()
 
@@ -64,7 +71,8 @@ def get_window(window_type):
                    "first_air_date": addon.LANG(20416),
                    "with_runtime": xbmc.getLocalizedString(2050),
                    "primary_release_date": addon.LANG(345),
-                   "vote_count": addon.LANG(32111)}
+                   "vote_count": addon.LANG(32111),
+                   "with_original_language": xbmc.getLocalizedString(308)}
 
         TRANSLATIONS = {"movie": addon.LANG(20338),
                         "tv": addon.LANG(20364),
@@ -427,6 +435,17 @@ def get_window(window_type):
             self.add_filter(key="certification",
                             value=cert,
                             label=cert)
+
+        @ch.click(ID_BUTTON_LANGUAGEFILTER)
+        def set_language_filter(self, control_id):
+            index = xbmcgui.Dialog().select(heading=f'ISO-639-1 {xbmc.getLocalizedString(304)}',
+                                            list=LANGUAGES)
+            if index == -1:
+                return None
+            language = LANGUAGES[index]
+            self.add_filter(key="with_original_language",
+                            value=language,
+                            label=language)
 
         def fetch_data(self, force=False):  # TODO: rewrite
             sort_by = self.sort + "." + self.order
