@@ -733,7 +733,7 @@ def handle_companies(results:list[dict]) -> ItemList[VideoItem]:
 
 
 def search_companies(company_name):
-    regex = re.compile('\(.+?\)')
+    regex = re.compile(r'\(.+?\)')
     response = get_data(url="search/company",
                         params={"query": regex.sub('', company_name)},
                         cache_days=10)
