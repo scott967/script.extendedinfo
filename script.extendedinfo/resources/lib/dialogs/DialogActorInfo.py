@@ -71,7 +71,7 @@ class DialogActorInfo(DialogBaseInfo):
         self.info.update_properties(
             imagetools.blur(self.info.get_art("thumb")))
 
-    def onInit(self):
+    def onInit(self, *args, **kwargs):
         """callback function from Kodi when window is opened
         Also calls onInit in parent classes to set all info in the
         dialog window
