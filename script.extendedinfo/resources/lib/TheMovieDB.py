@@ -518,7 +518,8 @@ def handle_release_dates(results:list[dict]) -> ItemList:
         ref:dict = item["release_dates"][0]
         if not ref.get("certification"):
             continue
-        listitem = VideoItem(label=item.get('name'))
+        #listitem = VideoItem(label=item.get('name')) #no key 'name'
+        listitem = VideoItem(label='')
         listitem.set_properties({'certification': ref.get('certification'),
                                  'iso_3166_1': item.get('iso_3166_1', "").lower(),
                                  'note': ref.get('note'),
