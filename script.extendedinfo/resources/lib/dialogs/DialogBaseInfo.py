@@ -274,6 +274,7 @@ class DialogBaseInfo(windows.DialogXML):
             return None
         if not self.yt_listitems:
             user_key = addon.setting("Youtube API Key")
+            search_str = search_str.replace('-', '')
             self.yt_listitems = youtube.search(
                 search_str, limit=15, api_key=user_key)
         if not self.yt_listitems:
