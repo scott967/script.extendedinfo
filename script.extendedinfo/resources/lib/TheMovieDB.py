@@ -364,7 +364,7 @@ def merge_with_cert_desc(input_list: ItemList, media_type: str) -> ItemList:
     """
     cert_list = get_certification_list(media_type)
     for item in input_list:
-        iso = item.get_property("iso_3166_1").upper()
+        iso = item.get_property("iso_3166_1")
         if iso not in cert_list:
             continue
         hit = utils.dictfind(lst=cert_list[iso],
@@ -373,6 +373,27 @@ def merge_with_cert_desc(input_list: ItemList, media_type: str) -> ItemList:
         if hit:
             item.set_property("meaning", hit["meaning"])
     return input_list
+
+def get_best_release(co_releases:list) -> dict:
+    """Gets a single release for a country with multiple releases
+    Ensures the release has a cert.  Best release is release with
+    "lowest" tmdb release type value
+
+    Args:
+        co_releases (list): _description_
+
+    Returns:
+        dict: _description_
+    """
+    best_release = {}
+    for release in co_releases:
+        if not release.get('certification'):
+            continue
+        if not best_release:
+            best_release = release
+        elif int(release.get('type')) < int(best_release.get('type')):
+            best_release = release
+    return best_release
 
 
 def handle_multi_search(results):
@@ -520,24 +541,36 @@ def handle_release_dates(results:list[dict]) -> ItemList:
     """Creates ItemList of video mpaa cert and dates as VideoItems
 
     Args:
-        results (list[dict]): a list of dicts with TMDB results
+        results (list[dict]): a list of dicts with TMDB releases
 
     Returns:
         ItemList: ItemList of releases/certs
     """
     listitems = ItemList()
     for item in results:
-        ref:dict = item["release_dates"][0]
-        if not ref.get("certification"):
-            continue
-        #listitem = VideoItem(label=item.get('name')) #no key 'name'
-        listitem = VideoItem(label='')
-        listitem.set_properties({'certification': ref.get('certification'),
-                                 'iso_3166_1': item.get('iso_3166_1', "").lower(),
-                                 'note': ref.get('note'),
-                                 'iso_639_1': ref.get('iso_639_1'),
-                                 'release_date': ref.get('release_date'),
-                                 'type': RELEASE_TYPES.get(ref.get('type'))})
+        if len(item["release_dates"]) == 1:
+            ref:dict = item["release_dates"][0] #only handles the first listed release per country
+            if not ref.get("certification"):
+                continue
+            #listitem = VideoItem(label=item.get('name')) #no key 'name'
+            listitem = VideoItem(label='')
+            listitem.set_properties({'certification': ref.get('certification'),
+                                    'iso_3166_1': item.get('iso_3166_1', ""),
+                                    'note': ref.get('note'),
+                                    'iso_639_1': ref.get('iso_639_1'),
+                                    'release_date': ref.get('release_date'),
+                                    'type': RELEASE_TYPES.get(ref.get('type'))})
+        else:
+            ref:dict = get_best_release(item["release_dates"])
+            if not ref:
+                continue
+            listitem = VideoItem(label='')
+            listitem.set_properties({'certification': ref.get('certification'),
+                                    'iso_3166_1': item.get('iso_3166_1', ""),
+                                    'note': ref.get('note'),
+                                    'iso_639_1': ref.get('iso_639_1'),
+                                    'release_date': ref.get('release_date'),
+                                    'type': RELEASE_TYPES.get(ref.get('type'))})
         listitems.append(listitem)
     return listitems
 
