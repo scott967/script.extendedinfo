@@ -59,7 +59,7 @@ class DialogBaseInfo(windows.DialogXML):
                 self.getControl(container_id).reset()
                 items = [i.get_listitem() for i in self.lists[key]] # lists is a dict of ItemList get_listitem gets xbmc listitem from VideoItem
                 self.getControl(container_id).addItems(items)
-            except IndexError as err:
+            except (IndexError, KeyError) as err:
                 utils.log(f'Notice: No container with id {container_id} key {key} available due to {err}')
             except Exception as err:
                 utils.log(f'Notice: No container with id {container_id} key {key} available due to {err}')
