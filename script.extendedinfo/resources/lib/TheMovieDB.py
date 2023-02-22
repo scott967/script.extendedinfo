@@ -990,7 +990,7 @@ def get_movie_tmdb_id(imdb_id:str=None, name:str=None, dbid:int=None):
                             params=params)
         if response and response["movie_results"]:
             return response["movie_results"][0]["id"]
-    return search_media(name) if name else None
+    return search_media(media_name = name) if name else None
 
 
 def get_show_tmdb_id(tvdb_id=None, source="tvdb_id"):
