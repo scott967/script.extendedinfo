@@ -336,21 +336,31 @@ def get_account_lists(cache_days=0):
     return response["results"]
 
 
-def get_certification_list(media_type:str):
-    response = get_data(url="certification/%s/list" % media_type,
+def get_certification_list(media_type:str) -> dict[str,list]:
+    """Gets the known certifications and meanings from tmdb
+    The list is cached since it doesn't change (much?)
+
+    Args:
+        media_type (str): movie/tv
+
+    Returns:
+        dict[str,list]: a dict keys are ISO-1366-1 countries
+                        values are list of certs and their descriptions
+    """
+    response = get_data(url=f"certification/{media_type}/list",
                         cache_days=999999)
     return response.get("certifications")
 
 
 def merge_with_cert_desc(input_list: ItemList, media_type: str) -> ItemList:
-    """_summary_
+    """adds the tmdb text description of certification
 
     Args:
-        input_list (ItemList): _description_
-        media_type (str): _description_
+        input_list (ItemList): the ItemList of releases (with country and cert)
+        media_type (str): movie or tv
 
     Returns:
-        ItemList: _description_
+        ItemList: the input ItemList with cert meanings appended to the VideoItems
     """
     cert_list = get_certification_list(media_type)
     for item in input_list:
@@ -433,7 +443,7 @@ def handle_movies(results: list[dict], local_first=True, sortkey="year") ->ItemL
                                      sortkey=sortkey)
 
 
-def handle_tvshows(results, local_first=True, sortkey="year"):
+def handle_tvshows(results:list[dict], local_first=True, sortkey="year"):
     tvshows = ItemList(content_type="tvshows")
     response = get_data(url="genre/tv/list",
                         params={"language": addon.setting("LanguageID")},

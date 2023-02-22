@@ -103,7 +103,7 @@ class DialogBaseInfo(windows.DialogXML):
             self.last_position = None
         addon.set_global("infobackground", "")
         self.last_control = self.getFocusId()
-        super(DialogBaseInfo, self).close()
+        super().close()
 
     @utils.run_async
     def bounce(self, identifier):
