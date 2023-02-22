@@ -10,8 +10,9 @@ import threading
 
 import xbmc
 import xbmcgui
+from resources.kutil131 import ActionHandler, addon, busy, kodijson
 
-from kutils import ActionHandler, addon, busy, imagetools, kodijson, utils
+from resources.kutil131 import imagetools, utils
 from resources.lib import TheMovieDB as tmdb
 from resources.lib import omdb
 from resources.lib.WindowManager import wm

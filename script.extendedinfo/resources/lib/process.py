@@ -13,6 +13,7 @@ Public functions:
 """
 
 from __future__ import annotations
+
 import os
 import shutil
 import time
@@ -20,8 +21,9 @@ import time
 import xbmc
 import xbmcgui
 import xbmcplugin
+from resources.kutil131 import addon, busy, kodijson
 
-from kutils import addon, busy, favs, kodijson, local_db, utils, youtube
+from resources.kutil131 import favs, local_db, utils, youtube
 from resources.lib import LastFM
 from resources.lib import TheAudioDB as AudioDB
 from resources.lib import TheMovieDB as tmdb

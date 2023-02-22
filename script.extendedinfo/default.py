@@ -7,11 +7,12 @@
 """
 
 from __future__ import annotations
+
 import sys
-from typing import Dict, List, Optional
 
-from kutils import addon, utils
+from resources.kutil131 import addon
 
+from resources.kutil131 import utils
 from resources.lib import process
 
 
@@ -86,8 +87,8 @@ class Main:
         instance attributes of self.infos list (invoked with info=)
         and self.params dict
         """
-        self.infos: List[str] = []
-        self.params: Dict[str, str] = {"handle": None}
+        self.infos: list[str] = []
+        self.params: dict[str, str] = {"handle": None}
         for arg in sys.argv[1:]:
             param = arg.replace('"', '').replace("'", " ")
             if param.startswith('info='):

@@ -10,13 +10,15 @@ Requires user API key (subscription basis) to access
 """
 
 from __future__ import annotations
+
 import urllib.error
 import urllib.parse
 import urllib.request
 
 import xbmc
+from resources.kutil131 import ItemList, addon
 
-from kutils import AudioItem, ItemList, VideoItem, addon, local_db, utils
+from resources.kutil131 import AudioItem, VideoItem, local_db, utils
 
 AUDIO_DB_KEY = '2'  #key no longer accepted - this is demo key
 BASE_URL = 'https://www.theaudiodb.com/api/v1/json'

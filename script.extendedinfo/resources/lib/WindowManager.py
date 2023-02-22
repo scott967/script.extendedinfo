@@ -17,9 +17,9 @@ import re
 import xbmc
 import xbmcgui
 import xbmcvfs
+from resources.kutil131 import addon, busy, player, windows
 
-from kutils import addon, busy, local_db, player, utils, windows
-
+from resources.kutil131 import local_db, utils
 from resources.lib import TheMovieDB as tmdb
 
 INFO_XML_CLASSIC = f'script-{addon.ID}-DialogVideoInfo.xml'

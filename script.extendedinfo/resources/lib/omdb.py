@@ -11,7 +11,9 @@ User must supply api key via addon settings
 
 from __future__ import annotations
 
-from kutils import addon, utils
+from resources.kutil131 import addon
+
+from resources.kutil131 import utils
 
 BASE_URL = "http://www.omdbapi.com/?tomatoes=true&plot=full&r=json&"
 

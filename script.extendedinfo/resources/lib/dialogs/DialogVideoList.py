@@ -9,8 +9,8 @@ from __future__ import annotations
 import xbmc
 import xbmcgui
 
-from kutils import (ActionHandler, DialogBaseList, addon, busy, confirmdialog,
-                    selectdialog, utils)
+from resources.kutil131 import (ActionHandler, DialogBaseList, addon, busy,
+                                confirmdialog, selectdialog, utils)
 from resources.lib import TheMovieDB as tmdb
 from resources.lib.WindowManager import wm
 

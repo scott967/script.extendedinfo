@@ -15,7 +15,9 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from kutils import ItemList, utils
+from resources.kutil131 import ItemList
+
+from resources.kutil131 import utils
 
 LAST_FM_API_KEY = 'd942dd5ca4c9ee5bd821df58cf8130d4'
 GOOGLE_MAPS_KEY = 'AIzaSyBESfDvQgWtWLkNiOYXdrA9aU-2hv_eprY'
@@ -59,7 +61,7 @@ def get_top_artists() -> ItemList:
     """Queries LastFM api chart.getTopArtists method for top 100 artists
 
     Returns:
-        ItemList: a kutils object that wraps a list of artist
+        ItemList: a kutils131object that wraps a list of artist
         info dicts
     """
     results: Optional[dict] = get_data(method="chart.getTopArtists",
@@ -76,7 +78,7 @@ def get_artist_albums(artist_mbid: str) -> ItemList:
         artist_mbid (str): The musicbrainz id for the artist
 
     Returns:
-        ItemList: a kutils object that wraps a list of albums
+        ItemList: a kutils131object that wraps a list of albums
         info dicts
     """
     if not artist_mbid:

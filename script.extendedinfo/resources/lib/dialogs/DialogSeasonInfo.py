@@ -4,7 +4,9 @@
 # Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
-from kutils import ActionHandler, addon, imagetools, utils
+from resources.kutil131 import ActionHandler, addon
+
+from resources.kutil131 import imagetools, utils
 from resources.lib import TheMovieDB as tmdb
 
 from .DialogVideoInfo import DialogVideoInfo

@@ -25,7 +25,9 @@ The class hierarchy is:
 """
 
 import xbmcgui
-from kutils import ActionHandler, addon, imagetools
+from resources.kutil131 import ActionHandler, ItemList, addon
+
+from resources.kutil131 import VideoItem, imagetools, utils
 from resources.lib import TheMovieDB as tmdb
 
 from .DialogBaseInfo import DialogBaseInfo
