@@ -297,7 +297,9 @@ class WindowManager:
         xbmc.executebuiltin("RunPlugin(plugin://plugin.video.youtube/play/?video_id=" +
                             youtube_id + "&screensaver=true&incognito=true)")
         if self.active_dialog and self.active_dialog.window_type == "dialog":
-            player.wait_for_video_end()
+            player.wait_for_video_start() #30 sec timeout
+            player.wait_for_video_end() #method returns when video ends
+            if not self.monitor.abortRequested():
             self.active_dialog.doModal()
 
 
