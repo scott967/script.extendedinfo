@@ -14,7 +14,9 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from kutils import ItemList, VideoItem, utils
+from resources.kutil131 import ItemList
+
+from resources.kutil131 import VideoItem, utils
 
 # TVRAGE_KEY = 'VBp9BuIr5iOiBeWCFRMG'
 API_KEY = ''

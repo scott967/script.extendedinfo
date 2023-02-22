@@ -7,9 +7,9 @@
 import datetime
 
 import xbmcgui
+from resources.kutil131 import ActionHandler, DialogBaseList, addon, busy, windows
 
-from kutils import (ActionHandler, DialogBaseList, addon, busy, utils, windows,
-                    youtube)
+from resources.kutil131 import utils, youtube
 from resources.lib.WindowManager import wm
 
 ch = ActionHandler()

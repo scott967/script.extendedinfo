@@ -76,13 +76,15 @@ Public functions:
 """
 
 from __future__ import annotations
+
 import re
 import urllib.error
 import urllib.parse
 import urllib.request
 
-from kutils import (ItemList, VideoItem, addon, kodijson, local_db,
-                    selectdialog, utils)
+from resources.kutil131 import ItemList, addon, kodijson, selectdialog
+
+from resources.kutil131 import VideoItem, local_db, utils
 
 TMDB_KEY = '34142515d9d23817496eeb4ff1d223d0'
 POSTER_SIZES = ["w92", "w154", "w185", "w342", "w500", "w780", "original"]

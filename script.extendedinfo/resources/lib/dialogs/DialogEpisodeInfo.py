@@ -5,8 +5,9 @@
 # This program is Free Software see LICENSE file for details
 
 import xbmc
+from resources.kutil131 import ActionHandler, addon, busy
 
-from kutils import ActionHandler, addon, busy, imagetools
+from resources.kutil131 import imagetools
 from resources.lib import TheMovieDB as tmdb
 from resources.lib.WindowManager import wm
 

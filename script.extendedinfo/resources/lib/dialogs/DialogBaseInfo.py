@@ -8,10 +8,10 @@ import traceback
 
 import xbmc
 import xbmcgui
+from resources.kutil131 import (ActionHandler, addon, kodijson, selectdialog, slideshow,
+                    windows)
 
-from kutils import (ActionHandler, VideoItem, addon, kodijson, selectdialog,
-                    slideshow, utils, windows, youtube)
-
+from resources.kutil131 import VideoItem, utils, youtube
 from resources.lib import TheMovieDB as tmdb
 from resources.lib.WindowManager import wm
 

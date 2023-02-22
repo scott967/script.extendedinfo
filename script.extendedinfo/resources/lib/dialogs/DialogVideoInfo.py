@@ -6,8 +6,9 @@
 
 import xbmc
 import xbmcgui
+from resources.kutil131 import ActionHandler, addon
 
-from kutils import ActionHandler, addon, utils
+from resources.kutil131 import utils
 from resources.lib import TheMovieDB as tmdb
 
 from .DialogBaseInfo import DialogBaseInfo
