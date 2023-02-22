@@ -10,10 +10,10 @@ The get_* functions are called to query LastFM API.
 """
 
 import re
-from typing import Optional
 import urllib.error
 import urllib.parse
 import urllib.request
+from typing import Optional
 
 from resources.kutil131 import ItemList
 
