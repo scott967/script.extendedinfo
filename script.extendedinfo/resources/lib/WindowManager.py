@@ -300,7 +300,7 @@ class WindowManager:
             player.wait_for_video_start() #30 sec timeout
             player.wait_for_video_end() #method returns when video ends
             if not self.monitor.abortRequested():
-            self.active_dialog.doModal()
+                self.active_dialog.doModal()
 
 
 wm = WindowManager()
