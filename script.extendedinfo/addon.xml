@@ -6,6 +6,7 @@
 		<!-- <import addon="script.module.kutils" version="1.3.0"/> -->
 		<import addon="script.module.routing" version="0.2.3+matrix.1"/>
         <import addon="script.module.pil" version="5.1.0"/>
+		<import addon="plugin.program.autocompletion" version="2.1.2"/>
         <import addon="script.module.autocompletion" version="2.0.3"/>
         <import addon="script.module.requests" version="2.25.1+matrix.1"/>
 	</requires>
