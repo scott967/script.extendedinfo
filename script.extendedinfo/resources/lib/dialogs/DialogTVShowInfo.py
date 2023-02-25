@@ -125,17 +125,9 @@ class DialogTVShowInfo(DialogVideoInfo):
         options = []
         title = self.info.get_info("tvshowtitle")
         dbid = self.info.get_info("dbid")
-        if dbid:
-            call = "RunScript(script.artwork.downloader,mediatype=tv,dbid={}%s)".format(
-                dbid)
-            options += [(addon.LANG(413), call % (",mode=gui")),
-                        (addon.LANG(14061), call % ("")),
-                        (addon.LANG(32101), call %
-                         (",mode=custom,extrathumbs")),
-                        (addon.LANG(32100), call % (",mode=custom"))]
-        else:
-            options += [(addon.LANG(32166),
-                         "RunPlugin(plugin://plugin.video.sickrage?action=addshow&show_name=%s)" % title)]
+        #if not dbid:
+        #    options += [(addon.LANG(32166),
+        #                 "RunPlugin(plugin://plugin.video.sickrage?action=addshow&show_name=%s)" % title)]
         options.append(
             (addon.LANG(1049), "Addon.OpenSettings(script.extendedinfo)"))
         return options
