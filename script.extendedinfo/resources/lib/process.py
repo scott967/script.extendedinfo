@@ -479,7 +479,7 @@ def start_info_actions(info: str, params: dict[str, str]):
                 if os.path.isdir(path):
                     shutil.rmtree(path)
             except Exception as err:
-                utils.log(err)
+                utils.log(f'Failed to remove cache due to {err}')
         utils.notify("Cache deleted")
     elif info == 'tmdbpassword':
         addon.set_password_prompt("tmdb_password")
