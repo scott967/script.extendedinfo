@@ -290,7 +290,7 @@
 								<radiowidth>44</radiowidth>
 								<radioheight>44</radioheight>
 								<visible>!String.IsEmpty(Window.Property(tmdb_logged_in))</visible>
-								<visible>!String.IsEqual(Window.Property(type),season) + !String.IsEqual(Window.Property(type),episode)</visible>
+								<visible>!String.IsEqual(Window.Property(type),season) + !String.IsEqual(Window.Property(type),episode) + !String.IsEqual(Window.Property(type),tvshow)</visible>
 							</control>
 							<control type="radiobutton" id="6002">
 								<label>$ADDON[script.extendedinfo 32130]</label>
