@@ -5,7 +5,8 @@
 
 import xbmcgui
 
-ACTIONS = {"left": xbmcgui.ACTION_MOVE_LEFT,
+ACTIONS = {"none": xbmcgui.ACTION_NONE,
+           "left": xbmcgui.ACTION_MOVE_LEFT,
            "right": xbmcgui.ACTION_MOVE_RIGHT,
            "up": xbmcgui.ACTION_MOVE_UP,
            "down": xbmcgui.ACTION_MOVE_DOWN,
@@ -149,6 +150,7 @@ ACTIONS = {"left": xbmcgui.ACTION_MOVE_LEFT,
            "filtersms9": xbmcgui.ACTION_FILTER_SMS9,
            "firstpage": xbmcgui.ACTION_FIRST_PAGE,
            "lastpage": xbmcgui.ACTION_LAST_PAGE,
+           "menu": xbmcgui.ACTION_MENU,
            "guiprofile": xbmcgui.ACTION_GUIPROFILE_BEGIN,
            "red": xbmcgui.ACTION_TELETEXT_RED,
            "green": xbmcgui.ACTION_TELETEXT_GREEN,
