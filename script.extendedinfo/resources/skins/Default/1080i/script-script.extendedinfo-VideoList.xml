@@ -6,6 +6,7 @@
 	     <onload condition="String.IsEmpty(Window(home).Property(WindowColor))">SetProperty(WindowColor,$VAR[AreaColorVar],home)</onload> -->
 	<onunload>ClearProperty(WindowColor,home)</onunload>
 	<defaultcontrol always="true">500</defaultcontrol>
+	<menucontrol>9000</menucontrol>
 	<controls>
 		<control type="image">
 			<texture>common/white.png</texture>
