@@ -262,14 +262,14 @@ class ListItem:
         return {k: v for k, v in self._properties.items() if v}
 
     def get_listitem(self) -> xbmcgui.ListItem:
-        utils.log(f'kutils131.listitem ListItem.get_listitem self label {self.label} path {self.path}')
+        #utils.log(f'kutils131.listitem ListItem.get_listitem self label {self.label} path {self.path}')
         #listitem: xbmcgui.ListItem
         listitem = xbmcgui.ListItem(label=str(self.label) if self.label else "",
                                     label2=str(self.label2) if self.label2 else "",
                                     path=self.path)
-        utils.log(f'kutils131.ListItem.get_listitem returns {type(listitem)} {listitem}')
-        utils.log(f'kutils131.ListItem self._properties {self._properties}')
-        utils.log(f'kutils131.ListItem self._infos {self._infos}')
+        #utils.log(f'kutils131.ListItem.get_listitem returns {type(listitem)} {listitem}')
+        #utils.log(f'kutils131.ListItem self._properties {self._properties}')
+        #utils.log(f'kutils131.ListItem self._infos {self._infos}')
         props = {k: str(v) for k, v in self._properties.items() if v}
         #utils.log(f'props {props}')
         infos = {k.lower(): v for k, v in self._infos.items() if v}
@@ -277,10 +277,10 @@ class ListItem:
         infos["path"] = self.path
         if "media_type" in infos:
             infos["mediatype"] = infos["media_type"]
-            utils.log(f'kutils131.ListItem infos mediatype {infos["mediatype"]}')
+            #utils.log(f'kutils131.ListItem infos mediatype {infos["mediatype"]}')
             infos.pop("media_type")
         if "file" in infos:
-            utils.log(f'file data in kutils131get_listitem: {infos["file"]}')
+            #utils.log(f'file data in kutils131get_listitem: {infos["file"]}')
             #infos["path"] = infos["file"]
             infos.pop("file")
         if "duration" in infos:
@@ -314,10 +314,10 @@ class ListItem:
         dct = utils.merge_dicts(self.get_properties(),
                                 self.get_artwork(),
                                 self.get_infos())
-        utils.log(f'kutils131.listitem.to_windowprops (setting dialog window props for window {window_id}) number of props {len(dct)}')
+        #utils.log(f'kutils131.listitem.to_windowprops (setting dialog window props for window {window_id}) number of props {len(dct)}')
         for k, v in dct.items():
             window.setProperty('%s%s' % (prefix, k), str(v))
-            utils.log(f'set property {prefix} {k} {v}')
+            #utils.log(f'set property {prefix} {k} {v}')
 
 
 class AudioItem(ListItem):

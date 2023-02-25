@@ -786,7 +786,7 @@ def search_companies(company_name):
     if response and "results" in response:
         return handle_companies(response["results"])
     else:
-        utils.log(f"TheMovieDB.searchcompanies Could not find company ID for {company_name}")
+        #utils.log(f"TheMovieDB.searchcompanies Could not find company ID for {company_name}")
         return None
 
 
@@ -868,7 +868,7 @@ def get_keywords(search_label):
                         params=params,
                         cache_days=30)
     if not response or not response.get("results"):
-        utils.log("TheMovieDB.get_keywords could not find Keyword ID")
+        #utils.log("TheMovieDB.get_keywords could not find Keyword ID")
         return False
     return response["results"]
 
@@ -980,9 +980,6 @@ def get_movie_tmdb_id(imdb_id:str=None, name:str=None, dbid:int=None):
     """
     if dbid and (int(dbid) > 0):
         imdb_id = local_db.get_imdb_id("movie", dbid)
-        if imdb_id:
-            utils.log(f"IMDB Id from local DB: {imdb_id}")
-            #return movie_id
     if imdb_id:
         params = {"external_source": "imdb_id",
                   "language": addon.setting("LanguageID")}

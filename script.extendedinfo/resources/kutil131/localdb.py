@@ -220,7 +220,7 @@ class LocalDB:
                                           movie['streamdetails'])
         db_movie.update_properties(stream_info)
         db_movie.set_cast(movie.get("cast"))
-        utils.log(f'localdb.handle_movie returns VideoItem {db_movie}')
+        #utils.log(f'localdb.handle_movie returns VideoItem {db_movie}')
         return db_movie
 
     def handle_tvshow(self, tvshow):
@@ -265,12 +265,10 @@ class LocalDB:
         response = kodijson.get_json(method="VideoLibrary.GetMovieDetails",
                                      params={"properties": MOVIE_PROPS, "movieid": movie_id})
         if "result" in response and "moviedetails" in response["result"]:
-            utils.log('kutils131localdb.get_movie got results from kodi db')
+            #utils.log('kutils131localdb.get_movie got results from kodi db')
             #utils.log(f'kutils131localdb.get_movie result {utils.pp(response["result"]["moviedetails"])}')
-            utils.log(f'kutils131localdb.get_movie handle_movie {response["result"]["moviedetails"].get("label", "no label")}')
+            #utils.log(f'kutils131localdb.get_movie handle_movie {response["result"]["moviedetails"].get("label", "no label")}')
             return self.handle_movie(response["result"]["moviedetails"])
-        else:
-            utils.log(f'localdb.get_movie no results')
         return {}
 
     def get_tvshow(self, tvshow_id):
@@ -342,17 +340,17 @@ class LocalDB:
             otitle = item.get_info("originaltitle").lower()
             if "imdb_id" in item.get_properties() and imdb_id in info["imdbs"]:
                 index = info["imdbs"].index(imdb_id)
-                utils.log(f'got local imdb match on index {index}')
+                #utils.log(f'got local imdb match on index {index}')
             elif "title" in item.get_infos() and title in info["titles"]:
                 index = info["titles"].index(title)
             elif "originaltitle" in item.get_infos() and otitle in info["otitles"]:
                 index = info["otitles"].index(otitle)
-                utils.log(f'got local otitle match on index {index}')
+                #utils.log(f'got local otitle match on index {index}')
             if index:
                 get_info = self.get_movie if media_type == "movie" else self.get_tvshow
                 local_item = get_info(info["ids"][index])
                 if local_item:
-                    utils.log(f'ktuils localdb got local item as {local_item} where get_info is {get_info}')
+                    #utils.log(f'ktuils localdb got local item as {local_item} where get_info is {get_info}')
                     try:
                         diff = abs(int(local_item.get_info("year")) - int(item.get_info("year")))
                         if diff > 1:

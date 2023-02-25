@@ -91,11 +91,6 @@ class DialogBaseList:
         super().onInit()
         viewtype = addon.setting("viewtype_selection")
         self.cur_viewtype = DialogBaseList.viewid.get(xbmc.getInfoLabel('Container.Viewmode'))
-        try:
-            utils.log(f'module.kutil131.DialogBaseList.onInit current viewtype: {self.cur_viewtype}')
-        except:
-            utils.log(f'module.kutil131.DialogBaseList.onInit current viewtype none: {xbmc.getInfoLabel("Container.Viewmode")}')
-        utils.log(f'module.kutil131.DialogBaseList.onInit settings viewtype: {viewtype}')
         if viewtype:
             xbmc.executebuiltin("Container.SetViewMode(%s)" % viewtype)
         self.update_ui()

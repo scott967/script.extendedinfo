@@ -47,12 +47,12 @@ def handle_videos(results:list[dict], extended=False, api_key=''):
     params = {"part": "contentDetails,statistics",
               "id": ",".join([i.get_property("youtube_id") for i in videos]),
               "key": api_key}
-    utils.log(f'kutils131.youtube handle_videos extended call youtube.get_data with params {params}')
+    #utils.log(f'kutils131.youtube handle_videos extended call youtube.get_data with params {params}')
     ext_results = get_data(method="videos",
                            params=params)
     if not ext_results or not 'items' in ext_results.keys():
         return videos
-    utils.log(f'kutils131.youtube handle_videos got extended info adding to videoitems')
+    #utils.log(f'kutils131.youtube handle_videos got extended info adding to videoitems')
     for item in videos:
         for ext_item in ext_results["items"]:
             if not item.get_property("youtube_id") == ext_item['id']:
@@ -85,7 +85,7 @@ def get_duration_in_seconds(duration:str):
     """
     if not duration.endswith('S'):
         duration = duration + '0S'
-    utils.log(f'kutils131youtube.get_duration raw duration string {duration}')
+    #utils.log(f'kutils131youtube.get_duration raw duration string {duration}')
     duration = duration[2:-1].replace("H", "M").split("M")
     if len(duration) == 3:
         return int(duration[0]) * 3600 + int(duration[1]) * 60 + int(duration[2])
@@ -192,7 +192,7 @@ def get_data(method, params=None, cache_days=0.5):
     url = "{base_url}{method}?{params}".format(base_url=BASE_URL,
                                                method=method,
                                                params=urllib.parse.urlencode(params))
-    utils.log(f'kutils131youtube.get_data url {url}')
+    #utils.log(f'kutils131youtube.get_data url {url}')
     return utils.get_JSON_response(url=url,
                                    cache_days=cache_days,
                                    folder="YouTube")
@@ -214,10 +214,10 @@ def search(search_str="", hd="", orderby="relevance", limit=40, extended=True,
               "q": search_str.replace('"', ''),
               "key" : api_key}
     #utils.log('kutils131youtube.search params:')
-    utils.pp(utils.merge_dicts(params, filters if filters else {}))
+    #utils.pp(utils.merge_dicts(params, filters if filters else {}))
     results = get_data(method="search",
                        params=utils.merge_dicts(params, filters if filters else {}))
-    utils.log(f'youtube search get_data results: {len(results.get("items", []))}')
+    #utils.log(f'youtube search get_data results: {len(results.get("items", []))}')
     #utils.pp(results)
     if 'error' in results.keys():
         utils.log('youtube get_data ERROR: {error}'.format(error=results.get('error').get('message')))
