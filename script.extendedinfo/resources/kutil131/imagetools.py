@@ -33,7 +33,7 @@ def blur(input_img, radius=25):
     targetfile = os.path.join(IMAGE_PATH, filename)
     vid_cache_file = os.path.join("special://profile/Thumbnails/Video", cachedthumb[0], cachedthumb)
     cache_file = os.path.join("special://profile/Thumbnails", cachedthumb[0], cachedthumb[:-4] + ".jpg")
-    utils.log(f'targetfile: {targetfile} cache_file: {cache_file}')
+    #utils.log(f'targetfile: {targetfile} cache_file: {cache_file}')
     if xbmcvfs.exists(targetfile):
         img = PIL.Image.open(targetfile)
         #utils.log('got existing targetfile')
@@ -54,7 +54,7 @@ def blur(input_img, radius=25):
         imgfilter = MyGaussianBlur(radius=radius)
         img = img.convert('RGB').filter(imgfilter)
         img.save(targetfile)
-        utils.log(f'saved targetfile')
+        #utils.log(f'saved targetfile')
     except Exception:
         utils.log("Could not get image for %s" % input_img)
         return {}
