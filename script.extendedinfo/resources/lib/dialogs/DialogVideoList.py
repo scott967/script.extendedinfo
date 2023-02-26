@@ -452,7 +452,6 @@ def get_window(window_type):
         def fetch_data(self, force=False):  # TODO: rewrite
             sort_by = self.sort + "." + self.order
             temp = "tv" if self.type == "tv" else "movies"
-            #utils.log('DialogVideoList fetch_data args: sort_by {} temp {} mode {}'.format(sort_by, temp, self.mode))  #debug
             if self.mode == "search":
                 self.filter_label = addon.LANG(
                     32146) % self.search_str if self.search_str else ""

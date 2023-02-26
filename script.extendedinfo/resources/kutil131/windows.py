@@ -20,7 +20,6 @@ class WindowMixin:
                 listitem = self.getListItem(self.getCurrentListPosition())
             return listitem
         except Exception as err:
-            #utils.log(f'kutil131.windows.WindowMixin.FocusedItem exception {err}')
             return None
 
     def set_visible(self, control_id, condition):

@@ -52,9 +52,7 @@ class VideoPlayer(xbmc.Player):
         while not monitor.waitForAbort(1.0):  #wait 10 sec to see if video starts
             timeout += -1
             if self.started:
-                #utils.log('kutils player av started')
                 break
             if timeout == 0:
                 self.stopped = True
-                #utils.log(f'kutils player start timeout self.stopped {self.stopped}')
                 break

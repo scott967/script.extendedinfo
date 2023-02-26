@@ -258,7 +258,6 @@ def send_request(url, params, values, delete=False):
     params["api_key"] = TMDB_KEY
     params = {k: str(v) for k, v in params.items() if v}
     url = "%s%s?%s" % (URL_BASE, url, urllib.parse.urlencode(params))
-    #utils.log(url)
     if delete:
         return utils.delete(url, values=values, headers=HEADERS)
     else:
@@ -786,7 +785,6 @@ def search_companies(company_name):
     if response and "results" in response:
         return handle_companies(response["results"])
     else:
-        #utils.log(f"TheMovieDB.searchcompanies Could not find company ID for {company_name}")
         return None
 
 
@@ -868,7 +866,6 @@ def get_keywords(search_label):
                         params=params,
                         cache_days=30)
     if not response or not response.get("results"):
-        #utils.log("TheMovieDB.get_keywords could not find Keyword ID")
         return False
     return response["results"]
 

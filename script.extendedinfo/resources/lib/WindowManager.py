@@ -213,7 +213,6 @@ class WindowManager:
             media_type (str, optional): [description]. Defaults to "movie".
             search_str (str, optional): [description]. Defaults to "".
         """
-        #utils.log(f'wm open_video_list listitems: {listitems}, filters {filters}')  #debug
         from .dialogs import DialogVideoList
         Browser = DialogVideoList.get_window(windows.DialogXML)
         dialog = Browser(LIST_XML,
