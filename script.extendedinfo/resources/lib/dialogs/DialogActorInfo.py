@@ -88,7 +88,6 @@ class DialogActorInfo(DialogBaseInfo):
         Args:
             control_id (int): id of window control that was clicked
         """
-        #utils.log(f'DialogActorInfo onclick called with control id {control_id}')
         super().onClick(control_id)
         ch.serve(control_id, self)
 

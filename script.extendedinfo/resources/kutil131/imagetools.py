@@ -26,35 +26,27 @@ def blur(input_img, radius=25):
     #input_img = utils.translate_path(urllib.parse.unquote(input_img))
     # input_img = input_img.replace("image://video@", "").rstrip("/") not working
     #input_img = input_img.rstrip("/")
-    #utils.log(f'imagetools.blur input_image {input_img} with type {type(input_img)}')
     cachedthumb = xbmc.getCacheThumbName(input_img)
-    #utils.log(f'cachedthumb {cachedthumb}')
     filename = "%s-radius_%i.png" % (cachedthumb, radius)
     targetfile = os.path.join(IMAGE_PATH, filename)
     vid_cache_file = os.path.join("special://profile/Thumbnails/Video", cachedthumb[0], cachedthumb)
     cache_file = os.path.join("special://profile/Thumbnails", cachedthumb[0], cachedthumb[:-4] + ".jpg")
-    #utils.log(f'targetfile: {targetfile} cache_file: {cache_file}')
     if xbmcvfs.exists(targetfile):
         img = PIL.Image.open(targetfile)
-        #utils.log('got existing targetfile')
         return {"ImageFilter": targetfile,
                 "ImageColor": get_colors(img)}
     try:
         if xbmcvfs.exists(cache_file):
-            #utils.log("image already in xbmc cache: " + cache_file)
             img = PIL.Image.open(utils.translate_path(cache_file))
         elif xbmcvfs.exists(vid_cache_file):
-            #utils.log("image already in xbmc video cache: " + vid_cache_file)
             img = PIL.Image.open(utils.translate_path(vid_cache_file))
         else:
             xbmcvfs.copy(input_img, targetfile)
             img = PIL.Image.open(targetfile)
-            #utils.log(f'image not cached')
         img.thumbnail((200, 200), PIL.Image.ANTIALIAS)
         imgfilter = MyGaussianBlur(radius=radius)
         img = img.convert('RGB').filter(imgfilter)
         img.save(targetfile)
-        #utils.log(f'saved targetfile')
     except Exception:
         utils.log("Could not get image for %s" % input_img)
         return {}

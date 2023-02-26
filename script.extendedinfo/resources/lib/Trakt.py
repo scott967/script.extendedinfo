@@ -62,7 +62,6 @@ def get_episodes(content):
     results = get_data(url=url,
                        params={"extended": "full"},
                        cache_days=0.3)
-    #utils.log(f'Trakt.get_episodes for {content} results')
     count = 1
     if not results:
         return None
@@ -102,9 +101,7 @@ def get_episodes(content):
                                  'id': ep["ids"]["tvdb"],
                                  'imdb_id': ep["ids"]["imdb"],
                                  'homepage': tv["homepage"]})
-            #utils.log(f'Trakt.get_episodes for content {content} VideoItem {show}')
             if tv["ids"].get("tmdb"):
-                #utils.log(f'Trakt.get_episodes get art from tmdb {tv["ids"]["tmdb"]}')
                 art_info = tmdb.get_tvshow(tv["ids"]["tmdb"], light=True)
                 show.set_artwork(tmdb.get_image_urls(poster=art_info.get("poster_path"),
                                                      fanart=art_info.get("backdrop_path")))
@@ -314,7 +311,6 @@ def get_data(url, params=None, cache_days=10):
     params = params if params else {}
     params["limit"] = 10
     url = "%s%s?%s" % (BASE_URL, url, urllib.parse.urlencode(params))
-    #utils.log(f'Trakt.get_data url: {url} headers: {HEADERS}')
     return utils.get_JSON_response(url=url,
                                    folder="Trakt",
                                    headers=HEADERS,
