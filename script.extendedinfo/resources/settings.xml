@@ -58,17 +58,6 @@
 						<heading>32174</heading>
 					</control>
 				</setting>
-				<setting id="actor_info"  type="path"  label="32175"  help="">
-                    <level>1</level>
-                    <default>special://profile/addon_data/script.extendedinfo2/</default>
-                    <constraints>
-                        <writable>true</writable>
-                        <allowempty>true</allowempty>
-                    </constraints>
-                    <control type="button" format="path">
-                        <heading>32175</heading>
-                    </control>
-                </setting>
 				<setting help="" id="viewtype_selection" label="582" type="string">
 					<level>0</level>
 					<visible>false</visible>
