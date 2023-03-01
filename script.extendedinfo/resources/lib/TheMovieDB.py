@@ -78,6 +78,7 @@ Public functions:
 from __future__ import annotations
 
 import re
+import traceback
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -903,8 +904,9 @@ def get_data(url: str = "", params: dict = None, cache_days: float = 14) -> dict
     if not response:
         utils.log("tmdb.get_data No response from TMDB")
         return None
-    if "status_code" in response:
-        utils.log(f'tmdb.get_data TMDB status code: {response.get("status_code")}')
+    if "status_code" in response and response.get("status_code") != 1:
+        utils.log(f'tmdb.get_data FAIL TMDB status code: {response.get("status_code")} {traceback.format_stack(limit=-3)}')
+        return None
     return response
 
 

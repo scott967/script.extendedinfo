@@ -285,10 +285,9 @@ class SetItemsThread(threading.Thread):
         """
         threading.Thread.__init__(self)
         self.set_id = set_id
+        self.listitems = []
+        self.setinfo = {}
 
     def run(self):
         if self.set_id and self.set_id != 0:
             self.listitems, self.setinfo = tmdb.get_set_movies(self.set_id)
-        else:
-            self.listitems = []
-            self.setinfo = {}
