@@ -297,7 +297,7 @@ class ActionHandler():
         if view_function:
             return view_function(wnd, control_id)
 
-    def serve_action(self, action, control_id, wnd):
+    def serve_action(self, action: xbmcgui.Action, control_id, wnd):
         action_id = action.getId()
         wnd.action_id = action_id
         if action_id in [ACTIONS["contextmenu"], ACTIONS["info"]]:
