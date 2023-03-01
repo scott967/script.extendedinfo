@@ -81,7 +81,7 @@ class DialogBaseInfo(windows.DialogXML):
     def onAction(self, action):
         ch.serve_action(action, self.getFocusId(), self)
 
-    def onClick(self, control_id):
+    def onClick(self, control_id: int):
         super(DialogBaseInfo, self).onClick(control_id)
         ch.serve(control_id, self)
 

@@ -103,7 +103,7 @@ class DialogBaseList:
     def onClick(self, control_id):
         ch.serve(control_id, self)
 
-    def onAction(self, action):
+    def onAction(self, action: xbmcgui.Action):
         ch.serve_action(action, self.getFocusId(), self)
 
     def onFocus(self, control_id):
