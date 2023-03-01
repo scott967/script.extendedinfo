@@ -3,7 +3,6 @@
 	<requires>
 		<import addon="xbmc.python" version="3.0.0"/>
 		<import addon="resource.images.studios.white" version="0.0.25"/>
-		<!-- <import addon="script.module.kutils" version="1.3.0"/> -->
 		<import addon="script.module.routing" version="0.2.3+matrix.1"/>
         <import addon="script.module.pil" version="5.1.0"/>
 		<import addon="plugin.program.autocompletion" version="2.1.2"/>
