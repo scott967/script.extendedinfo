@@ -32,7 +32,7 @@ class Main:
         """Constructor gets actions from args to create the
         plugin list
         """
-        utils.log(f"version {addon.VERSION} started")
+        utils.log(f"plugin version {addon.VERSION} started")
         addon.set_global("extendedinfo_running", "true")
         self._parse_argv()
         for info in self.infos:
