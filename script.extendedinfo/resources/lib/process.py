@@ -49,7 +49,7 @@ def start_info_actions(info: str, params: dict[str, str]):
         if not params.get("artist_mbid"):
             params["artist_mbid"] = utils.fetch_musicbrainz_id(
                 params["artistname"])
-    utils.log(f'start_info_actions: {info}')
+    utils.log(f'process start_info_actions info: {info} params:')
     utils.pp(params)
     if "prefix" in params and not params["prefix"].endswith('.'):
         params["prefix"] = params["prefix"] + '.'
