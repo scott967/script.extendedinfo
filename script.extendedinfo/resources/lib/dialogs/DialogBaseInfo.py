@@ -266,7 +266,7 @@ class DialogBaseInfo(windows.DialogXML):
     def exit_script(self, *args):
         self.exit()
 
-    @utils.run_async
+    # @utils.run_async
     def get_youtube_vids(self, search_str):
         try:
             youtube_list = self.getControl(ID_LIST_YOUTUBE)
