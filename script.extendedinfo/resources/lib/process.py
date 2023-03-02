@@ -24,11 +24,11 @@ import xbmcplugin
 from resources.kutil131 import addon, busy, kodijson
 
 from resources.kutil131 import favs, local_db, utils, youtube
-from resources.lib import LastFM
-from resources.lib import TheAudioDB as AudioDB
-from resources.lib import TheMovieDB as tmdb
-from resources.lib import Trakt
-from resources.lib.WindowManager import wm
+from resources.lib import lastfm
+from resources.lib import theaudiodb as AudioDB
+from resources.lib import themoviedb as tmdb
+from resources.lib import trakt
+from resources.lib.windowmanager import wm
 
 
 def start_info_actions(info: str, params: dict[str, str]):
@@ -58,14 +58,14 @@ def start_info_actions(info: str, params: dict[str, str]):
     if info == 'discography':
         discography = AudioDB.get_artist_discography(params["artistname"])
         if not discography:
-            discography = LastFM.get_artist_albums(params.get("artist_mbid"))
+            discography = lastfm.get_artist_albums(params.get("artist_mbid"))
         return discography
     elif info == 'mostlovedtracks':
         return AudioDB.get_most_loved_tracks(params["artistname"])
     elif info == 'trackdetails':
         return AudioDB.get_track_details(params.get("id", ""))
     elif info == 'topartists':
-        return LastFM.get_top_artists()
+        return lastfm.get_top_artists()
     #  The MovieDB
     elif info == 'incinemamovies':
         return tmdb.get_movies("now_playing")
@@ -186,7 +186,7 @@ def start_info_actions(info: str, params: dict[str, str]):
                 movie_id = local_db.get_imdb_id("movie", params["dbid"])
             else:
                 movie_id = params["id"]
-            return Trakt.get_similar("movie", movie_id)
+            return trakt.get_similar("movie", movie_id)
     elif info == 'traktsimilartvshows':
         if params.get("id") or params.get("dbid"):
             if params.get("dbid"):
@@ -198,52 +198,52 @@ def start_info_actions(info: str, params: dict[str, str]):
                                                      dbid=params["dbid"])
             else:
                 tvshow_id = params["id"]
-            return Trakt.get_similar("show", tvshow_id)
+            return trakt.get_similar("show", tvshow_id)
     elif info == 'airingepisodes':
-        return Trakt.get_episodes("shows")
+        return trakt.get_episodes("shows")
     elif info == 'premiereepisodes':
-        return Trakt.get_episodes("premieres")
+        return trakt.get_episodes("premieres")
     elif info == 'trendingshows':
-        return Trakt.get_shows("trending")
+        return trakt.get_shows("trending")
     elif info == 'popularshows':
-        return Trakt.get_shows("popular")
+        return trakt.get_shows("popular")
     elif info == 'anticipatedshows':
-        return Trakt.get_shows("anticipated")
+        return trakt.get_shows("anticipated")
     elif info == 'mostcollectedshows':
-        return Trakt.get_shows_from_time("collected")
+        return trakt.get_shows_from_time("collected")
     elif info == 'mostplayedshows':
-        return Trakt.get_shows_from_time("played")
+        return trakt.get_shows_from_time("played")
     elif info == 'mostwatchedshows':
-        return Trakt.get_shows_from_time("watched")
+        return trakt.get_shows_from_time("watched")
     elif info == 'trendingmovies':
-        return Trakt.get_movies("trending")
+        return trakt.get_movies("trending")
     elif info == 'traktpopularmovies':
-        return Trakt.get_movies("popular")
+        return trakt.get_movies("popular")
     elif info == 'mostplayedmovies':
-        return Trakt.get_movies_from_time("played")
+        return trakt.get_movies_from_time("played")
     elif info == 'mostwatchedmovies':
-        return Trakt.get_movies_from_time("watched")
+        return trakt.get_movies_from_time("watched")
     elif info == 'mostcollectedmovies':
-        return Trakt.get_movies_from_time("collected")
+        return trakt.get_movies_from_time("collected")
     elif info == 'mostanticipatedmovies':
-        return Trakt.get_movies("anticipated")
+        return trakt.get_movies("anticipated")
     elif info == 'traktboxofficemovies':
-        return Trakt.get_movies("boxoffice")
+        return trakt.get_movies("boxoffice")
     elif info == 'similarartistsinlibrary':
         return local_db.get_similar_artists(params.get("artist_mbid"))
     # LastFM
     elif info == 'trackinfo':
         addon.clear_global(f'{params.get("prefix", "")}Summary')
         if params["artistname"] and params["trackname"]:
-            track_info = LastFM.get_track_info(artist_name=params["artistname"],
+            track_info = lastfm.get_track_info(artist_name=params["artistname"],
                                                track=params["trackname"])
             addon.set_global(f'{params.get("prefix", "")}Summary',
                             track_info["summary"])
     # Bands in town  API no longer provides event access
     #  elif info == 'topartistsnearevents':
     #    artists = local_db.get_artists()
-    #    from . import BandsInTown
-    #    return BandsInTown.get_near_events(artists[0:49])
+    #    from . import  bandsintown
+    #    return  bandsintown.get_near_events(artists[0:49])
     # Youtube
     elif info == 'youtubesearchvideos':
         addon.set_global(f'{params.get("prefix", "")}SearchValue',

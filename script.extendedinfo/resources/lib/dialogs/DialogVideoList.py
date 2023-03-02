@@ -11,8 +11,8 @@ import xbmcgui
 
 from resources.kutil131 import (ActionHandler, DialogBaseList, addon, busy,
                                 confirmdialog, selectdialog, utils)
-from resources.lib import TheMovieDB as tmdb
-from resources.lib.WindowManager import wm
+from resources.lib import themoviedb as tmdb
+from resources.lib.windowmanager import wm
 
 ID_BUTTON_SORT = 5001
 ID_BUTTON_GENREFILTER = 5002

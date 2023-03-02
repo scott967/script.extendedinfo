@@ -10,7 +10,7 @@ import xbmcgui
 from resources.kutil131 import ActionHandler, DialogBaseList, addon, busy, windows
 
 from resources.kutil131 import utils, youtube
-from resources.lib.WindowManager import wm
+from resources.lib.windowmanager import wm
 
 ch = ActionHandler()
 

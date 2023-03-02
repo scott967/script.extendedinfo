@@ -28,9 +28,9 @@ import xbmcgui
 from resources.kutil131 import ActionHandler, ItemList, addon
 
 from resources.kutil131 import VideoItem, imagetools, utils
-from resources.lib import TheMovieDB as tmdb
+from resources.lib import themoviedb as tmdb
 
-from .DialogBaseInfo import DialogBaseInfo
+from .dialogbaseinfo import DialogBaseInfo
 
 ID_CONTROL_PLOT = 132
 

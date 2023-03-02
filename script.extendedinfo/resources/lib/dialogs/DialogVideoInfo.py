@@ -9,9 +9,9 @@ import xbmcgui
 from resources.kutil131 import ActionHandler, addon
 
 from resources.kutil131 import utils
-from resources.lib import TheMovieDB as tmdb
+from resources.lib import themoviedb as tmdb
 
-from .DialogBaseInfo import DialogBaseInfo
+from .dialogbaseinfo import DialogBaseInfo
 
 BUTTONS = {8, 9, 10, 6001, 6002, 6003, 6005, 6006}
 
