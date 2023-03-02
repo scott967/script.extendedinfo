@@ -32,7 +32,7 @@ import urllib.request
 from resources.kutil131 import ItemList, addon
 
 from resources.kutil131 import VideoItem, local_db, utils
-from resources.lib import TheMovieDB as tmdb
+from resources.lib import themoviedb as tmdb
 
 TRAKT_KEY = 'e9a7fba3fa1b527c08c073770869c258804124c5d7c984ce77206e695fbaddd5'
 BASE_URL = "https://api.trakt.tv/"

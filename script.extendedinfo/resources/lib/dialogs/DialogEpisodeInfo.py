@@ -8,10 +8,10 @@ import xbmc
 from resources.kutil131 import ActionHandler, addon, busy
 
 from resources.kutil131 import imagetools
-from resources.lib import TheMovieDB as tmdb
-from resources.lib.WindowManager import wm
+from resources.lib import themoviedb as tmdb
+from resources.lib.windowmanager import wm
 
-from .DialogVideoInfo import DialogVideoInfo
+from .dialogvideoinfo import DialogVideoInfo
 
 ID_BUTTON_RATED = 6006
 

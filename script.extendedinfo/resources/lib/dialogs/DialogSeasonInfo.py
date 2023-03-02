@@ -7,9 +7,9 @@
 from resources.kutil131 import ActionHandler, addon
 
 from resources.kutil131 import imagetools, utils
-from resources.lib import TheMovieDB as tmdb
+from resources.lib import themoviedb as tmdb
 
-from .DialogVideoInfo import DialogVideoInfo
+from .dialogvideoinfo import DialogVideoInfo
 
 ch = ActionHandler()
 

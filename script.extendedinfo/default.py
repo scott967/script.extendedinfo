@@ -76,7 +76,7 @@ class Main:
         if not self.infos:
             addon.set_global('infodialogs.active', "true")
             try:
-                from resources.lib.WindowManager import wm
+                from resources.lib.windowmanager import wm
                 wm.open_video_list()
             finally:
                 addon.clear_global('infodialogs.active')

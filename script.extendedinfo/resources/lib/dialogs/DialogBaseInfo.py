@@ -12,8 +12,8 @@ from resources.kutil131 import (ActionHandler, addon, kodijson, selectdialog, sl
                     windows)
 
 from resources.kutil131 import VideoItem, utils, youtube
-from resources.lib import TheMovieDB as tmdb
-from resources.lib.WindowManager import wm
+from resources.lib import themoviedb as tmdb
+from resources.lib.windowmanager import wm
 
 ch = ActionHandler()
 
