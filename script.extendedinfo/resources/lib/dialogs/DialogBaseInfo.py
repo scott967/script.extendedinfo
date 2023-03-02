@@ -82,7 +82,7 @@ class DialogBaseInfo(windows.DialogXML):
         ch.serve_action(action, self.getFocusId(), self)
 
     def onClick(self, control_id: int):
-        super(DialogBaseInfo, self).onClick(control_id)
+        super().onClick(control_id)
         ch.serve(control_id, self)
 
     def onFocus(self, control_id):
