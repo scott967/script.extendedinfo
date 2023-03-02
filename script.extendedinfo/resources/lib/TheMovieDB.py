@@ -1413,7 +1413,7 @@ def get_movies_from_list(list_id, cache_days=5):
     '''
     get movie dict list from tmdb list.
     '''
-    data = get_data(url="list/%s" % (list_id),
+    data = get_data(url=f"list/{list_id}",
                     params={"language": addon.setting("LanguageID")},
                     cache_days=cache_days)
     return handle_movies(data["items"], False, None) if data else []

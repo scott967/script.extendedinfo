@@ -83,9 +83,10 @@ def start_info_actions(info: str, params: dict[str, str]):
         account_lists = tmdb.handle_lists(tmdb.get_account_lists())
         for item in account_lists:
             item.set_property("directory", True)
+            item.set_folder(True)
         return account_lists
     elif info == 'listmovies':
-        return tmdb.get_movies_from_list(params["id"])
+        return tmdb.get_movies_from_list(params["id"]) if params.get('id') else []
     elif info == 'airingtodaytvshows':
         return tmdb.get_tvshows("airing_today")
     elif info == 'onairtvshows':
