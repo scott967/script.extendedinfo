@@ -51,9 +51,13 @@ class Main:
         if args.startswith("---"):
             delimiter = "&"
             args = args[3:]
+        elif args.find("&---"):
+            delimiter = "&"
         else:
             delimiter = "&&"
         for arg in args.split(delimiter):
+            if arg.startswith("---"):
+                arg = arg[3:]
             param = arg.replace('"', '').replace("'", " ")
             if param.startswith('info='):
                 self.infos.append(param[5:])
