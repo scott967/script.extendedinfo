@@ -22,6 +22,9 @@ class VideoPlayer(xbmc.Player):
     def onPlayBackStopped(self):
         self.stopped = True
 
+    def onPlayBackError(self):
+        self.stopped = True
+
     def onAVStarted(self):
         self.started = True
         self.stopped = False
@@ -47,11 +50,16 @@ class VideoPlayer(xbmc.Player):
         self.stopped = False
 
     def wait_for_video_start(self):
+        """Timer that checks if Youtube can play selected listitem
+        Hard coded to 15 sec
+        """
         monitor = xbmc.Monitor()
-        timeout = 10
+        timeout = 15
         while not monitor.waitForAbort(1.0):  #wait 10 sec to see if video starts
+            if monitor.abortRequested():
+                break
             timeout += -1
-            if self.started:
+            if self.stopped or self.started:
                 break
             if timeout == 0:
                 self.stopped = True
