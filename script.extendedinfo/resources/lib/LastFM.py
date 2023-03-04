@@ -24,7 +24,15 @@ GOOGLE_MAPS_KEY = 'AIzaSyBESfDvQgWtWLkNiOYXdrA9aU-2hv_eprY'
 BASE_URL = 'http://ws.audioscrobbler.com/2.0/?'
 
 
-def _handle_albums(results) -> ItemList:
+def _handle_albums(results: dict) -> ItemList:
+    """Converts TADB query results to kutils131 ItemList
+
+    Args:
+        results (dict): TADB albums for an artist
+
+    Returns:
+        ItemList: a kutils131 ItemList od dicts
+    """
     albums = ItemList(content_type="albums")
     if not results:
         return albums
@@ -41,6 +49,14 @@ def _handle_albums(results) -> ItemList:
 
 
 def _handle_artists(results) -> ItemList:
+    """Converts TADB artist query to kutils ItemList
+
+    Args:
+        results (_type_): _description_
+
+    Returns:
+        ItemList: a kutils131 ItemList of artist info as dicts
+    """
     artists = ItemList(content_type="artists")
     if not results:
         return artists
@@ -61,7 +77,7 @@ def get_top_artists() -> ItemList:
     """Queries LastFM api chart.getTopArtists method for top 100 artists
 
     Returns:
-        ItemList: a kutils131object that wraps a list of artist
+        ItemList: a kutils131 object that wraps a list of artist
         info dicts
     """
     results: Optional[dict] = get_data(method="chart.getTopArtists",
