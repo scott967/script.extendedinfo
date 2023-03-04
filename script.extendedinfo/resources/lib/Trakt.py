@@ -103,8 +103,9 @@ def get_episodes(content):
                                  'homepage': tv["homepage"]})
             if tv["ids"].get("tmdb"):
                 art_info = tmdb.get_tvshow(tv["ids"]["tmdb"], light=True)
-                show.set_artwork(tmdb.get_image_urls(poster=art_info.get("poster_path"),
-                                                     fanart=art_info.get("backdrop_path")))
+                if art_info:
+                    show.set_artwork(tmdb.get_image_urls(poster=art_info.get("poster_path", ""),
+                                                     fanart=art_info.get("backdrop_path", "")))
             shows.append(show)
             count += 1
             if count > 20:
@@ -152,7 +153,8 @@ def handle_movies(results):
                               'language': item.get("language"),
                               'homepage': item.get("homepage")})
         art_info = tmdb.get_movie(item["ids"]["tmdb"], light=True)
-        movie.set_artwork(tmdb.get_image_urls(poster=art_info.get("poster_path"),
+        if art_info:
+            movie.set_artwork(tmdb.get_image_urls(poster=art_info.get("poster_path"),
                                               fanart=art_info.get("backdrop_path")))
         movies.append(movie)
     movies = local_db.merge_with_local(media_type="movie",
@@ -203,7 +205,8 @@ def handle_tvshows(results):
                              'airshorttime': airs.get("time"),
                              'watchers': item.get("watchers")})
         art_info = tmdb.get_tvshow(item["ids"]["tmdb"], light=True)
-        show.set_artwork(tmdb.get_image_urls(poster=art_info.get("poster_path"),
+        if art_info:
+            show.set_artwork(tmdb.get_image_urls(poster=art_info.get("poster_path"),
                                              fanart=art_info.get("backdrop_path")))
         shows.append(show)
     shows = local_db.merge_with_local(media_type="tvshow",
