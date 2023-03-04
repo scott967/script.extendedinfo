@@ -189,7 +189,6 @@ def get_data(method, params=None, cache_days=0.5):
     url = "{base_url}{method}?{params}".format(base_url=BASE_URL,
                                                method=method,
                                                params=urllib.parse.urlencode(params))
-    utils.log(f'youtube.get_data search url {url}')
     return utils.get_JSON_response(url=url,
                                    cache_days=cache_days,
                                    folder="YouTube")
