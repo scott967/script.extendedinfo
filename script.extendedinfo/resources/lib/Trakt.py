@@ -105,7 +105,7 @@ def get_episodes(content):
                 art_info = tmdb.get_tvshow(tv["ids"]["tmdb"], light=True)
                 if art_info:
                     show.set_artwork(tmdb.get_image_urls(poster=art_info.get("poster_path", ""),
-                                                     fanart=art_info.get("backdrop_path", "")))
+                                                     fanart=art_info.get("backdrop_path")))
             shows.append(show)
             count += 1
             if count > 20:
