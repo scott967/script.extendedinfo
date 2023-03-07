@@ -20,7 +20,7 @@ import xbmcvfs
 from resources.kutil131 import addon, busy, player, windows
 
 from resources.kutil131 import local_db, utils
-from resources.lib import themoviedb as tmdb
+from resources.lib import TheMovieDB as tmdb
 
 INFO_XML_CLASSIC = f'script-{addon.ID}-DialogVideoInfo.xml'
 LIST_XML_CLASSIC = f'script-{addon.ID}-VideoList.xml'
@@ -64,7 +64,7 @@ class WindowManager:
         opens movie video info dialog, deal with window stack
         """
         busy.show_busy()
-        from .dialogs.dialogmovieinfo import DialogMovieInfo
+        from .dialogs.DialogMovieInfo import DialogMovieInfo
         dbid = int(dbid) if dbid and int(dbid) > 0 else None
         if not movie_id:
             movie_id = tmdb.get_movie_tmdb_id(imdb_id=imdb_id,
@@ -83,7 +83,7 @@ class WindowManager:
         """
         busy.show_busy()
         dbid = int(dbid) if dbid and int(dbid) > 0 else None
-        from .dialogs.dialogtvshowinfo import DialogTVShowInfo
+        from .dialogs.DialogTVShowInfo import DialogTVShowInfo
         if tmdb_id:
             pass
         elif tvdb_id:
@@ -113,7 +113,7 @@ class WindowManager:
         needs *season AND (*tvshow_id OR *tvshow)
         """
         busy.show_busy()
-        from .dialogs.dialogseasoninfo import DialogSeasonInfo
+        from .dialogs.DialogSeasonInfo import DialogSeasonInfo
         if not tvshow_id:
             params = {"query": tvshow,
                       "language": addon.setting("language")}
@@ -144,7 +144,7 @@ class WindowManager:
         open season info, deal with window stack
         needs (*tvshow_id OR *tvshow) AND *season AND *episode
         """
-        from .dialogs.dialogepisodeinfo import DialogEpisodeInfo
+        from .dialogs.DialogEpisodeInfo import DialogEpisodeInfo
         if not tvshow_id and tvshow:
             tvshow_id = tmdb.search_media(media_name=tvshow,
                                           media_type="tv",
@@ -172,7 +172,7 @@ class WindowManager:
         Returns:
             None: if no tmdb actor id could be found
         """
-        from resources.lib.dialogs.dialogactorinfo import DialogActorInfo
+        from resources.lib.dialogs.DialogActorInfo import DialogActorInfo
         if name and not actor_id:  #use name to get person from tmdb for actor_id
             name = name.split(f" {addon.LANG(20347)} ")
             names = name[0].strip().split(" / ")
@@ -213,8 +213,8 @@ class WindowManager:
             media_type (str, optional): [description]. Defaults to "movie".
             search_str (str, optional): [description]. Defaults to "".
         """
-        from .dialogs import dialogvideolist
-        Browser = dialogvideolist.get_window(windows.DialogXML)
+        from .dialogs import DialogVideoList
+        Browser = DialogVideoList.get_window(windows.DialogXML)
         dialog = Browser(LIST_XML,
                          addon.PATH,
                          listitems=listitems,
@@ -231,8 +231,8 @@ class WindowManager:
         """
         open video list, deal with window stack
         """
-        from .dialogs import dialogyoutubelist
-        YouTube = dialogyoutubelist.get_window(windows.DialogXML)
+        from .dialogs import DialogYoutubeList
+        YouTube = DialogYoutubeList.get_window(windows.DialogXML)
         dialog = YouTube(f'script-{addon.ID}-YoutubeList.xml',
                          addon.PATH,
                          search_str=search_str,
