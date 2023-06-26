@@ -1,5 +1,3 @@
-# -*- coding: utf8 -*-
-
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
 # This program is Free Software see LICENSE file for details
 import datetime
@@ -258,22 +256,27 @@ def get_year(year_string):
     return year_string[:4] if year_string else ""
 
 
-def format_time(time, time_format=None):
+def format_time(time:int, time_format=None):
     """
     get formatted time
+    time (int): duration in secs
     time_format = h, m or None
     """
     try:
         intTime = int(time)
     except Exception:
         return time
-    hour = str(intTime / 60)
-    minute = str(intTime % 60).zfill(2)
+    #hour = str(intTime / 60)
+    #minute = str(intTime % 60).zfill(2)
+    minute, second = divmod(time, 60)
+    hour, minute = divmod(minute, 60)
     if time_format == "h":
-        return hour
+        return str(hour)
     elif time_format == "m":
-        return minute
-    elif intTime >= 60:
+        return str(minute)
+    elif time_format == 's':
+        return str(second)
+    elif intTime >= 3600:
         return hour + " h " + minute + " min"
     else:
         return minute + " min"
