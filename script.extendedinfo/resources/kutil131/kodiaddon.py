@@ -1,5 +1,3 @@
-# -*- coding: utf8 -*-
-
 # Copyright (C) 2016 - Philipp Temminghoff <phil65@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
@@ -61,7 +59,7 @@ class Addon:
 
     def get_password(self, setting_name):
         mac = str(uuid.getnode())
-        mac_hash = hashlib.md5(mac).hexdigest()
+        mac_hash = hashlib.md5(mac.encode()).hexdigest()
         if not self.addon.getSetting("mac_hash"):
             self.addon.setSetting("mac_hash", mac_hash)
         elif self.addon.getSetting("mac_hash") != mac_hash:
@@ -103,25 +101,39 @@ class Addon:
         HOME.clearProperties()
 
 
-def encode_string(clear):
+def encode_string(clear: str) -> str:
+    """base64 encodes a string
+
+    Args:
+        clear (str): string to be encoded
+
+    Returns:
+        str: the url safe base64 encoding as bytes
+    """
     enc = []
     key = str(uuid.getnode())
-    for i in range(len(clear)):
+    clear_enc = clear.encode()
+    for i in range(len(clear_enc)):
         key_c = key[i % len(key)]
-        enc_c = chr((ord(clear[i]) + ord(key_c)) % 256)
+        enc_c = chr((clear_enc[i] + ord(key_c)) % 256)
         enc.append(enc_c)
-    return base64.urlsafe_b64encode("".join(enc))
+    return base64.urlsafe_b64encode("".join(enc).encode()).decode()
 
 
-def decode_string(enc):
-    """
-    return decoded string (encoded with uuid)
+def decode_string(enc: str) -> str:
+    """return decoded string (encoded with uuid)
+
+    Args:
+        enc (str): base64 string encoded by encode_string
+    
+    Returns:
+        str:  the decoded string
     """
     dec = []
     key = str(uuid.getnode())
-    enc = base64.urlsafe_b64decode(enc)
+    enc = base64.urlsafe_b64decode(enc.encode()).decode()
     for i in range(len(enc)):
         key_c = key[i % len(key)]
-        dec_c = chr((256 + ord(enc[i]) - ord(key_c)) % 256)
+        dec_c = ((256 + ord(enc[i]) - ord(key_c)) % 256).to_bytes(1, 'little')
         dec.append(dec_c)
-    return "".join(dec)
+    return bytes.join(b'', dec).decode()
