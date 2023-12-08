@@ -125,6 +125,7 @@ class ListItem:
     def __repr__(self):
         return "\n".join(["Label:", self.label,
                           "Label2:", self.label2,
+                          "Path:", self.path,
                           "InfoLabels:", utils.dump_dict(self._infos),
                           "Properties:", utils.dump_dict(self._properties),
                           "Artwork:", utils.dump_dict(self._artwork),
