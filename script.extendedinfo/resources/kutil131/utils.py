@@ -391,9 +391,9 @@ def get_http(url, headers=False):
         headers = {'User-agent': 'Kodi/17.0 ( fbacher@kodi.tv )'}
     while (succeed < 2) and (not xbmc.Monitor().abortRequested()):
         try:
-            request = requests.get(url, headers=headers)
+            request = requests.get(url, headers=headers, timeout=10)
             return request.text
-        except Exception as err:
+        except requests.exceptions.RequestException as err:
             log(f"get_http: could not get data from {url} exception {err}")
             xbmc.sleep(1000)
             succeed += 1
@@ -404,9 +404,13 @@ def post(url, values, headers):
     """
     retuns answer to post request
     """
-    request = requests.post(url=url,
-                            data=json.dumps(values),
-                            headers=headers)
+    try:
+        request = requests.post(url=url,
+                                data=json.dumps(values),
+                                headers=headers,
+                                timeout=10)
+    except requests.exceptions.RequestException as err:
+        log(f"get_http: could not get data from {url} exception {err}")
     return json.loads(request.text)
 
 
@@ -414,9 +418,13 @@ def delete(url, values, headers):
     """
     returns answer to delete request
     """
-    request = requests.delete(url=url,
-                              data=json.dumps(values),
-                              headers=headers)
+    try:
+        request = requests.delete(url=url,
+                                data=json.dumps(values),
+                                headers=headers,
+                                timeout=10)
+    except requests.exceptions.RequestException as err:
+        log(f"get_http: could not get data from {url} exception {err}")
     return json.loads(request.text)
 
 
@@ -490,8 +498,12 @@ def get_file(url):
     clean_url = translate_path(urllib.parse.unquote(url)).replace("image://", "")
     clean_url = clean_url.rstrip("/")
     cached_thumb = xbmc.getCacheThumbName(clean_url)
-    vid_cache_file = os.path.join("special://profile/Thumbnails/Video", cached_thumb[0], cached_thumb)
-    cache_file_jpg = os.path.join("special://profile/Thumbnails/", cached_thumb[0], cached_thumb[:-4] + ".jpg").replace("\\", "/")
+    vid_cache_file = os.path.join("special://profile/Thumbnails/Video",
+                                  cached_thumb[0],
+                                  cached_thumb)
+    cache_file_jpg = os.path.join("special://profile/Thumbnails/",
+                                  cached_thumb[0],
+                                  cached_thumb[:-4] + ".jpg").replace("\\", "/")
     cache_file_png = cache_file_jpg[:-4] + ".png"
     if xbmcvfs.exists(cache_file_jpg):
         log("cache_file_jpg Image: " + url + "-->" + cache_file_jpg)
