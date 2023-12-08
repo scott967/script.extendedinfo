@@ -40,7 +40,7 @@ def _handle_albums(results: dict) -> ItemList:
                            'mbid': album.get('mbid', ""),
                            'mediatype': "album",
                            'thumb': album['image'][-1]['#text'],
-                           'label': "%s - %s" % (album['artist']['name'], album['name']),
+                           'label': f"{album['artist']['name']} - {album['name']}",
                            'title': album['name']})
             albums.append(album)
     return albums
@@ -163,8 +163,7 @@ def get_data(method: str, params=None, cache_days=0.5) -> dict:
     params["api_key"] = LAST_FM_API_KEY
     params["format"] = "json"
     params = {k: str(v) for k, v in params.items() if v}
-    url = "{base_url}{params}".format(base_url=BASE_URL,
-                                      params=urllib.parse.urlencode(params))
+    url = f"{BASE_URL}{urllib.parse.urlencode(params)}"
     return utils.get_JSON_response(url=url,
                                    cache_days=cache_days,
                                    folder="LastFM")

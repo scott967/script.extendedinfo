@@ -256,7 +256,7 @@ def set_rating(media_type, media_id, rating, dbid=None):
 def send_request(url, params, values, delete=False):
     params["api_key"] = TMDB_KEY
     params = {k: str(v) for k, v in params.items() if v}
-    url = "%s%s?%s" % (URL_BASE, url, urllib.parse.urlencode(params))
+    url = f"{URL_BASE}{url}?{urllib.parse.urlencode(params)}"
     if delete:
         return utils.delete(url, values=values, headers=HEADERS)
     else:
