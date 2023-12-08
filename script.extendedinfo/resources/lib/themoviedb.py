@@ -85,7 +85,8 @@ from resources.kutil131 import (ItemList, VideoItem, addon, kodijson, local_db,
                                 selectdialog, utils)
 from resources.lib import localdatahandler
 
-TMDB_KEY = '34142515d9d23817496eeb4ff1d223d0'
+#TMDB_KEY = '34142515d9d23817496eeb4ff1d223d0'
+TMDB_KEY = 'f49b34e973a5d63ad060633d43260738'
 POSTER_SIZES = ["w92", "w154", "w185", "w342", "w500", "w780", "original"]
 LOGO_SIZES = ["w45", "w92", "w154", "w185", "w300", "w500", "original"]
 BACKDROP_SIZES = ["w300", "w780", "w1280", "original"]
