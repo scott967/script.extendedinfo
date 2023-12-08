@@ -231,14 +231,14 @@ def extract_youtube_id(raw_string):
 #     YDStreamExtractor.handleDownload(vid)
 
 
-def notify(header="", message="", icon=addon.ICON, time=5000, sound=True):
+def notify(header="", message="", icon=addon.ICON, ntime=5000, sound=True):
     """
     show kodi notification dialog
     """
     xbmcgui.Dialog().notification(heading=header,
                                   message=message,
                                   icon=icon,
-                                  time=time,
+                                  time=ntime,
                                   sound=sound)
 
 
@@ -265,19 +265,19 @@ def get_year(year_string):
     return year_string[:4] if year_string else ""
 
 
-def format_time(time:int, time_format=None):
+def format_time(ftime:int, time_format=None):
     """
     get formatted time
     time (int): duration in secs
     time_format = h, m or None
     """
     try:
-        intTime = int(time)
+        intTime = int(ftime)
     except Exception:
-        return time
+        return ftime
     #hour = str(intTime / 60)
     #minute = str(intTime % 60).zfill(2)
-    minute, second = divmod(time, 60)
+    minute, second = divmod(ftime, 60)
     hour, minute = divmod(minute, 60)
     if time_format == "h":
         return str(hour)
@@ -367,7 +367,11 @@ def calculate_age(born, died=False):
     else:
         return ""
     actor_born = born.split("-")
-    base_age = int(ref_day[0]) - int(actor_born[0])
+    try:
+        base_age = int(ref_day[0]) - int(actor_born[0])
+    except ValueError as err:
+        log(f'utils.calculate_age fail for actor_born {actor_born} with error {err}')
+        return ""
     if len(actor_born) > 1:
         diff_months = int(ref_day[1]) - int(actor_born[1])
         diff_days = int(ref_day[2]) - int(actor_born[2])
@@ -579,7 +583,7 @@ def dict_to_listitems(data=None):
     return itemlist
 
 
-def pretty_date(time=False):
+def pretty_date(btime=False):
     """
     Get a datetime object or a int() Epoch timestamp and return a
     pretty string like 'an hour ago', 'Yesterday', '3 months ago',
@@ -587,11 +591,11 @@ def pretty_date(time=False):
     # https://stackoverflow.com/questions/1551382/user-friendly-time-format-in-python
     """
     now = datetime.datetime.now()
-    if type(time) is int:
-        diff = now - datetime.datetime.fromtimestamp(time)
-    elif isinstance(time, datetime.datetime):
-        diff = now - time
-    elif not time:
+    if isinstance(btime, int):
+        diff = now - datetime.datetime.fromtimestamp(btime)
+    elif isinstance(btime, datetime.datetime):
+        diff = now - btime
+    elif not btime:
         diff = now - now
     second_diff = diff.seconds
     day_diff = diff.days
