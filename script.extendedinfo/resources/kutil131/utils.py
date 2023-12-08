@@ -24,7 +24,16 @@ import xbmcvfs
 from resources.kutil131 import addon
 
 
-def youtube_info_by_id(youtube_id):
+def youtube_info_by_id(youtube_id) -> tuple:
+    """Gets youtube video info from YDSStreamExtractor
+    Currently inop due to YDSStreamextractor not maintained.
+
+    Args:
+        youtube_id (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     #vid = get_youtube_info(youtube_id)
     vid = None #added
     if not vid:
@@ -456,7 +465,14 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> di
     return results
 
 
-def dict_to_windowprops(data=None, prefix="", window_id=10000):
+def dict_to_windowprops(data:dict=None, prefix="", window_id=10000):
+    """Sets window property keys / values from dict
+
+    Args:
+        data (dict optional):  the data to be set as properties Defaults to None.
+        prefix (str, optional): a prefix for the property key Defaults to "".
+        window_id (int, optional): Kodi window id. Defaults to 10000.
+    """
     window = xbmcgui.Window(window_id)
     if not data:
         return None

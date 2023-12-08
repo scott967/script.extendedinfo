@@ -23,14 +23,14 @@ BASE_URL = 'https://www.theaudiodb.com/api/v1/json'
 PLUGIN_BASE = 'plugin://script.extendedinfo/?info='
 
 
-def _handle_albums(results):
-    """[summary]
+def _handle_albums(results:dict) -> ItemList:
+    """Creates an ItemList of kutils131 AudioItems
 
     Args:
-        results ([type]): [description]
+        results (dict): TADB album info
 
     Returns:
-        [type]: [description]
+        ItemList: kutils131 ItemList of AudioItems
     """
     albums = ItemList(content_type="albums")
     if not results.get('album'):
@@ -77,6 +77,14 @@ def _handle_albums(results):
 
 
 def _handle_tracks(results: dict) -> ItemList:
+    """Creates an ItemList of track AudioItems
+
+    Args:
+        results (dict): TADB tracks
+
+    Returns:
+        ItemList: The kutils131 itemlist of the tracts
+    """
     tracks = ItemList(content_type="songs")
     if not results.get('track'):
         return tracks
@@ -95,7 +103,15 @@ def _handle_tracks(results: dict) -> ItemList:
     return tracks
 
 
-def _handle_musicvideos(results):
+def _handle_musicvideos(results:dict) -> ItemList:
+    """Creates an ItemList of TADB VideoItems 
+
+    Args:
+        results (dict): TADB musicvideos
+
+    Returns:
+        ItemList: the kutils131 ItemList of musicvideos
+    """
     mvids = ItemList(content_type="musicvideos")
     if not results.get('mvids'):
         return mvids
@@ -114,6 +130,14 @@ def _handle_musicvideos(results):
 
 
 def extended_artist_info(results: dict) -> dict:
+    """Gets artist info from TADB and returns artist dict
+
+    Args:
+        results (dict): TADB artist info
+
+    Returns:
+        dict: artist details using Kodi properties keywords
+    """
     if not results.get('artists'):
         return {}
     local_bio = 'strBiography' + addon.setting("LanguageID").upper()
@@ -164,7 +188,7 @@ def get_artist_discography(search_str) -> ItemList:
         search_str (str): Artist name
 
     Returns:
-        [ItemList]: Kutils list instance of AudioItems
+        [ItemList]: kutils131 ItemList instance of AudioItems
     """
     if not search_str:
         return ItemList(content_type="albums")
@@ -214,7 +238,17 @@ def get_most_loved_tracks(search_str="", mbid="") -> ItemList | list:
     return _handle_tracks(results)
 
 
-def get_album_details(audiodb_id="", mbid=""):
+def get_album_details(audiodb_id="", mbid="") -> ItemList | list:
+    """Creates ItemList of TADB alubm detals
+
+    Args:
+        audiodb_id (str, optional): TADB album id "".
+        mbid (str, optional): mbid album groupd id Defaults to "".
+
+    Returns:
+        list: empty if no results
+        ItemList: kutils131 ItemList of album AudioItems
+    """
     if audiodb_id:
         url = 'album'
         params = {"m": audiodb_id}
@@ -227,7 +261,15 @@ def get_album_details(audiodb_id="", mbid=""):
     return _handle_albums(results)[0]
 
 
-def get_musicvideos(audiodb_id):
+def get_musicvideos(audiodb_id) -> ItemList:
+    """Creates ItemList of musicvideo Videoitems
+
+    Args:
+        audiodb_id (str): TADB id
+
+    Returns:
+        ItemList: kutils131 ItemList
+    """
     if not audiodb_id:
         return ItemList(content_type="musicvideos")
     params = {"i": audiodb_id}

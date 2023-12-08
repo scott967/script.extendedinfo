@@ -213,10 +213,10 @@ def search(search_str="", hd="", orderby="relevance", limit=40, extended=True,
         utils.log('youtube get_data ERROR: {error}'.format(error=results.get('error').get('message')))
     if not results or 'items' not in results.keys():
         return None
-	
+
 	# Give initial value to keep IDE happy as well as in case we drop through all
 	# choices
-	
+
     listitems: ItemList = ItemList()
     if media_type == "video":
         listitems = handle_videos(results["items"], extended=extended, api_key=api_key)

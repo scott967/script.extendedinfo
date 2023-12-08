@@ -47,7 +47,7 @@ def _handle_albums(results: dict) -> ItemList:
 
 
 def _handle_artists(results) -> ItemList:
-    """Converts TADB artist query to kutils ItemList
+    """Converts TADB artist query to kutils131 ItemList
 
     Args:
         results (_type_): _description_
@@ -111,7 +111,7 @@ def get_similar_artists(artist_mbid: str) -> ItemList:
         artist_mbid (str): The musicbrainz id for the artist
 
     Returns:
-        ItemList: a kutils object that wraps a list of artists info dicts
+        ItemList: a kutils131 object that wraps a list of artists info dicts
     """
     if not artist_mbid:
         return ItemList(content_type="artists")
