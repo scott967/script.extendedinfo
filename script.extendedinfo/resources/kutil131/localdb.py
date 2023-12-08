@@ -191,7 +191,7 @@ class LocalDB:
                             'playcount': movie.get("playcount"),
                             'setid': movie.get("setid"),
                             'top250': movie.get("top250"),
-                            'imdbnumber': movie.get("uniqueid").get("imdb", ""),
+                            'imdbnumber': movie.get("uniqueid", {}).get("imdb", ""),
                             'userrating': movie.get('userrating'),
                             'trailer': trailer,
                             'rating': round(float(movie['rating']), 1),
