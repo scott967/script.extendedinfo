@@ -83,7 +83,6 @@ import urllib.request
 
 from resources.kutil131 import (ItemList, VideoItem, addon, kodijson, local_db,
                                 selectdialog, utils)
-from resources.lib import localdatahandler
 
 #TMDB_KEY = '34142515d9d23817496eeb4ff1d223d0'
 TMDB_KEY = 'f49b34e973a5d63ad060633d43260738'
