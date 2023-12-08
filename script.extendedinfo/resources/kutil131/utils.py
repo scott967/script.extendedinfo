@@ -173,14 +173,14 @@ def get_skin_string(name):
     """
     get String with name *name
     """
-    return xbmc.getInfoLabel("Skin.String(%s)" % name)
+    return xbmc.getInfoLabel(f"Skin.String({name})")
 
 
 def set_skin_string(name, value):
     """
     Set String *name to value *value
     """
-    xbmc.executebuiltin("Skin.SetString(%s, %s)" % (name, value))
+    xbmc.executebuiltin(f"Skin.SetString({name}, {value})")
 
 
 def run_async(func):
@@ -374,7 +374,7 @@ def calculate_age(born, died=False):
         if diff_months < 0 or (diff_months == 0 and diff_days < 0):
             base_age -= 1
         elif diff_months == 0 and diff_days == 0 and not died:
-            notify("%s (%i)" % (addon.LANG(32158), base_age))
+            notify(f"{addon.LANG(32158)} ({base_age})")
     return base_age
 
 
@@ -455,7 +455,8 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> di
             # utils.log("download %s. time: %f" % (url, time.time() - now))
             save_to_file(results, hashed_url, cache_path)
         except Exception as err:
-            log(f"Exception: Could not get new JSON data from {url} with error {err}. Trying to fallback to cache")
+            log(f"Exception: Could not get new JSON data from {url} "
+                f"with error {err}. Trying to fallback to cache")
             #log(f'kutils131.utils.get_JSON_response {response}')
             results = read_from_file(path) if xbmcvfs.exists(path) else []
     if not results:
@@ -478,7 +479,7 @@ def dict_to_windowprops(data:dict=None, prefix="", window_id=10000):
         return None
     for (key, value) in data.items():
         value = str(value)
-        window.setProperty('%s%s' % (prefix, key), value)
+        window.setProperty(f'{prefix}{key}', value)
 
 
 def get_file(url):
@@ -503,9 +504,9 @@ def get_file(url):
         response = urllib.request.urlopen(request, timeout=3)
         data = response.read()
         response.close()
-        log('image downloaded: ' + clean_url)
+        log(f'image downloaded: {clean_url}')
     except Exception:
-        log('image download failed: ' + clean_url)
+        log(f'image download failed: {clean_url}')
         return ""
     if not data:
         return ""
@@ -515,7 +516,7 @@ def get_file(url):
             f.write(data)
         return translate_path(image)
     except Exception:
-        log('failed to save image ' + url)
+        log(f'failed to save image {url}')
         return ""
 
 
@@ -525,12 +526,12 @@ def fetch_musicbrainz_id(artist, artist_id=-1):
     uses musicbrainz.org
     """
     base_url = "http://musicbrainz.org/ws/2/artist/?fmt=json"
-    url = '&query=artist:%s' % urllib.parse.quote_plus(artist.encode('utf-8'))
+    url = f'&query=artist:{urllib.parse.quote_plus(artist.encode("utf-8"))}'
     results = get_JSON_response(url=base_url + url,
                                 cache_days=30,
                                 folder="MusicBrainz")
     if results and len(results["artists"]) > 0:
-        log("found artist id for %s: %s" % (artist, results["artists"][0]["id"]))
+        log(f'found artist id for {artist}: {results["artists"][0]["id"]}')
         return results["artists"][0]["id"]
     else:
         return None
@@ -561,7 +562,7 @@ def dict_to_listitems(data=None):
         return []
     itemlist = []
     for (count, result) in enumerate(data):
-        listitem = xbmcgui.ListItem('%s' % (str(count)))
+        listitem = xbmcgui.ListItem(f'{str(count)}')
         for (key, value) in result.items():
             if not value:
                 continue

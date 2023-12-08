@@ -18,7 +18,7 @@ from resources.kutil131 import VideoItem, utils
 
 # TVRAGE_KEY = 'VBp9BuIr5iOiBeWCFRMG'
 API_KEY = ''
-BASE_URL = "http://api.bandsintown.com/events/search?format=json&api_version=2.0&app_id=%s&" % API_KEY
+BASE_URL = f"http://api.bandsintown.com/events/search?format=json&api_version=2.0&app_id={API_KEY}&"
 
 
 def handle_events(results: list) -> ItemList:

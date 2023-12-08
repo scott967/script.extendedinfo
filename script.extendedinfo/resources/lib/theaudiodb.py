@@ -45,8 +45,7 @@ def _handle_albums(results:dict) -> ItemList:
         elif item.get('strDescription'):
             desc = item['strDescription']
         if item.get('strReview'):
-            desc += "[CR][CR][B]%s:[/B][CR][CR]%s" % (
-                addon.LANG(185), item['strReview'])
+            desc += f"[CR][CR][B]{addon.LANG(185)}:[/B][CR][CR]{item['strReview']}"
         album = AudioItem(label=item['strAlbum'],
                           path="")
         album.set_infos({'artist': item['strArtist'],
@@ -91,14 +90,14 @@ def _handle_tracks(results: dict) -> ItemList:
     for item in results['track']:
         youtube_id = utils.extract_youtube_id(item.get('strMusicVid', ''))
         track = AudioItem(label=item['strTrack'],
-                          path="%syoutubevideo&&id=%s" % (PLUGIN_BASE, youtube_id))
+                          path=f"{PLUGIN_BASE}youtubevideo&&id={youtube_id}")
         track.set_infos({'title': item['strTrack'],
                          'album': item['strAlbum'],
                          'artist': item['strArtist'],
                          'mediatype': "song"})
         track.set_properties({'mbid': item['strMusicBrainzID']})
         track.set_artwork(
-            {'thumb': "http://i.ytimg.com/vi/%s/0.jpg" % youtube_id})
+            {'thumb': f"http://i.ytimg.com/vi/{youtube_id}/0.jpg"})
         tracks.append(track)
     return tracks
 
@@ -118,13 +117,13 @@ def _handle_musicvideos(results:dict) -> ItemList:
     for item in results['mvids']:
         youtube_id = utils.extract_youtube_id(item.get('strMusicVid', ''))
         mvid = VideoItem(label=item['strTrack'],
-                         path="%syoutubevideo&&id=%s" % (PLUGIN_BASE, youtube_id))
+                         path=f"{PLUGIN_BASE}youtubevideo&&id={youtube_id}")
         mvid.set_infos({'title': item['strTrack'],
                         'plot': item['strDescriptionEN'],
                         'mediatype': "musicvideo"})
         mvid.set_properties({'id': item['idTrack']})
         mvid.set_artwork(
-            {'thumb': "http://i.ytimg.com/vi/%s/0.jpg" % youtube_id})
+            {'thumb': f"http://i.ytimg.com/vi/{youtube_id}/0.jpg"})
         mvids.append(mvid)
     return mvids
 
@@ -307,7 +306,6 @@ def get_data(url: str, params: dict) -> dict:
     if tadb_key is None or tadb_key == '':
         tadb_key = AUDIO_DB_KEY #limited function key
     params: dict = {k: str(v) for k, v in params.items() if v}
-    url: str = "{0}/{1}/{2}.php?{3}".format(BASE_URL,
-                                            tadb_key, url, urllib.parse.urlencode(params))
+    url: str = f"{BASE_URL}/{tadb_key}/{url}.php?{urllib.parse.urlencode(params)}"
     return utils.get_JSON_response(url=url,
                                    folder="TheAudioDB")
