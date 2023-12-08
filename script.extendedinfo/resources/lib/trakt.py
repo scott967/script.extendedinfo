@@ -8,14 +8,14 @@ TMDB
 Public functions:
     get_episodes(content) gets upcoming episodes content shows or
                           premiering shows content premieres
-                          returns a kutils ItemList
+                          returns a kutils131 ItemList
     get_shows(show_type)  gets tvshows for showtype trending/popular/anticipated
-                          returns a kutils ItemList
+                          returns a kutils131 ItemList
     get_shows_from_time(show_type, period) gets tvshos for showtype collected/played/
                                            watched for previous month
-                                           returns a kutils ItemList
+                                           returns a kutils131 ItemList
     get_movies(movie_type) gets movies for movietype trending/popular/anticipated
-                           returns a kutils ItemList
+                           returns a kutils131 ItemList
     get_movies_from_time(movie_type, period) gets movies forf movietype collected/
                                              played/watched for previous month
     get_similar(media_type, imdb_id) gets related mediatype show(s)/movie(s) from
@@ -49,7 +49,7 @@ def get_episodes(content):
         content (str): enum shows (upcoming) or premieres (new shows)
 
     Returns:
-        ItemList: a kutils ItemList instance of VideoItems
+        ItemList: a kutils131 ItemList instance of VideoItems
     """
     shows = ItemList(content_type="episodes")
     url = ""
@@ -120,7 +120,7 @@ def handle_movies(results):
         results (list): a list of dicts, each dict is Trakt data for movie
 
     Returns:
-        ItemList: a kutils ItemList of VideoItems
+        ItemList: a kutils131 ItemList of VideoItems
     """
     movies = ItemList(content_type="movies")
     path = 'extendedinfo&&id=%s' if addon.bool_setting(
@@ -163,13 +163,13 @@ def handle_movies(results):
 
 
 def handle_tvshows(results):
-    """helper function creates kutils VideoItems and adds to an ItemList
+    """helper function creates kutils131 VideoItems and adds to an ItemList
 
     Args:
         results (list): a list of dicts, each dict is Trakt data for show
 
     Returns:
-        ItemList: a kutils ItemList of VideoItems
+        ItemList: a kutils131 ItemList of VideoItems
     """
     shows = ItemList(content_type="tvshows")
     for i in results:
@@ -221,7 +221,7 @@ def get_shows(show_type):
         show_type (str): enum trending/popular/anticipated
 
     Returns:
-        ItemList: a kutils ItemList of VideoItems
+        ItemList: a kutils131 ItemList of VideoItems
     """
     results = get_data(url='shows/%s' % show_type,
                        params={"extended": "full"})
@@ -236,7 +236,7 @@ def get_shows_from_time(show_type, period="monthly"):
         period (str, optional): enum daily/weekly/monthly/yearly/all Defaults to "monthly"
 
     Returns:
-        ItemList: a kutils ItemList of VideoItems
+        ItemList: a kutils131 ItemList of VideoItems
     """
     results = get_data(url='shows/%s/%s' % (show_type, period),
                        params={"extended": "full"})
@@ -250,7 +250,7 @@ def get_movies(movie_type):
         movie_type (str): enum trending/popular/anticipated
 
     Returns:
-        ItemList: a kutils ItemList of VideoItems
+        ItemList: a kutils131 ItemList of VideoItems
     """
     results = get_data(url='movies/%s' % movie_type,
                        params={"extended": "full"})
@@ -265,7 +265,7 @@ def get_movies_from_time(movie_type, period="monthly"):
         period (str, optional): enum daily/weekly/monthly/yearly/all Defaults to "monthly"
 
     Returns:
-        ItemList: a kutils ItemList of VideoItems
+        ItemList: a kutils131 ItemList of VideoItems
     """
     results = get_data(url='movies/%s/%s' % (movie_type, period),
                        params={"extended": "full"})
@@ -280,7 +280,7 @@ def get_similar(media_type, imdb_id):
         imdb_id (str): the imbd id for show or movie
 
     Returns:
-        ItemList: a kutils ItemList of VideoItems
+        ItemList: a kutils131 ItemList of VideoItems
     """
     if not imdb_id or not media_type:
         return None
@@ -307,7 +307,7 @@ def get_data(url, params=None, cache_days=10):
 
     Returns:
         dict: a dict from the deserialized JSON response from api or None
-        Note: kutils does not return the GET failure code (ie if not 200)
+        Note: kutils131 does not return the GET failure code (ie if not 200)
     """
     params = params if params else {}
     params["limit"] = 10

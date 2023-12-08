@@ -22,13 +22,13 @@ BASE_URL = "http://api.bandsintown.com/events/search?format=json&api_version=2.0
 
 
 def handle_events(results: list) -> ItemList:
-    """converts a list of BandsinTown events to a kutils ItemList
+    """converts a list of BandsinTown events to a kutils131 ItemList
 
     Args:
         results (list): list of event dicts
 
     Returns:
-        ItemList: a kutils ItemList of VideoItems
+        ItemList: a kutils131 ItemList of VideoItems
     """
     events = ItemList()
     for event in results:
@@ -54,7 +54,7 @@ def get_near_events(artists: str) -> ItemList:  # not possible with api 2.0
         artists (str): _description_
 
     Returns:
-        ItemList: A kutils ItemList of VideoItems for artist events
+        ItemList: A kutils131 ItemList of VideoItems for artist events
     """
     arts = [urllib.parse.quote(art['artist'].encode("utf-8"))
             for art in artists[:50]]

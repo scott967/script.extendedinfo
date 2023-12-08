@@ -364,6 +364,7 @@ def start_info_actions(info: str, params: dict[str, str]):
             return None
         addon.set_global('infodialogs.active', "true")
         try:
+            utils.log('call wm.open_movie_info') #debug
             wm.open_movie_info(movie_id=params.get("id"),
                             dbid=params.get("dbid"),
                             imdb_id=params.get("imdb_id"),
@@ -372,6 +373,7 @@ def start_info_actions(info: str, params: dict[str, str]):
             addon.clear_global('infodialogs.active')
     elif info == 'extendedactorinfo':
         if addon.get_global('infodialogs.active'):
+            utils.log('process already running wait for complete')
             return None
         addon.set_global('infodialogs.active', "true")
         try:

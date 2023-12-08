@@ -387,7 +387,7 @@ class VideoItem(ListItem):
     """Kodi video listitem, based on built-in datatypes
 
     Args:
-        ListItem (class): The Kutils ListItem class
+        ListItem (class): The kutils131 ListItem class
     """
 
     def __init__(self, *args, **kwargs):
@@ -407,7 +407,7 @@ class VideoItem(ListItem):
 
     def from_listitem(self, listitem: xbmcgui.ListItem):
         """
-        xbmcgui listitem -> kodi65 listitem
+        xbmcgui listitem -> kutils131 listitem
         """
         info = listitem.getVideoInfoTag()
         self.label = listitem.getLabel()
