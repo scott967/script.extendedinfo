@@ -195,6 +195,21 @@ class LoginProvider:
             return None
         return str(response["guest_session_id"])
 
+    def test_session_id(self, session_id) -> bool:
+        """tests session_id by getting account_id
+        If no account_id returned session_id is invalid.
+
+        Args:
+            session_id (str): a session_id stored in settings
+
+        Returns:
+            bool: True if session_id got and account_id
+        """
+        response = get_data(url="account",
+                            params={"session_id": session_id},
+                            cache_days=999999)
+        return response.get("status_code") != 1
+
     def get_session_id(self, cache_days=999) -> str:
         """gets the tmdb session id from addon settings or creates one if not found
 
@@ -206,7 +221,9 @@ class LoginProvider:
             str: the tmdb session id
         """
         if addon.setting("session_id"):
-            return addon.setting("session_id")
+            self.session_id = addon.setting("session_id")
+            if self.test_session_id(self.session_id):
+                return addon.setting("session_id")
         self.create_session_id()
         return self.session_id
 
