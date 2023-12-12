@@ -131,7 +131,7 @@ class LoginProvider:
     """
 
     def __init__(self, *args, **kwargs) -> LoginProvider:
-        """Creates a new session for user at tmdb
+        """Creates a new user for accessing tmdb
 
         Returns:
             LoginProvider: session for user
@@ -141,6 +141,15 @@ class LoginProvider:
         self.account_id = None
         self.username = kwargs.get("username")
         self.password = kwargs.get("password")
+    
+    def reset_session_id(self):
+        """Resets the user session_id in settings when tmdb authentication fails
+        This will require obraining a new session_id via get_session_id
+        """
+        utils.log('tmdb.LoginProvider tmdb authentication failed, resetting session_id')
+        if addon.setting("session_id"):
+            addon.set_setting("session_id", "")
+
 
     def check_login(self) -> bool:
         """determines if user has an active login (session id) on tmdb when opening a tmdb-based
@@ -148,6 +157,7 @@ class LoginProvider:
         see https://developers.themoviedb.org/3/authentication/how-do-i-generate-a-session-id
         for the tmdb protocol
         Note: in api v4 this will become mandatory.  Optional in v3
+        Note2: checks addon settings for a saved session id first.
 
         Returns:
             bool: true if user has an active session id from tmdb
@@ -157,7 +167,7 @@ class LoginProvider:
         return False
 
     def get_account_id(self) -> str:
-        """returns TMDB account id
+        """returns TMDB account id.  Requires an active session id
 
         Returns:
             str: the tmdb account id or None
@@ -202,6 +212,8 @@ class LoginProvider:
 
     def create_session_id(self) -> None:
         """gets session id from tmdb as self.session_id and saves it in addon settings
+        1.  get request token from tmdb
+        2.  create session with login using username/pass
         """
         response = get_data(url="authentication/token/new",
                             cache_days=0)
@@ -211,17 +223,19 @@ class LoginProvider:
         response = get_data(url="authentication/token/validate_with_login",
                             params=params,
                             cache_days=0)
+        utils.log(f'tmdb.LoginProvider.create_session_id session with login {response}')
         if response and response.get("success"):
             request_token = response["request_token"]
             response = get_data(url="authentication/session/new",
                                 params={"request_token": request_token})
             if response and "success" in response:
+                utils.log(f'tmdb.LoginProvider.create_session_in got new session id {response}')
                 self.session_id = str(response["session_id"])
                 addon.set_setting("session_id", self.session_id)
 
 
 def set_rating(media_type, media_id, rating, dbid=None):
-    '''
+    '''Sets rating for a user media item on tmdb account and Kodi userrating
     media_type: movie, tv or episode
     media_id: tmdb_id / episode ident array
     rating: rating value (1 - 10, 0 for deleting)
@@ -234,8 +248,10 @@ def set_rating(media_type, media_id, rating, dbid=None):
     params = {}
     if Login.check_login():
         params["session_id"] = Login.get_session_id()
+        utils.log('tmdb.set_rating got login session id')
     else:
         params["guest_session_id"] = Login.get_guest_session_id()
+        utils.log('tmdb.set_rating no login use guest session id')
     if media_type == "episode":
         if not media_id[1]:
             media_id[1] = "0"
@@ -254,6 +270,17 @@ def set_rating(media_type, media_id, rating, dbid=None):
 
 
 def send_request(url, params, values, delete=False):
+    """formats a tmdb api query url
+
+    Args:
+        url (_type_): _description_
+        params (_type_): _description_
+        values (_type_): _description_
+        delete (bool, optional): request is a post or delete. Defaults to False.
+
+    Returns:
+        _type_: _description_
+    """
     params["api_key"] = TMDB_KEY
     params = {k: str(v) for k, v in params.items() if v}
     url = f"{URL_BASE}{url}?{urllib.parse.urlencode(params)}"
@@ -880,7 +907,7 @@ def get_set_id(set_name):
     return response["results"][0]["id"]
 
 
-def get_data(url: str = "", params: dict = None, cache_days: float = 14) -> dict:
+def get_data(url: str = "", params: dict = None, cache_days: float = 14) -> dict|None:
     """Queries tmdb api v3 or local cache
 
     Args:
@@ -898,12 +925,15 @@ def get_data(url: str = "", params: dict = None, cache_days: float = 14) -> dict
     params["api_key"] = TMDB_KEY
     params = {k: str(v) for k, v in params.items() if v}
     url = "%s%s?%s" % (URL_BASE, url, urllib.parse.urlencode(params))
+    utils.log(f'tmdb.get_data query url: {url}')
     response = utils.get_JSON_response(url, cache_days, "TheMovieDB")
     if not response:
         utils.log("tmdb.get_data No response from TMDB")
         return None
     if "status_code" in response and response.get("status_code") != 1:
         utils.log(f'tmdb.get_data FAIL TMDB status code: {response.get("status_code")} {traceback.format_stack(limit=-3)}')
+        if response.get('status_code') == 3:
+            Login.reset_session_id()
         return None
     return response
 
@@ -1034,10 +1064,10 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> tuple[VideoI
                 dict of key str value kutils131 ItemList
                 dict of account states
     """
+    utils.log(f'tmdb.extended_movie_info for {movie_id}')
     if not movie_id:
         return None
-    info: dict | None = get_movie(
-        movie_id=movie_id, cache_days=cache_days)
+    info: dict | None = get_movie(movie_id=movie_id, cache_days=cache_days)
     if not info or info.get('success') is False:
         utils.notify("Could not get tmdb movie information")
         return (None, None, None)
@@ -1357,6 +1387,7 @@ def get_rated_media_items(media_type, sort_by=None, page=1, cache_days=0):
         data = get_data(url="account/%s/rated/%s" % (account_id, media_type),
                         params=params,
                         cache_days=cache_days)
+        utils.log(f'tmdb.get_rated_media_itmes logged in got {data}')
     else:
         session_id = Login.get_guest_session_id()
         if not session_id:
@@ -1367,6 +1398,7 @@ def get_rated_media_items(media_type, sort_by=None, page=1, cache_days=0):
         data = get_data(url="guest_session/%s/rated/%s" % (session_id, media_type),
                         params=params,
                         cache_days=0)
+        utils.log(f'tmdb.get_rated_media_itmes guest got {data}')
     if media_type == "tv/episodes":
         itemlist = handle_episodes(data["results"])
     elif media_type == "tv":
@@ -1436,7 +1468,7 @@ def get_actor_credits(actor_id, media_type):
 
 
 def get_movie(movie_id, light=False, cache_days=30) -> dict | None:
-    """gets details from tmdb for a moview with tmdb movie-id
+    """gets details from tmdb for a movie with tmdb movie-id
 
     Args:
         movie_id (str): tmdb movie id
@@ -1448,16 +1480,15 @@ def get_movie(movie_id, light=False, cache_days=30) -> dict | None:
         Union[dict, None]: A dict of movie infos.  If no response from TMDB
                             returns None
     """
-    params = {"include_image_language": "en,null,%s" % addon.setting("LanguageID"),
+    params = {"include_image_language": f"en,null,{addon.setting('LanguageID')}",
               "language": addon.setting("LanguageID"),
               "append_to_response": None if light else ALL_MOVIE_PROPS
               }
     if Login.check_login():
         params["session_id"] = Login.get_session_id()
-    return get_data(url="movie/%s" % (movie_id),
+    return get_data(url=f"movie/{movie_id}",
                     params=params,
                     cache_days=cache_days)
-
 
 def get_similar_movies(movie_id):
     '''
@@ -1467,7 +1498,6 @@ def get_similar_movies(movie_id):
     if not response or not response.get("similar"):
         return []
     return handle_movies(response["similar"]["results"])
-
 
 def get_similar_tvshows(tvshow_id):
     '''

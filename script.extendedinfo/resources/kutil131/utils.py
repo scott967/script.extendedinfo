@@ -384,7 +384,7 @@ def calculate_age(born, died=False):
 
 def get_http(url, headers=False):
     """
-    fetches data from *url, returns it as a string
+    fetches data from *url as hppt GET, returns it as a string
     """
     succeed = 0
     if not headers:

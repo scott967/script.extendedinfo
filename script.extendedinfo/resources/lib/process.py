@@ -359,12 +359,12 @@ def start_info_actions(info: str, params: dict[str, str]):
                             mode="search")
         finally:
             addon.clear_global('infodialogs.active')
-    elif info == 'extendedinfo': # called with movie
+    elif info == 'extendedinfo': # called with movie id
         if addon.get_global('infodialogs.active'):
             return None
         addon.set_global('infodialogs.active', "true")
         try:
-            utils.log('call wm.open_movie_info') #debug
+            utils.log('process.start_info_actions call wm.open_movie_info') #debug
             wm.open_movie_info(movie_id=params.get("id"),
                             dbid=params.get("dbid"),
                             imdb_id=params.get("imdb_id"),
