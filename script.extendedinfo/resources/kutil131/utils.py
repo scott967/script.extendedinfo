@@ -384,14 +384,16 @@ def calculate_age(born, died=False):
 
 def get_http(url, headers=False):
     """
-    fetches data from *url as hppt GET, returns it as a string
+    fetches data from *url as http GET, returns it as a string
     """
     succeed = 0
     if not headers:
-        headers = {'User-agent': 'Kodi/17.0 ( fbacher@kodi.tv )'}
+        headers = {'User-agent': 'Kodi/19.0 ( fbacher@kodi.tv )'}
     while (succeed < 2) and (not xbmc.Monitor().abortRequested()):
         try:
+            #log(f'kutils131.utils.get_http headers {headers}')
             request = requests.get(url, headers=headers, timeout=10)
+            #log(f'kutils131.utils.get_http response from tmdb {request.text}')
             return request.text
         except requests.exceptions.RequestException as err:
             log(f"get_http: could not get data from {url} exception {err}")
@@ -452,20 +454,22 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> di
         try:
             prop = json.loads(addon.get_global(hashed_url))
             if prop:
+                #log(f'kutils131.utils.get_JSON_repsonse got kodi prop {prop}')
                 return prop
         except Exception:
-            # utils.log("could not load prop data for %s" % url)
+            #log(f"could not load prop data for {url}")
             pass
     path = os.path.join(cache_path, hashed_url + ".txt")
     if xbmcvfs.exists(path) and ((now - os.path.getmtime(path)) < cache_seconds):
         results = read_from_file(path)
-        # utils.log("loaded file for %s. time: %f" % (url, time.time() - now))
+        #log(f"loaded file for {url}. time: {(time.time() - now):f} and results {results}")
     else:
         response = get_http(url, headers)
         try:
             results = json.loads(response)
             # utils.log("download %s. time: %f" % (url, time.time() - now))
-            save_to_file(results, hashed_url, cache_path)
+            if "status_code" in response and response.get("status_code") == 1:
+                save_to_file(results, hashed_url, cache_path)
         except Exception as err:
             log(f"Exception: Could not get new JSON data from {url} "
                 f"with error {err}. Trying to fallback to cache")

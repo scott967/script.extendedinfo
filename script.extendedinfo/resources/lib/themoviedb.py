@@ -10,7 +10,8 @@ Public variables:
         creation
 
 Public functions:
-    set_rating:  sets local videodb userrating or TMDB user rating (called from button in dialogvideoinfo)
+    set_rating:  sets local videodb userrating or TMDB user rating
+                    (called from button in dialogvideoinfo)
     change_fav_status:  sets TMDB user favorite (called from button in dialogvideoinfo)
     create_list:  creates a new user list on TMDB
     remove_list_dialog:  opens a Kodi select dialog to allow user to select
@@ -81,11 +82,17 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from resources.kutil131 import (ItemList, VideoItem, addon, kodijson, local_db,
+from resources.kutil131 import (ItemList, VideoItem, addon, kodiaddon, kodijson, local_db,
                                 selectdialog, utils)
 
-#TMDB_KEY = '34142515d9d23817496eeb4ff1d223d0'
-TMDB_KEY = 'f49b34e973a5d63ad060633d43260738'
+TMDB_TOKEN = ('wpjCrsKBwpjClnvCmsKiwoDCmcKCf8KFwrB8ZsKFwpl-bWXCnsKqesKgwprCh8K'
+              'HwpzChMKgesKhwoJ7wqXCmn3CssKIwpzChcKHwpjCscKJwojCisKiwofCm37CoMK'
+              'QdHdlwoJ7wonCrsKBacKKYX3Csn9iwoN3wpjCsX93fcKqwoLCn35pwo_CmX9pfsK'
+              'hwonCrcKBe8KGwqh9wqV7ZcKQwop6wrF-ZsKJwq7ChnVxbcKEdMKLwqrCj8KkfsK'
+              'fwo3CisKCwqR5wqbChMKawphmd8KjwpPCrX1twpDCqnrCoMKZd8KiwpnCmMKkwob'
+              'CnMKOesKDwpV8e8KAYsKQwot_wrHCkcKLbcKswoLCm8KfwrDCnMKBZHfCgMKAwpT'
+              'CjsKJwpzCr8KWwpbCkcKnwoV5wpliesKYaWzChcKJwovCoMKua3htwojCj396wox'
+              '8woLChcKQwqDCscKDwpHCpMKe')
 POSTER_SIZES = ["w92", "w154", "w185", "w342", "w500", "w780", "original"]
 LOGO_SIZES = ["w45", "w92", "w154", "w185", "w300", "w500", "original"]
 BACKDROP_SIZES = ["w300", "w780", "w1280", "original"]
@@ -94,13 +101,16 @@ STILL_SIZES = ["w92", "w185", "w300", "original"]
 HEADERS = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
-    'User-agent': 'Kodi/17.0 ( scott967@kodi.tv )'
+    'User-agent': 'Kodi/19.0 ( scott967@kodi.tv )',
+    'Authorization': ''
 }
 IMAGE_BASE_URL = "http://image.tmdb.org/t/p/"
 POSTER_SIZE = "w500"
 URL_BASE = "https://api.themoviedb.org/3/"
-ALL_MOVIE_PROPS = "account_states,alternative_titles,credits,images,keywords,release_dates,videos,translations,similar,reviews,lists,rating"
-ALL_TV_PROPS = "account_states,alternative_titles,content_ratings,credits,external_ids,images,keywords,rating,similar,translations,videos"
+ALL_MOVIE_PROPS = ("account_states,alternative_titles,credits,images,keywords,"
+                   "release_dates,videos,translations,similar,reviews,lists,rating")
+ALL_TV_PROPS = ("account_states,alternative_titles,content_ratings,credits,"
+                "external_ids,images,keywords,rating,similar,translations,videos")
 ALL_ACTOR_PROPS = "tv_credits,movie_credits,combined_credits,images,tagged_images"
 ALL_SEASON_PROPS = "videos,images,external_ids,credits"
 ALL_EPISODE_PROPS = "account_states,credits,external_ids,images,rating,videos"
@@ -141,7 +151,7 @@ class LoginProvider:
         self.account_id = None
         self.username = kwargs.get("username")
         self.password = kwargs.get("password")
-    
+
     def reset_session_id(self):
         """Resets the user session_id in settings when tmdb authentication fails
         This will require obraining a new session_id via get_session_id
@@ -272,10 +282,9 @@ def set_rating(media_type, media_id, rating, dbid=None):
     if media_type == "episode":
         if not media_id[1]:
             media_id[1] = "0"
-        url = "tv/%s/season/%s/episode/%s/rating" % (
-            media_id[0], media_id[1], media_id[2])
+        url = f"tv/{media_id[0]}/season/{media_id[1]}/episode/{media_id[2]}/rating"
     else:
-        url = "%s/%s/rating" % (media_type, media_id)
+        url = f"{media_type}/{media_id}/rating"
     results = send_request(url=url,
                            params=params,
                            values={"value": "%.1f" %
@@ -298,7 +307,8 @@ def send_request(url, params, values, delete=False):
     Returns:
         _type_: _description_
     """
-    params["api_key"] = TMDB_KEY
+    HEADERS['Authorization'] = 'Bearer ' + kodiaddon.decode_string(TMDB_TOKEN, uuick=addon.setting('tmdb_tok'))
+    #utils.log(f'tmdb.send_request headers {HEADERS}')
     params = {k: str(v) for k, v in params.items() if v}
     url = f"{URL_BASE}{url}?{urllib.parse.urlencode(params)}"
     if delete:
@@ -307,7 +317,17 @@ def send_request(url, params, values, delete=False):
         return utils.post(url, values=values, headers=HEADERS)
 
 
-def change_fav_status(media_id=None, media_type="movie", status="true"):
+def change_fav_status(media_id=None, media_type="movie", status="true") -> str:
+    """Updates user favorites list on tmdb
+
+    Args:
+        media_id (_type_, optional): tmdb id. Defaults to None.
+        media_type (str, optional): _tmdb medi type. Defaults to "movie".
+        status (str, optional): tmdb favorite status. Defaults to "true".
+
+    Returns:
+        str: tmdb result status message
+    """
     session_id = Login.get_session_id()
     if not session_id:
         utils.notify("Could not get session id")
@@ -315,7 +335,7 @@ def change_fav_status(media_id=None, media_type="movie", status="true"):
     values = {"media_type": media_type,
               "media_id": media_id,
               "favorite": status}
-    results = send_request(url="account/%s/favorite" % Login.get_account_id(),
+    results = send_request(url=f"account/{Login.get_account_id()}/favorite",
                            params={"session_id": session_id},
                            values=values)
     if results:
@@ -337,7 +357,15 @@ def create_list(list_name):
     return results["list_id"]
 
 
-def remove_list_dialog(account_lists):
+def remove_list_dialog(account_lists) -> bool:
+    """opens select dialog to remove list from user tmdb lists
+
+    Args:
+        account_lists (_type_): user's existing tgmdb lists
+
+    Returns:
+        bool: True if user successfully removed a list
+    """
     index = selectdialog.open(header=addon.LANG(32138),
                               listitems=account_lists)
     if index >= 0:
@@ -346,7 +374,16 @@ def remove_list_dialog(account_lists):
 
 
 def remove_list(list_id):
-    results = send_request(url="list/%s" % list_id,
+    """removes user selected list from user's tmdb lists
+    raises toast with results from tmdb
+
+    Args:
+        list_id (_type_): id of user tmdb list to remove
+
+    Returns:
+        _type_: _description_
+    """
+    results = send_request(url=f"list/{list_id}",
                            params={"session_id": Login.get_session_id()},
                            values={'media_id': list_id},
                            delete=True)
@@ -356,8 +393,16 @@ def remove_list(list_id):
 
 
 def change_list_status(list_id, movie_id, status):
+    """adds or removes item from user tmdb list
+    raises toast with results from tmdb
+
+    Args:
+        list_id (_type_): the user list to update
+        movie_id (_type_): th eitem tmdb id to update
+        status (_type_): add or remove item
+    """
     method = "add_item" if status else "remove_item"
-    results = send_request(url="list/%s/%s" % (list_id, method),
+    results = send_request(url=f"list/{list_id}/{method}",
                            params={"session_id": Login.get_session_id()},
                            values={'media_id': movie_id})
     if results:
@@ -372,7 +417,7 @@ def get_account_lists(cache_days=0):
     account_id = Login.get_account_id()
     if not session_id or not account_id:
         return []
-    response = get_data(url="account/%s/lists" % (account_id),
+    response = get_data(url=f"account/{account_id}/lists",
                         params={"session_id": session_id},
                         cache_days=cache_days)
     return response["results"]
@@ -450,7 +495,7 @@ def handle_multi_search(results):
     return listitems
 
 
-def handle_movies(results: list[dict], local_first=True, sortkey="year") ->ItemList:
+def handle_movies(results: list[dict], local_first=True, sortkey="year") ->ItemList[VideoItem]:
     """takes a list of movies (dicts) and adds local db data and then sorts as an ItemList
     The tmdb movie keys are converted to extendedinfo keys and genre ids converted
     to localized text strings, then a VideoItem is created for each movie.  The
@@ -484,7 +529,7 @@ def handle_movies(results: list[dict], local_first=True, sortkey="year") ->ItemL
                         'mediatype': "movie",
                         'country': movie.get('original_language'),
                         'plot': movie.get('overview'),
-                        'Trailer': "%splaytrailer&&id=%s" % (PLUGIN_BASE, movie.get("id")),
+                        'Trailer': f"{PLUGIN_BASE}playtrailer&&id={movie.get('id')}",
                         'genre': " / ".join([i for i in genres if i]),
                         'votes': movie.get('vote_count'),
                         'year': utils.get_year(release_date),
@@ -525,7 +570,7 @@ def handle_tvshows(results:list[dict], local_first=True, sortkey="year"):
             elif len(tv["episode_run_time"]) == 1:
                 duration = "%i" % (tv["episode_run_time"][0])
         newtv = VideoItem(label=tv.get('name'),
-                          path=PLUGIN_BASE + 'extendedtvinfo&&id=%s' % tmdb_id)
+                          path=f'{PLUGIN_BASE}extendedtvinfo&&id={tmdb_id}')
         newtv.set_infos({'originaltitle': tv.get('original_name', ""),
                          'title': tv.get('name'),
                          'duration': duration,
@@ -554,7 +599,15 @@ def handle_tvshows(results:list[dict], local_first=True, sortkey="year"):
     return tvshows
 
 
-def handle_episodes(results):
+def handle_episodes(results:list[dict]) -> ItemList[VideoItem]:
+    """Creates an ItemList of VideoItems for episodes
+
+    Args:
+        results (_type_): tmdb episode details
+
+    Returns:
+        _type_: Kutils131 ItemList of episode VideoItmes
+    """
     listitems = ItemList(content_type="episodes")
     for item in results:
         title = item.get("name")
@@ -579,7 +632,7 @@ def handle_episodes(results):
     return listitems
 
 
-def handle_release_dates(results:list[dict]) -> ItemList:
+def handle_release_dates(results:list[dict]) -> ItemList[VideoItem]:
     """Creates ItemList of video mpaa cert and dates as VideoItems
 
     Args:
@@ -617,7 +670,7 @@ def handle_release_dates(results:list[dict]) -> ItemList:
     return listitems
 
 
-def handle_content_ratings(results):
+def handle_content_ratings(results:list[dict]) -> ItemList[VideoItem]:
     listitems = ItemList()
     for item in results:
         listitem = VideoItem(label=item['rating'])
@@ -627,7 +680,15 @@ def handle_content_ratings(results):
     return listitems
 
 
-def handle_reviews(results):
+def handle_reviews(results:list[dict]) -> ItemList[VideoItem]:
+    """Creates an ItemList of VideoItems for tmdb reviews
+
+    Args:
+        results (_type_): tmdb review details
+
+    Returns:
+        ItemList: Kutils131 ItemList of review VideoItmes
+    """
     listitems = ItemList()
     for item in results:
         listitem = VideoItem(label=item.get('author'))
@@ -682,7 +743,15 @@ def handle_lists(results:list[dict]) -> ItemList[VideoItem]:
     return listitems
 
 
-def handle_seasons(results):
+def handle_seasons(results:list[dict]) -> ItemList[VideoItem]:
+    """Creates an ItemList of VideoItems for seasons
+
+    Args:
+        results (_type_): tmdb season details
+
+    Returns:
+        ItemList: Kutils131 ItemList of season VideoItmes
+    """
     listitems = ItemList(content_type="seasons")
     for item in results:
         season = item.get('season_number')
@@ -722,7 +791,7 @@ def handle_videos(results:list[dict]) -> ItemList[VideoItem]:
     return listitems
 
 
-def handle_people(results: list[dict], select: bool = False) -> ItemList[VideoItem]:
+def handle_people(results:list[dict], select: bool = False) -> ItemList[VideoItem]:
     """converts list of tmdb people into kutils131 videoitems
     The VideoItem properties are tmdb query results
 
@@ -924,7 +993,7 @@ def get_set_id(set_name):
     return response["results"][0]["id"]
 
 
-def get_data(url: str = "", params: dict = None, cache_days: float = 14) -> dict|None:
+def get_data(url:str = "", params:dict = None, cache_days:float = 14) -> dict|None:
     """Queries tmdb api v3 or local cache
 
     Args:
@@ -939,16 +1008,16 @@ def get_data(url: str = "", params: dict = None, cache_days: float = 14) -> dict
         TMDB response
     """
     params = params if params else {}
-    params["api_key"] = TMDB_KEY
+    HEADERS['Authorization'] = 'Bearer ' + kodiaddon.decode_string(TMDB_TOKEN, uuick=addon.setting('tmdb_tok'))
     params = {k: str(v) for k, v in params.items() if v}
     url = "%s%s?%s" % (URL_BASE, url, urllib.parse.urlencode(params))
     utils.log(f'tmdb.get_data query url: {url}')
-    response = utils.get_JSON_response(url, cache_days, "TheMovieDB")
+    response = utils.get_JSON_response(url, cache_days, folder='TheMovieDB', headers=HEADERS)
     if not response:
         utils.log("tmdb.get_data No response from TMDB")
         return None
     if "status_code" in response and response.get("status_code") != 1:
-        utils.log(f'tmdb.get_data FAIL TMDB status code: {response.get("status_code")} {traceback.format_stack(limit=-3)}')
+        utils.log(f'tmdb.get_data FAIL TMDB status code: {response.get("status_code")} - {response.get("status_message")} {traceback.format_stack(limit=-3)}')
         if response.get('status_code') == 3:
             Login.reset_session_id()
         return None
@@ -968,7 +1037,7 @@ def get_company_data(company_id):
 def get_credit_info(credit_id):
     if not credit_id:
         return []
-    return get_data(url="credit/%s" % (credit_id),
+    return get_data(url=f"credit/{credit_id}",
                     params={"language": addon.setting("LanguageID")},
                     cache_days=30)
 
