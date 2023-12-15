@@ -1192,7 +1192,7 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> tuple[VideoI
                      'writer': " / ".join(authors),
                      'plot': info.get('overview'),
                      'originaltitle': info.get('original_title'),
-                     'Country': info.get('original_language'),
+                     'country': info['origin_country'] if info.get('origin_country') else info.get('original_language'),
                      'imdbnumber': info.get('imdb_id'),
                      'genre': " / ".join([i["name"] for i in info["genres"]]),
                      'year': utils.get_year(info.get("release_date")),
