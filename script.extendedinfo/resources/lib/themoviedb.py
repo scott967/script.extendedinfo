@@ -135,6 +135,24 @@ STATUS = {"released": addon.LANG(32071),
           "planned": addon.LANG(32076)}
 
 
+def _mulitple_repl(text:str) -> str:
+    """ replaces html tags in text with Kodi label formats
+    TRANS is a literal dict with regex patterns to match and replace
+    Args:
+            text (str): string to replace tags
+
+        Returns:
+            str: string with Kodi formatting
+
+    """
+    TRANS = {"<a.*?</a>": "",
+             "<b>": "[B]",
+             "</b>": "[/B]",
+             "<i>": "[I]",
+             "</i>": "[/I]"}
+    regex = re.compile(f"({'|'.join(map(re.escape, TRANS.keys()))})")
+    return regex.sub(lambda mo: TRANS[mo.group()], text)
+
 class LoginProvider:
     """
     logs into TMDB for user or guest and gets corresponding session or guest session id
@@ -527,7 +545,7 @@ def handle_movies(results: list[dict], local_first=True, sortkey="year") ->ItemL
         item.set_infos({'title': movie.get('title'),
                         'originaltitle': movie.get('original_title', ""),
                         'mediatype': "movie",
-                        'country': movie.get('original_language'),
+                        'country': movie['origin_country'] if movie.get('origin_country') else movie.get('original_language'),
                         'plot': movie.get('overview'),
                         'Trailer': f"{PLUGIN_BASE}playtrailer&&id={movie.get('id')}",
                         'genre': " / ".join([i for i in genres if i]),
@@ -575,7 +593,7 @@ def handle_tvshows(results:list[dict], local_first=True, sortkey="year"):
                          'title': tv.get('name'),
                          'duration': duration,
                          'genre': " / ".join([i for i in genres if i]),
-                         'country': tv.get('original_language'),
+                         'country': tv['origin_country'] if tv.get('origin_country') else tv.get('original_language'),
                          'plot': tv.get("overview"),
                          'year': utils.get_year(tv.get('first_air_date')),
                          'mediatype': "tvshow",
@@ -693,7 +711,7 @@ def handle_reviews(results:list[dict]) -> ItemList[VideoItem]:
     for item in results:
         listitem = VideoItem(label=item.get('author'))
         listitem.set_properties({'author': item.get('author'),
-                                 'content': re.sub("<a.*?</a>", "", item.get('content')).lstrip(),
+                                 'content': _mulitple_repl(item.get('content')).lstrip(),
                                  'id': item.get('id'),
                                  'url': item.get('url')})
         listitems.append(listitem)
@@ -1279,7 +1297,7 @@ def extended_tvshow_info(tvshow_id=None, cache_days=7, dbid=None):
                       'year': utils.get_year(info.get('first_air_date')),
                       'mediatype': "tvshow",
                       'rating': round(info['vote_average'], 1) if info.get('vote_average') else "",
-                      'country': info.get('original_language'),
+                      'country': info['origin_country'] if info.get('origin_country') else info.get('original_language'),
                       'userrating': info.get('rating'),
                       'votes': info.get('vote_count'),
                       'premiered': info.get('first_air_date'),
