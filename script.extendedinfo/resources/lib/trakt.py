@@ -126,7 +126,7 @@ def handle_movies(results):
         item = i["movie"] if "movie" in i else i
         trailer = f'{PLUGIN_BASE}youtubevideo&&id={utils.extract_youtube_id(item["trailer"])}'
         movie = VideoItem(label=item["title"],
-                          path=f'{PLUGIN_BASE}{path}{item["ids"]["tmdb"]}')
+                          path=PLUGIN_BASE + path % item["ids"]["tmdb"])
         movie.set_infos({'title': item["title"],
                          'duration': item["runtime"] * 60 if item["runtime"] else "",
                          'tagline': item["tagline"],
