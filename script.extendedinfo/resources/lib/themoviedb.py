@@ -268,13 +268,11 @@ class LoginProvider:
         response = get_data(url="authentication/token/validate_with_login",
                             params=params,
                             cache_days=0)
-        utils.log(f'tmdb.LoginProvider.create_session_id session with login {response}')
         if response and response.get("success"):
             request_token = response["request_token"]
             response = get_data(url="authentication/session/new",
                                 params={"request_token": request_token})
             if response and "success" in response:
-                utils.log(f'tmdb.LoginProvider.create_session_in got new session id {response}')
                 self.session_id = str(response["session_id"])
                 addon.set_setting("session_id", self.session_id)
 
@@ -293,7 +291,6 @@ def set_rating(media_type, media_id, rating, dbid=None):
     params = {}
     if Login.check_login():
         params["session_id"] = Login.get_session_id()
-        utils.log('tmdb.set_rating got login session id')
     else:
         params["guest_session_id"] = Login.get_guest_session_id()
         utils.log('tmdb.set_rating no login use guest session id')
@@ -326,7 +323,6 @@ def send_request(url, params, values, delete=False):
         _type_: _description_
     """
     HEADERS['Authorization'] = 'Bearer ' + kodiaddon.decode_string(TMDB_TOKEN, uuick=addon.setting('tmdb_tok'))
-    #utils.log(f'tmdb.send_request headers {HEADERS}')
     params = {k: str(v) for k, v in params.items() if v}
     url = f"{URL_BASE}{url}?{urllib.parse.urlencode(params)}"
     if delete:
@@ -1029,7 +1025,6 @@ def get_data(url:str = "", params:dict = None, cache_days:float = 14) -> dict|No
     HEADERS['Authorization'] = 'Bearer ' + kodiaddon.decode_string(TMDB_TOKEN, uuick=addon.setting('tmdb_tok'))
     params = {k: str(v) for k, v in params.items() if v}
     url = "%s%s?%s" % (URL_BASE, url, urllib.parse.urlencode(params))
-    utils.log(f'tmdb.get_data query url: {url}')
     response = utils.get_JSON_response(url, cache_days, folder='TheMovieDB', headers=HEADERS)
     if not response:
         utils.log("tmdb.get_data No response from TMDB")
@@ -1168,7 +1163,6 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> tuple[VideoI
                 dict of key str value kutils131 ItemList
                 dict of account states
     """
-    utils.log(f'tmdb.extended_movie_info for {movie_id}')
     if not movie_id:
         return None
     info: dict | None = get_movie(movie_id=movie_id, cache_days=cache_days)
@@ -1491,7 +1485,6 @@ def get_rated_media_items(media_type, sort_by=None, page=1, cache_days=0):
         data = get_data(url="account/%s/rated/%s" % (account_id, media_type),
                         params=params,
                         cache_days=cache_days)
-        utils.log(f'tmdb.get_rated_media_itmes logged in got {data}')
     else:
         session_id = Login.get_guest_session_id()
         if not session_id:
@@ -1502,7 +1495,6 @@ def get_rated_media_items(media_type, sort_by=None, page=1, cache_days=0):
         data = get_data(url="guest_session/%s/rated/%s" % (session_id, media_type),
                         params=params,
                         cache_days=0)
-        utils.log(f'tmdb.get_rated_media_itmes guest got {data}')
     if media_type == "tv/episodes":
         itemlist = handle_episodes(data["results"])
     elif media_type == "tv":

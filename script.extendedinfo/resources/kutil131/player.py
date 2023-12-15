@@ -33,19 +33,27 @@ class VideoPlayer(xbmc.Player):
     def onPlayBackStarted(self):
         self.started = True
         self.stopped = False
-        utils.log(f'kutil131.player.Videoplayer.onPlayBackStarted {self.started} stopped {self.stopped}') #debug
 
     @busy.set_busy
-    def youtube_info_by_id(self, youtube_id):
-        vid = utils.get_youtube_info(youtube_id)
+    def youtube_info_by_id(self, youtube_id) -> None:
+        """function uses inop YTStreamextractor
+
+        Args:
+            youtube_id (_type_): _description_
+
+        Returns:
+            _type_: function retained for future use
+        """
+        #vid = utils.get_youtube_info(youtube_id)
+        vid = {}
         if not vid:
             return None, None
-        listitem = xbmcgui.ListItem(label=vid.title)
-        listitem.setArt({'thumb': vid.thumbnail})
-        listitem.setInfo(type='video',
-                         infoLabels={"genre": vid.sourceName,
-                                     "plot": vid.description})
-        return vid.streamURL(), listitem
+        #listitem = xbmcgui.ListItem(label=vid.title)
+        #listitem.setArt({'thumb': vid.thumbnail})
+        #listitem.setInfo(type='video',
+        #                 infoLabels={"genre": vid.sourceName,
+        #                             "plot": vid.description})
+        #return vid.streamURL(), listitem
 
     def wait_for_video_end(self):
         monitor: xbmc.Monitor = xbmc.Monitor()
@@ -67,11 +75,9 @@ class VideoPlayer(xbmc.Player):
                 break
             timeout += -1
             if self.started:
-                utils.log('kutils.player.wait_for_video_start av started') #debug
                 break
             if timeout == 0:
                 self.stopped = True
-                utils.log(f'kutils.player.wait_for_video_start start timeout self.stopped {self.stopped}') #debug
                 break
 
     def wait_for_kodivideo_start(self):
@@ -79,7 +85,6 @@ class VideoPlayer(xbmc.Player):
         Sets a 20 sec timer to attempt play local db media.  If
         timer ends videoplayer self.stopped is set
         """
-        utils.log('kutil131.player.Videoplayer.wait_for_kodivideo_start start timer')
         monitor = xbmc.Monitor()
         timeout = 20
         while not monitor.waitForAbort(1):  #wait to see if video starts
@@ -87,9 +92,7 @@ class VideoPlayer(xbmc.Player):
                 break
             timeout += -1
             if self.started:
-                utils.log('kutil131.player.VideoPlayer av started exit wait_for_kodivideo_start') #debug
                 break
             if timeout == 0:
                 self.stopped = True
-                utils.log(f'kutil131.player.VideoPlayer.wait_for_kodivideo_start exit start timeout self.stopped {self.stopped}') #debug
                 break

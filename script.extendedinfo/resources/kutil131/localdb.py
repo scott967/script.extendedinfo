@@ -82,7 +82,7 @@ class LocalDB:
                                 "mood": " / ".join(item['mood']),
                                 "instrument": " / ".join(item['instrument']),
                                 "librarypath": 'musicdb://artists/%s/' % item['artistid']})
-        utils.log('%i of %i artists found in last.FM are in Kodi database' % (len(artists), len(simi_artists)))
+        #utils.log('%i of %i artists found in last.FM are in Kodi database' % (len(artists), len(simi_artists)))
         return artists
 
     def get_similar_movies(self, dbid):
@@ -413,7 +413,7 @@ class LocalDB:
             data = kodijson.get_json(method="VideoLibrary.GetMovieDetails",
                                      params={"properties": ["uniqueid", "title", "year"], "movieid": int(dbid)})
             if "result" in data and "moviedetails" in data["result"]:
-                try: 
+                try:
                     return data['result']['moviedetails']['uniqueid']['imdb']
                 except KeyError:
                     return None
@@ -441,7 +441,7 @@ class LocalDB:
             if "result" in data and "tvshowdetails" in data["result"]:
                 return data['result']['tvshowdetails']['uniqueid'].get('tmdb', None)
         return None
-		
+
     def get_tvshow_id_by_episode(self, dbid):
         if not dbid:
             return None

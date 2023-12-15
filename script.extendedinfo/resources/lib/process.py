@@ -47,7 +47,6 @@ def start_info_actions(info: str, params: dict[str, str]):
         if not params.get("artist_mbid"):
             params["artist_mbid"] = utils.fetch_musicbrainz_id(
                 params["artistname"])
-    utils.log(f'process start_info_actions info: {info} params:')
     utils.pp(params)
     if "prefix" in params and not params["prefix"].endswith('.'):
         params["prefix"] = params["prefix"] + '.'
@@ -295,7 +294,6 @@ def start_info_actions(info: str, params: dict[str, str]):
             params = {"dbid": dbid,
                       "id": utils.get_infolabel(f'{container_id}ListItem.Property(id)'),
                       "name": utils.get_infolabel(f'{container_id}ListItem.Title')}
-            utils.log(f'process.start_info_actions call exendedinfo with {params}')
             start_info_actions("extendedinfo", params)
         elif db_type == "tvshow":
             params = {"dbid": dbid,
@@ -364,7 +362,6 @@ def start_info_actions(info: str, params: dict[str, str]):
             return None
         addon.set_global('infodialogs.active', "true")
         try:
-            utils.log('process.start_info_actions call wm.open_movie_info') #debug
             wm.open_movie_info(movie_id=params.get("id"),
                             dbid=params.get("dbid"),
                             imdb_id=params.get("imdb_id"),

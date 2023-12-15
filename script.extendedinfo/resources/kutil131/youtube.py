@@ -79,7 +79,6 @@ def get_duration_in_seconds(duration:str) -> int:
     """
     convert youtube duration string to seconds int
     """
-    utils.log(f'kutils131.youtube.get_duraction_in_secs duration {duration}')
     if not duration.endswith('S'):
         duration = duration + '0S'
     try:

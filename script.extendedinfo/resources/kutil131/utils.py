@@ -454,15 +454,12 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> di
         try:
             prop = json.loads(addon.get_global(hashed_url))
             if prop:
-                #log(f'kutils131.utils.get_JSON_repsonse got kodi prop {prop}')
                 return prop
         except Exception:
-            #log(f"could not load prop data for {url}")
             pass
     path = os.path.join(cache_path, hashed_url + ".txt")
     if xbmcvfs.exists(path) and ((now - os.path.getmtime(path)) < cache_seconds):
         results = read_from_file(path)
-        #log(f"loaded file for {url}. time: {(time.time() - now):f} and results {results}")
     else:
         response = get_http(url, headers)
         try:
