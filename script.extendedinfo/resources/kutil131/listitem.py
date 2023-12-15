@@ -290,6 +290,8 @@ class ListItem:
                 listitem.setInfo(self.type, infos)
             else:
                 vinfotag = listitem.getVideoInfoTag()
+                utils.log(f'kutils131.listitem.get_listitem genre {infos.items().get("genre")} country {infos.items().get("country")}'
+                          f' director {infos.items().get("diector")} studio {infos.items().get("studio")} writer {infos.items().get("writer")}')
                 for k, v in infos.items():
                     if k in ['genre','country','director','studio','writer']: v = v.split(' / ')
                     if k in ['year', 'votes', 'userrating']: v = int(v)
