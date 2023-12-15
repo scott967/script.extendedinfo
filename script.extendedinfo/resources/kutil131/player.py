@@ -36,16 +36,25 @@ class VideoPlayer(xbmc.Player):
         utils.log(f'kutil131.player.Videoplayer.onPlayBackStarted {self.started} stopped {self.stopped}') #debug
 
     @busy.set_busy
-    def youtube_info_by_id(self, youtube_id):
-        vid = utils.get_youtube_info(youtube_id)
+    def youtube_info_by_id(self, youtube_id) -> None:
+        """function uses inop YTStreamextractor
+
+        Args:
+            youtube_id (_type_): _description_
+
+        Returns:
+            _type_: function retained for future use
+        """
+        #vid = utils.get_youtube_info(youtube_id)
+        vid = {}
         if not vid:
             return None, None
-        listitem = xbmcgui.ListItem(label=vid.title)
-        listitem.setArt({'thumb': vid.thumbnail})
-        listitem.setInfo(type='video',
-                         infoLabels={"genre": vid.sourceName,
-                                     "plot": vid.description})
-        return vid.streamURL(), listitem
+        #listitem = xbmcgui.ListItem(label=vid.title)
+        #listitem.setArt({'thumb': vid.thumbnail})
+        #listitem.setInfo(type='video',
+        #                 infoLabels={"genre": vid.sourceName,
+        #                             "plot": vid.description})
+        #return vid.streamURL(), listitem
 
     def wait_for_video_end(self):
         monitor: xbmc.Monitor = xbmc.Monitor()
