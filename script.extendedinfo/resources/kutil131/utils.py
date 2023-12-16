@@ -391,9 +391,7 @@ def get_http(url, headers=False):
         headers = {'User-agent': 'Kodi/19.0 ( fbacher@kodi.tv )'}
     while (succeed < 2) and (not xbmc.Monitor().abortRequested()):
         try:
-            #log(f'kutils131.utils.get_http headers {headers}')
             request = requests.get(url, headers=headers, timeout=10)
-            #log(f'kutils131.utils.get_http response from tmdb {request.text}')
             return request.text
         except requests.exceptions.RequestException as err:
             log(f"get_http: could not get data from {url} exception {err}")

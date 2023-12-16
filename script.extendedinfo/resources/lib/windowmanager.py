@@ -270,7 +270,7 @@ class WindowManager:
         try:
             dialog.doModal()
         except SystemExit:
-            utils.log('wm.open_dialog fails to open or forced closed') #debug
+            pass
 #        if dialog.canceled:
 #            addon.set_global("infobackground", self.saved_background)
 #            self.window_stack = []
