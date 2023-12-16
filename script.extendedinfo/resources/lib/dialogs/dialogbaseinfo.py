@@ -26,8 +26,8 @@ class DialogBaseInfo(windows.DialogXML):
     dialog types (eg actor info or movie info)
 
     Args:
-        windows.DialogXML (DialogXML): a kutils class derived from xbmcgui.WindowXMLDialog
-        and kutils WindowMixin classes
+        windows.DialogXML (DialogXML): a kutils131 class derived from xbmcgui.WindowXMLDialog
+        and kutils131 WindowMixin classes
 
     Returns:
         _type_: _description_
@@ -101,7 +101,9 @@ class DialogBaseInfo(windows.DialogXML):
             self.last_position = None
         addon.set_global("infobackground", "")
         self.last_control = self.getFocusId()
+        utils.log('dialogbaseinfo.DialogBaseInfo call close()')
         super().close()
+        utils.log('dialogbaseinfo.close returned ')
 
     @utils.run_async
     def bounce(self, identifier):

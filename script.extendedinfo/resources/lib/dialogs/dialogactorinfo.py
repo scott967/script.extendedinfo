@@ -4,17 +4,17 @@
 
 """Provides the DialogActorInfo class that implements a dialog
 XML window.  The Actor Info is added to the window properties
-from a kutils VideoItem.  Panels of VideoItems are added from
-kutils ItemLists and a Youtube list.
+from a kutils131 VideoItem.  Panels of VideoItems are added from
+kutils131 ItemLists and a Youtube list.
 
 The class hierarchy is:
     xbmcgui.Window
     --------------
     xbmcgui.WindowXML / xbmcgui.WindowDialogMixin
     ---------------
-    xbmc.WindowDialogXML / kutils.windows.WindowMixin
+    xbmc.WindowDialogXML / kutils131.windows.WindowMixin
     ---------------
-    kutils.windows.DialogXML
+    kutils131.windows.DialogXML
     ---------------
     DialogBaseInfo
     ---------------
