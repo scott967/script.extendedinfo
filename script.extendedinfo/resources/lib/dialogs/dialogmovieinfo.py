@@ -113,6 +113,7 @@ class DialogMovieInfo(DialogVideoInfo):
         self.set_omdb_infos_async()
 
     def onClick(self, control_id):
+        utils.log(f'dialogmovieinfo.onClick got click on {control_id}')
         super().onClick(control_id)
         ch.serve(control_id, self)
 
