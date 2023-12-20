@@ -469,7 +469,7 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> di
         try:
             results = json.loads(response)
             # utils.log("download %s. time: %f" % (url, time.time() - now))
-            if "status_code" in response and response.get("status_code") == 1:
+            if "status_code" in results and results.get("status_code") == 1:
                 save_to_file(results, hashed_url, cache_path)
         except Exception as err:
             log(f"Exception: Could not get new JSON data from {url} "
