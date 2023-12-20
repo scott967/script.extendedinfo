@@ -236,7 +236,9 @@ class LoginProvider:
         response = get_data(url="account",
                             params={"session_id": session_id},
                             cache_days=999999)
-        return response.get("status_code") != 1
+        if response and "status_code" in response: 
+            return response.get("status_code") == 1
+        return False
 
     def get_session_id(self, cache_days=999) -> str:
         """gets the tmdb session id from addon settings or creates one if not found
