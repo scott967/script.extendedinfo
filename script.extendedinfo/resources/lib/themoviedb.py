@@ -172,7 +172,7 @@ class LoginProvider:
 
     def reset_session_id(self):
         """Resets the user session_id in settings when tmdb authentication fails
-        This will require obraining a new session_id via get_session_id
+        This will require obtaining a new session_id via get_session_id
         """
         utils.log('tmdb.LoginProvider tmdb authentication failed, resetting session_id')
         if addon.setting("session_id"):
