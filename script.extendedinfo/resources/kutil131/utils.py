@@ -474,6 +474,7 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> di
                     save_to_file(results, hashed_url, cache_path)
             else:
                 save_to_file(results, hashed_url, cache_path)
+                log(f'kutils131.utils.get_JSON_response saved results to cache file in {folder}')
         except Exception as err:
             log(f"Exception: Could not get new JSON data from {url} "
                 f"with error {err}. Trying to fallback to cache")
