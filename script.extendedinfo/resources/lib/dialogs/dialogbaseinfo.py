@@ -101,9 +101,9 @@ class DialogBaseInfo(windows.DialogXML):
             self.last_position = None
         addon.set_global("infobackground", "")
         self.last_control = self.getFocusId()
-        utils.log('dialogbaseinfo.DialogBaseInfo call close()')
+        utils.log('dialogbaseinfo.DialogBaseInfo call close()')  #debug
         super().close()
-        utils.log('dialogbaseinfo.close returned ')
+        utils.log('dialogbaseinfo.close returned ')  #debug
 
     @utils.run_async
     def bounce(self, identifier):
