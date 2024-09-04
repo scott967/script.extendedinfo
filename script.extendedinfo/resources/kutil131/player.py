@@ -88,7 +88,7 @@ class VideoPlayer(xbmc.Player):
         Sets a 20 sec timer to attempt play local db media.  If
         timer ends videoplayer self.stopped is set
         """
-        utils.log('kutil131.player.Videoplayer.wait_for_kodivideo_start start timer')
+        utils.log('kutil131.player.Videoplayer.wait_for_kodivideo_start start timer')  #debug
         monitor = xbmc.Monitor()
         timeout = 20
         while not monitor.waitForAbort(1):  #wait to see if video starts

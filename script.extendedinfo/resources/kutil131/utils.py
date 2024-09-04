@@ -391,9 +391,9 @@ def get_http(url, headers=False):
         headers = {'User-agent': 'Kodi/19.0 ( fbacher@kodi.tv )'}
     while (succeed < 2) and (not xbmc.Monitor().abortRequested()):
         try:
-            #log(f'kutils131.utils.get_http headers {headers}')
+            #log(f'kutils131.utils.get_http headers {headers}')  #debug
             request = requests.get(url, headers=headers, timeout=10)
-            log(f'kutils131.utils.get_http response from tmdb {request.text}')
+            log(f'kutils131.utils.get_http response from tmdb {request.text}')  #debug
             return request.text
         except requests.exceptions.RequestException as err:
             log(f"get_http: could not get data from {url} exception {err}")
@@ -454,17 +454,17 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> di
         try:
             prop = json.loads(addon.get_global(hashed_url))
             if prop:
-                log(f'kutils131.utils.get_JSON_repsonse got kodi prop {prop}')
+                log(f'kutils131.utils.get_JSON_repsonse got kodi prop {prop}')  #debug
                 return prop
         except Exception:
-            log(f"could not load prop data for {url}")
+            log(f"could not load prop data for {url}")  #debug
             pass
     path = os.path.join(cache_path, hashed_url + ".txt")
     if xbmcvfs.exists(path) and ((now - os.path.getmtime(path)) < cache_seconds):
         results = read_from_file(path)
-        log(f"loaded file for {url}. time: {(time.time() - now):f} and results {results}")
+        log(f"loaded file for {url}. time: {(time.time() - now):f} and results {results}")  #debug
     else:
-        #log(f'kutil131.utils.get_JSON_response get_http headers {headers}')
+        #log(f'kutil131.utils.get_JSON_response get_http headers {headers}')  #debug
         response = get_http(url, headers)
         try:
             results = json.loads(response)
@@ -474,7 +474,7 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> di
                     save_to_file(results, hashed_url, cache_path)
             else:
                 save_to_file(results, hashed_url, cache_path)
-                log(f'kutils131.utils.get_JSON_response saved results to cache file in {folder}')
+                log(f'kutils131.utils.get_JSON_response saved results to cache file in {folder}')  #debug
         except Exception as err:
             log(f"Exception: Could not get new JSON data from {url} "
                 f"with error {err}. Trying to fallback to cache")

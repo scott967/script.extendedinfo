@@ -373,7 +373,7 @@ def start_info_actions(info: str, params: dict[str, str]):
             addon.clear_global('infodialogs.active')
     elif info == 'extendedactorinfo':
         if addon.get_global('infodialogs.active'):
-            utils.log('process already running wait for complete')
+            utils.log('process already running wait for complete')  #debug
             return None
         addon.set_global('infodialogs.active', "true")
         try:

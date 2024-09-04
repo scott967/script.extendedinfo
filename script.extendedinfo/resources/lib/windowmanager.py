@@ -289,10 +289,10 @@ class WindowManager:
 #        if self.window_stack and not self.monitor.abortRequested():
 #
         if self.window_stack:
-            utils.log(f'windowmanager.WM.open_dialog wait for video player status to pop and domodal last dialog started: {player.started} stopped/fail to play: {player.stopped} ')
+            utils.log(f'windowmanager.WM.open_dialog wait for video player status to pop and domodal last dialog started: {player.started} stopped/fail to play: {player.stopped} ')  #debug
             while not self.monitor.abortRequested() and player.started and not player.stopped:
                 self.monitor.waitForAbort(2)
-            utils.log(f'windowmanager.WM.open_dialog player stopped status: {player.stopped} Pop dialog from stack, set as active and open doModal')
+            utils.log(f'windowmanager.WM.open_dialog player stopped status: {player.stopped} Pop dialog from stack, set as active and open doModal')  #debug
             self.active_dialog = self.window_stack.pop()
             xbmc.sleep(300)
             try:
