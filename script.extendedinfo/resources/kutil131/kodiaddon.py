@@ -90,6 +90,7 @@ class Addon:
             setting_value (str): property value
         """
         HOME.setProperty(setting_name, setting_value)
+        #xbmc.log(f'Setting Home window property {setting_name} {self.get_global(setting_name)}')
 
     def get_global(self, setting_name):
         return HOME.getProperty(setting_name)

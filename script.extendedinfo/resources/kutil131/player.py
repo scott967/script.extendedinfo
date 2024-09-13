@@ -80,8 +80,8 @@ class VideoPlayer(xbmc.Player):
                 break
             if timeout == 0:
                 self.stopped = True
-                utils.log(f'kutils.player.wait_for_video_start start timeout self.stopped {self.stopped}') #debug
-                break
+            utils.log(f'kutil.player.wait_for_video_start start timeout self.stopped {self.stopped}') #debug
+            break
 
     def wait_for_kodivideo_start(self):
         """Timer called from dialogmovieinfo that checks if Kodi can play selected listitem

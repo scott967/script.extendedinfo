@@ -26,31 +26,33 @@ class DialogBaseInfo(windows.DialogXML):
     dialog types (eg actor info or movie info)
 
     Args:
-        windows.DialogXML (DialogXML): a kutils131 class derived from xbmcgui.WindowXMLDialog
-        and kutils131 WindowMixin classes
+        windows.DialogXML (DialogXML): a kutil131 class derived from xbmcgui.WindowXMLDialog
+        and kutil131 WindowMixin classes
 
     Returns:
-        _type_: _description_
+        DialogBaseInfo: class instance
     """
     ACTION_PREVIOUS_MENU = [92, 9]
     ACTION_EXIT_SCRIPT = [13, 10]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.logged_in: bool = tmdb.Login.check_login()
+        utils.log('DialogBaseInfo check login status')
+        self.logged_in: bool = tmdb.tmdb_login.check_login()
+        utils.log(f'DialogBaseInfo tmdb logged in? {self.logged_in}')
         self.bouncing = False
         self.last_focus = None
         self.lists = None
         self.states = False
         self.yt_listitems = []
-        self.info = VideoItem() # kutils listitem
+        self.info = VideoItem() # kutil131 listitem
         self.last_control = None
         self.last_position = None
 
     def onInit(self, *args, **kwargs):
         super().onInit()
         # self.set_buttons()
-        self.info.to_windowprops(window_id=self.window_id)  #kutils sets dialog window
+        self.info.to_windowprops(window_id=self.window_id)  #kutil131 sets dialog window
         #properties from the info VideoItem(listitem)
         for container_id, key in self.LISTS:
             try:
@@ -271,7 +273,7 @@ class DialogBaseInfo(windows.DialogXML):
         try:
             youtube_list = self.getControl(ID_LIST_YOUTUBE)
         except Exception as err:
-            utils.log(f'DialogBaseInfo.get_youtube_vids threw exception {err}')
+            utils.log(f'DialogBaseInfo.get_youtube_vids getControl for ID_LIST_YOUTUBE threw exception {err}')
             return None
         if not self.yt_listitems:
             user_key = addon.setting("Youtube API Key")

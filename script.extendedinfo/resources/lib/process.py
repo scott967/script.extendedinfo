@@ -39,7 +39,7 @@ def start_info_actions(info: str, params: dict[str, str]):
         params (dict[str,str]): Optional parameters for the action
 
     Returns:
-        [ItemList]: a kodi utils ItemList of VideoItems/Music
+        [ItemList]: a kodi utils ItemList of VideoItems/MusicItems
     """
     if "artistname" in params:
         params["artistname"] = params.get(
@@ -104,6 +104,7 @@ def start_info_actions(info: str, params: dict[str, str]):
         if not movie_id:
             movie_id = tmdb.get_movie_tmdb_id(imdb_id=params.get("imdb_id"),
                                               dbid=params.get("dbid"))
+        utils.log(f'process.start_info_actions for similarmovies got {"tmdb_id " + str(movie_id) if movie_id else "no id"}')
         if movie_id:
             return tmdb.get_similar_movies(movie_id)
     elif info == 'similartvshows':

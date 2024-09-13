@@ -1,5 +1,8 @@
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
 # This program is Free Software see LICENSE file for details
+
+from __future__ import annotations
+
 import datetime
 import hashlib
 import json
@@ -393,7 +396,7 @@ def get_http(url, headers=False):
         try:
             #log(f'kutils131.utils.get_http headers {headers}')  #debug
             request = requests.get(url, headers=headers, timeout=10)
-            log(f'kutils131.utils.get_http response from tmdb {request.text}')  #debug
+            log(f'kutil131.utils.get_http response from online {request.text}')  #debug
             return request.text
         except requests.exceptions.RequestException as err:
             log(f"get_http: could not get data from {url} exception {err}")
@@ -430,7 +433,7 @@ def delete(url, values, headers):
     return json.loads(request.text)
 
 
-def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> dict:
+def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> list[dict] | dict:
     """gets JSON response for *url, makes use of prop and file cache.
 
     Args:
@@ -440,7 +443,7 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> di
         headers (bool, optional): headers to use in https request. Defaults to False.
 
     Returns:
-        dict: a deserialized JSON query response or None
+        list[dict]: a deserialized JSON query response or None
     """
     now = time.time()
     hashed_url = hashlib.md5(url.encode("utf-8", "ignore")).hexdigest()
@@ -450,36 +453,43 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> di
         addon.clear_global(hashed_url)
         addon.clear_global(hashed_url + "_timestamp")
     prop_time = addon.get_global(hashed_url + "_timestamp")
+    # get data from home window property
     if prop_time and now - float(prop_time) < cache_seconds:
         try:
             prop = json.loads(addon.get_global(hashed_url))
             if prop:
-                log(f'kutils131.utils.get_JSON_repsonse got kodi prop {prop}')  #debug
+                log(f'kutil131.utils.get_JSON_repsonse got kodi window hashed_url prop {prop}') #debug
                 return prop
         except Exception:
-            log(f"could not load prop data for {url}")  #debug
+            log(f"could not load window prop data for {url}") #debug
             pass
+    # get data from local disk cache file
     path = os.path.join(cache_path, hashed_url + ".txt")
     if xbmcvfs.exists(path) and ((now - os.path.getmtime(path)) < cache_seconds):
         results = read_from_file(path)
-        log(f"loaded file for {url}. time: {(time.time() - now):f} and results {results}")  #debug
+        #for trakt acticipatedmovies results is list of dict per movie
+        log(f"kutil131.utils.get_JSON_response loaded local file for {url}. time: {(time.time() - now):f} and results {results}") #debug
     else:
-        #log(f'kutil131.utils.get_JSON_response get_http headers {headers}')  #debug
+        #log(f'kutil131.utils.get_JSON_response get_http headers {headers}') #debug
+        #  data not cached query online source
         response = get_http(url, headers)
         try:
             results = json.loads(response)
-            # utils.log("download %s. time: %f" % (url, time.time() - now))
             if folder == 'TheMovieDB':
-                if "status_code" in results and results.get("status_code") == 1:
-                    save_to_file(results, hashed_url, cache_path)
+                if ("results" in results):
+                    log(f'kutil131.utils.get_JSON_response results in tmdb response {type(results)} --- {results}')
+                    # utils.log("download %s. time: %f" % (url, time.time() - now))
+                    if "status_code" in results and results.get("status_code") == 1:
+                        save_to_file(results, hashed_url, cache_path)
             else:
                 save_to_file(results, hashed_url, cache_path)
-                log(f'kutils131.utils.get_JSON_response saved results to cache file in {folder}')  #debug
+                log(f'kutil131.utils.get_JSON_response saved non-tmdb results to cache file in {folder}')  #debug
         except Exception as err:
-            log(f"Exception: Could not get new JSON data from {url} "
+            log(f"kutil131.utils.get_JSON_response Exception: Could not get new JSON data from {url} "
                 f"with error {err}. Trying to fallback to cache")
             #log(f'kutils131.utils.get_JSON_response {response}')
             results = read_from_file(path) if xbmcvfs.exists(path) else []
+    log(f'kutil131.utils.get_JSON_response response (local cache or online) type {type(results)} -- {results}') #debug
     if not results:
         return None
     addon.set_global(hashed_url + "_timestamp", str(now))
@@ -556,7 +566,7 @@ def fetch_musicbrainz_id(artist, artist_id=-1):
                                 cache_days=30,
                                 folder="MusicBrainz")
     if results and len(results["artists"]) > 0:
-        log(f'found artist id for {artist}: {results["artists"][0]["id"]}')
+        log(f'kutil131.utils.fetch_mbid found artist id for {artist}: {results["artists"][0]["id"]}')
         return results["artists"][0]["id"]
     else:
         return None

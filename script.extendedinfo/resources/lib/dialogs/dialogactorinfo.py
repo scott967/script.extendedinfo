@@ -4,17 +4,17 @@
 
 """Provides the DialogActorInfo class that implements a dialog
 XML window.  The Actor Info is added to the window properties
-from a kutils131 VideoItem.  Panels of VideoItems are added from
-kutils131 ItemLists and a Youtube list.
+from a kutil131 VideoItem.  Panels of VideoItems are added from
+kutil131 ItemLists and a Youtube list.
 
 The class hierarchy is:
     xbmcgui.Window
     --------------
     xbmcgui.WindowXML / xbmcgui.WindowDialogMixin
     ---------------
-    xbmc.WindowDialogXML / kutils131.windows.WindowMixin
+    xbmc.WindowDialogXML / kutil131.windows.WindowMixin
     ---------------
-    kutils131.windows.DialogXML
+    kutil131.windows.DialogXML
     ---------------
     DialogBaseInfo
     ---------------
@@ -77,7 +77,9 @@ class DialogActorInfo(DialogBaseInfo):
         dialog window
         """
         self.get_youtube_vids(self.info.label)
+        #utils.log('DialogActorInfo.onInit get_youtube_vids thread spun')
         super().onInit()
+        #utils.log('DialogActorinfo.onInit done : DialogBaseInfo.oninit done')
 
     def onClick(self, control_id):
         """callback function from Kodi when control in window is

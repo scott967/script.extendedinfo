@@ -87,18 +87,24 @@ class Main:
         """
         self.infos: list[str] = []
         self.params: dict[str, str] = {"handle": None}
+        utils.log(f'default._parse_argv argv[1:] {sys.argv[1:]}')
         for arg in sys.argv[1:]:
+            utils.log(f'default._parse_argv arg is {arg}')
             param = arg.replace('"', '').replace("'", " ")
             if param.startswith('info='):
                 self.infos.append(param[5:])
+                utils.log(f'default._parse_argv self.infos is {self.infos}')
             else:
                 try:
                     self.params[param.split('=', maxsplit=1)[0].lower()] = "=".join(
                         param.split("=")[1:]).strip()
+                    utils.log(f'default._parse_argv self.params {self.params}')
                 except Exception:
                     pass
+        utils.log(f'default._parse_argv final self.infos {self.infos} self.params {self.params}')
 
 
 if (__name__ == "__main__"):
+    #utils.log(f'syspath is {sys.path}') #debug
     Main()
 utils.log('finished')

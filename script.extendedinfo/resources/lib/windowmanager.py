@@ -309,7 +309,7 @@ class WindowManager:
         if self.active_dialog and self.active_dialog.window_type == "dialog":
             self.active_dialog.close()
         xbmc.executebuiltin("Dialog.Close(movieinformation)")
-        xbmc.executebuiltin("RunPlugin(plugin://plugin.video.youtube/play/?video_id=" +
+        xbmc.executebuiltin("PlayMedia(plugin://plugin.video.youtube/play/?video_id=" +
                             youtube_id + "&screensaver=true&incognito=true)")
         if self.active_dialog and self.active_dialog.window_type == "dialog":
             player.wait_for_video_start() #30 sec timeout

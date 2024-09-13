@@ -124,6 +124,7 @@ def trakt():
         li = xbmcgui.ListItem(label=value)
         li.setArt({'thumb': 'DefaultFolder.png'})
         url = f'plugin://script.extendedinfo?info={key}'
+        utils.log(f'plugin.trakt listitem url: {url} for key {key}')
         xbmcplugin.addDirectoryItem(handle=plugin.handle,
                                     url=url,
                                     listitem=li,

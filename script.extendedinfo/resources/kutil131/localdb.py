@@ -1,6 +1,8 @@
 # Copyright (C) 2016 - Philipp Temminghoff <phil65@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
+from __future__ import annotations
+
 import itertools
 import json
 
@@ -406,25 +408,36 @@ class LocalDB:
         mbid = data['result']['artistdetails'].get('musicbrainzartistid')
         return mbid if mbid else None
 
-    def get_imdb_id(self, media_type, dbid):
+    def get_imdb_id(self, media_type, dbid) -> tuple[str,str]:
+        """gets the imdb id from unique id and title
+
+        Args:
+            media_type (_type_): "movie" or "tvshow"
+            dbid (_type_): The Kodi db dbid for the item
+
+        Returns:
+            tuple: the imdb and title (if not found return null string)
+        """        
         if not dbid:
             return None
         if media_type == "movie":
             data = kodijson.get_json(method="VideoLibrary.GetMovieDetails",
                                      params={"properties": ["uniqueid", "title", "year"], "movieid": int(dbid)})
+            utils.log(f'localdb.get_imdb_id json data for movie {data}')
             if "result" in data and "moviedetails" in data["result"]:
                 try:
-                    return data['result']['moviedetails']['uniqueid']['imdb']
+                    return data['result']['moviedetails']['uniqueid']['imdb'], ''
                 except KeyError:
-                    return None
+                    return '', data['result']['moviedetails']['title']
         elif media_type == "tvshow":
             data = kodijson.get_json(method="VideoLibrary.GetTVShowDetails",
                                      params={"properties": ["uniqueid", "title", "year"], "tvshowid": int(dbid)})
+            utils.log(f'localdb.get_imdb_id json data for tvshow {data}')
             if "result" in data and "tvshowdetails" in data["result"]:
                 try:
-                    return data['result']['tvshowdetails']['uniqueid']['imdb']
+                    return data['result']['tvshowdetails']['uniqueid']['imdb'], ''
                 except KeyError:
-                    return None
+                    return '', data['result']['tvshowdetails']['title']
         return None
 
     def get_tmdb_id(self, media_type, dbid):
