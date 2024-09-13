@@ -40,7 +40,7 @@ def handle_videos(results:list[dict], extended=False, api_key=''):
         except Exception:
             video_id = snippet["resourceId"]["videoId"]
         video = VideoItem(label=html.unescape(snippet["title"]),
-                          path=PLUGIN_BASE + 'youtubevideo&&id=%s' % video_id)
+                          path=f'{PLUGIN_BASE}youtubevideo&&id={video_id}')
         video.set_infos({'plot': html.unescape(snippet["description"]),
                          'mediatype': "video",
                          'premiered': snippet["publishedAt"][:10]})
@@ -109,11 +109,11 @@ def get_formatted_duration(duration):
     """
     duration = duration[2:-1].replace("H", "M").split("M")
     if len(duration) == 3:
-        return "{}:{}:{}".format(duration[0].zfill(2), duration[1].zfill(2), duration[2].zfill(2))
+        return f"{duration[0].zfill(2)}:{duration[1].zfill(2)}:{duration[2].zfill(2)}"
     elif len(duration) == 2:
-        return "{}:{}".format(duration[0].zfill(2), duration[1].zfill(2))
+        return f"{duration[0].zfill(2)}:{duration[1].zfill(2)}"
     else:
-        return "00:{}".format(duration[0].zfill(2))
+        return f"00:{duration[0].zfill(2)}"
 
 
 def handle_playlists(results, api_key=''):
@@ -132,7 +132,7 @@ def handle_playlists(results, api_key=''):
         except Exception:
             playlist_id = snippet["resourceId"]["playlistId"]
         playlist = VideoItem(label=snippet["title"],
-                             path=PLUGIN_BASE + 'youtubeplaylist&&id=%s' % playlist_id)
+                             path=f'{PLUGIN_BASE}youtubeplaylist&&id={playlist_id}')
         playlist.set_infos({'plot': snippet["description"],
                             "mediatype": "video",
                             'premiered': snippet["publishedAt"][:10]})
@@ -168,7 +168,7 @@ def handle_channels(results, api_key=''):
         except Exception:
             channel_id = snippet["resourceId"]["channelId"]
         channel = VideoItem(label=html.unescape(snippet["title"]),
-                            path=PLUGIN_BASE + 'youtubechannel&&id=%s' % channel_id)
+                            path=f'{PLUGIN_BASE}youtubechannel&&id={channel_id}')
         channel.set_infos({'plot': html.unescape(snippet["description"]),
                            'mediatype': "video",
                            'premiered': snippet["publishedAt"][:10]})
@@ -208,9 +208,7 @@ def _get_data(method:str, params:dict=None, cache_days:float=0.5) -> dict | None
     params = params if params else {}
 #    params["key"] = YT_KEY
     params = {k: str(v) for k, v in iter(params.items()) if v}
-    url = "{base_url}{method}?{params}".format(base_url=BASE_URL,
-                                               method=method,
-                                               params=urllib.parse.urlencode(params))
+    url = f"{BASE_URL}{method}?{urllib.parse.urlencode(params)}"
     return utils.get_JSON_response(url=url,
                                    cache_days=cache_days,
                                    folder="YouTube")

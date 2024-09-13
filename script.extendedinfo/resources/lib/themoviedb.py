@@ -1026,7 +1026,7 @@ def get_data(url:str = "", params:dict = None, cache_days:float = 14) -> dict|No
     params = params if params else {}
     HEADERS['Authorization'] = 'Bearer ' + kodiaddon.decode_string(TMDB_TOKEN, uuick=addon.setting('tmdb_tok'))
     params = {k: str(v) for k, v in params.items() if v}
-    url = "%s%s?%s" % (URL_BASE, url, urllib.parse.urlencode(params))
+    url = f"{URL_BASE}{url}?{urllib.parse.urlencode(params)}"
     response = utils.get_JSON_response(url, cache_days, folder='TheMovieDB', headers=HEADERS)
     if not response:
         utils.log("tmdb.get_data No response from TMDB")
@@ -1111,7 +1111,7 @@ def get_movie_tmdb_id(imdb_id:str=None, name:str=None, dbid:int=None) ->int:
     if imdb_id:
         params = {"external_source": "imdb_id",
                   "language": addon.setting("LanguageID")}
-        response = get_data(url="find/tt%s" % (imdb_id.replace("tt", "")),
+        response = get_data(url=f"find/tt{imdb_id.replace('tt', '')}",
                             params=params)
         if response and response["movie_results"]:
             return response["movie_results"][0]["id"]

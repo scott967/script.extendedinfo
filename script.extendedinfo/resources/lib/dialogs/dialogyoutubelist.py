@@ -243,8 +243,7 @@ def get_window(window_type:type[xbmcgui.WindowXML]) -> type[DialogBaseList]:
         def context_menu(self, control_id):
             listitem = self.FocusedItem(control_id)
             if self.type == "video":
-                more_vids = "{} [B]{}[/B]".format(addon.LANG(32081),
-                                                  listitem.getProperty("channel_title"))
+                more_vids = f"{addon.LANG(32081)} [B]{listitem.getProperty('channel_title')}[/B]"
                 index = xbmcgui.Dialog().contextmenu(
                     list=[addon.LANG(32069), more_vids])
                 if index < 0:
@@ -300,7 +299,7 @@ def open(self, search_str="", filters=None, sort="relevance", filter_label="", m
     open video list, deal with window stack
     """
     YouTube = get_window(windows.DialogXML)
-    dialog = YouTube('script-%s-YoutubeList.xml' % addon.NAME, addon.PATH,
+    dialog = YouTube(f'script-{addon.NAME}-YoutubeList.xml', addon.PATH,
                      search_str=search_str,
                      filters=[] if not filters else filters,
                      filter_label=filter_label,
