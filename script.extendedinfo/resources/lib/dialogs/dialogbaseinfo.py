@@ -37,7 +37,7 @@ class DialogBaseInfo(windows.DialogXML):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.logged_in: bool = tmdb.Login.check_login()
+        self.logged_in: bool = tmdb.tmdb_login.check_login()
         self.bouncing = False
         self.last_focus = None
         self.lists = None
