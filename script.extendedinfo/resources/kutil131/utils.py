@@ -470,11 +470,15 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> li
         response = get_http(url, headers)
         try:
             results = json.loads(response)
+            if folder == 'TheMovieDB':
+                if ("results" in results):
             # utils.log("download %s. time: %f" % (url, time.time() - now))
-            if "status_code" in results and results.get("status_code") == 1:
+                    if "status_code" in results and results.get("status_code") == 1:
+                        save_to_file(results, hashed_url, cache_path)
+            else:
                 save_to_file(results, hashed_url, cache_path)
         except Exception as err:
-            log(f"Exception: Could not get new JSON data from {url} "
+            log(f"kutil131.utils.get_JSON_response Exception: Could not get new JSON data from {url} "
                 f"with error {err}. Trying to fallback to cache")
             #log(f'kutils131.utils.get_JSON_response {response}')
             results = read_from_file(path) if xbmcvfs.exists(path) else []
