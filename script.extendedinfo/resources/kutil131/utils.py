@@ -1,5 +1,8 @@
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
 # This program is Free Software see LICENSE file for details
+
+from __future__ import annotations
+
 import datetime
 import hashlib
 import json
@@ -428,7 +431,7 @@ def delete(url, values, headers):
     return json.loads(request.text)
 
 
-def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> dict:
+def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> list[dict] | dict:
     """gets JSON response for *url, makes use of prop and file cache.
 
     Args:
@@ -438,7 +441,7 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> di
         headers (bool, optional): headers to use in https request. Defaults to False.
 
     Returns:
-        dict: a deserialized JSON query response or None
+        list[dict]: a deserialized JSON query response or None
     """
     now = time.time()
     hashed_url = hashlib.md5(url.encode("utf-8", "ignore")).hexdigest()
@@ -448,6 +451,7 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> di
         addon.clear_global(hashed_url)
         addon.clear_global(hashed_url + "_timestamp")
     prop_time = addon.get_global(hashed_url + "_timestamp")
+    # get data from home window property
     if prop_time and now - float(prop_time) < cache_seconds:
         try:
             prop = json.loads(addon.get_global(hashed_url))
@@ -455,10 +459,14 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> di
                 return prop
         except Exception:
             pass
+    # get data from local disk cache file
     path = os.path.join(cache_path, hashed_url + ".txt")
     if xbmcvfs.exists(path) and ((now - os.path.getmtime(path)) < cache_seconds):
         results = read_from_file(path)
+        #for trakt acticipatedmovies results is list of dict per movie
     else:
+        #log(f'kutil131.utils.get_JSON_response get_http headers {headers}') #debug
+        #  data not cached query online source
         response = get_http(url, headers)
         try:
             results = json.loads(response)

@@ -39,7 +39,7 @@ def start_info_actions(info: str, params: dict[str, str]):
         params (dict[str,str]): Optional parameters for the action
 
     Returns:
-        [ItemList]: a kodi utils ItemList of VideoItems/Music
+        [ItemList]: a kodi utils ItemList of VideoItems/MusicItems
     """
     if "artistname" in params:
         params["artistname"] = params.get(

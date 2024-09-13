@@ -172,7 +172,7 @@ class LoginProvider:
 
     def reset_session_id(self):
         """Resets the user session_id in settings when tmdb authentication fails
-        This will require obraining a new session_id via get_session_id
+        This will require obtaining a new session_id via get_session_id
         """
         utils.log('tmdb.LoginProvider tmdb authentication failed, resetting session_id')
         if addon.setting("session_id"):
@@ -1093,7 +1093,7 @@ def get_image_urls(poster=None, still=None, fanart=None, profile: str =None) -> 
     return images
 
 
-def get_movie_tmdb_id(imdb_id:str=None, name:str=None, dbid:int=None):
+def get_movie_tmdb_id(imdb_id:str=None, name:str=None, dbid:int=None) ->int:
     """Gets tmdb id for movie
 
 
@@ -1588,10 +1588,15 @@ def get_movie(movie_id, light=False, cache_days=30) -> dict | None:
                     params=params,
                     cache_days=cache_days)
 
-def get_similar_movies(movie_id):
-    '''
-    get dict list containing movies similar to *movie_id
-    '''
+def get_similar_movies(movie_id:int) ->ItemList[VideoItem]:
+    """Queries tmdb for a movie to obtain similar movies
+
+    Args:
+        movie_id (int): tmdb id
+
+    Returns:
+        ItemList[VideoItem]: list of kutil131 videoitems of similar movies
+    """
     response = get_movie(movie_id)
     if not response or not response.get("similar"):
         return []

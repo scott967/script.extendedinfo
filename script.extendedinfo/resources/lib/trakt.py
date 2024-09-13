@@ -11,7 +11,7 @@ Public functions:
                           returns a kutils131 ItemList
     get_shows(show_type)  gets tvshows for showtype trending/popular/anticipated
                           returns a kutils131 ItemList
-    get_shows_from_time(show_type, period) gets tvshos for showtype collected/played/
+    get_shows_from_time(show_type, period) gets tvshows for showtype collected/played/
                                            watched for previous month
                                            returns a kutils131 ItemList
     get_movies(movie_type) gets movies for movietype trending/popular/anticipated
@@ -21,6 +21,8 @@ Public functions:
     get_similar(media_type, imdb_id) gets related mediatype show(s)/movie(s) from
                                      an imdb id.
 """
+
+from __future__ import annotations
 
 import datetime
 import urllib.error
@@ -42,14 +44,14 @@ HEADERS = {
 PLUGIN_BASE = "plugin://script.extendedinfo/?info="
 
 
-def get_episodes(content):
-    """gets upcoming/premiering episodes from today
+def get_episodes(content:str) -> ItemList[VideoItem]:
+    """gets upcoming 14 days/premiering episodes from today
 
     Args:
         content (str): enum shows (upcoming) or premieres (new shows)
 
     Returns:
-        ItemList: a kutils131 ItemList instance of VideoItems
+        ItemList: a kutil131 ItemList instance of VideoItems
     """
     shows = ItemList(content_type="episodes")
     url = ""
@@ -110,14 +112,14 @@ def get_episodes(content):
     return shows
 
 
-def handle_movies(results):
-    """helper function creates kutils131 VideoItems and adds to an ItemList
+def handle_movies(results:list[dict]) -> ItemList[VideoItem]:
+    """helper function creates kutil131 VideoItems and adds to an ItemList
 
     Args:
         results (list): a list of dicts, each dict is Trakt data for movie
 
     Returns:
-        ItemList: a kutils131 ItemList of VideoItems
+        ItemList: a kutil131 ItemList of VideoItems
     """
     movies = ItemList(content_type="movies")
     path = 'extendedinfo&&id=%s' if addon.bool_setting(
@@ -159,13 +161,13 @@ def handle_movies(results):
 
 
 def handle_tvshows(results):
-    """helper function creates kutils131 VideoItems and adds to an ItemList
+    """helper function creates kutil131 VideoItems and adds to an ItemList
 
     Args:
         results (list): a list of dicts, each dict is Trakt data for show
 
     Returns:
-        ItemList: a kutils131 ItemList of VideoItems
+        ItemList: a kutil131 ItemList of VideoItems
     """
     shows = ItemList(content_type="tvshows")
     for i in results:
@@ -217,7 +219,7 @@ def get_shows(show_type):
         show_type (str): enum trending/popular/anticipated
 
     Returns:
-        ItemList: a kutils131 ItemList of VideoItems
+        ItemList: a kutil131 ItemList of VideoItems
     """
     results = get_data(url=f'shows/{show_type}',
                        params={"extended": "full"})
@@ -239,21 +241,21 @@ def get_shows_from_time(show_type, period="monthly"):
     return handle_tvshows(results) if results else []
 
 
-def get_movies(movie_type):
+def get_movies(movie_type:str) -> ItemList[VideoItem]:
     """gets Trakt full data for movies of enumerated type
 
     Args:
         movie_type (str): enum trending/popular/anticipated
 
     Returns:
-        ItemList: a kutils131 ItemList of VideoItems
+        ItemList: a kutil131 ItemList of VideoItems
     """
     results = get_data(url=f'movies/{movie_type}',
                        params={"extended": "full"})
     return handle_movies(results) if results else []
 
 
-def get_movies_from_time(movie_type, period="monthly"):
+def get_movies_from_time(movie_type:str, period="monthly") -> ItemList[VideoItem]:
     """gets Trakt full data for movies of enumerated type for enumerated period
 
     Args:
@@ -290,7 +292,7 @@ def get_similar(media_type, imdb_id):
         return handle_movies(results)
 
 
-def get_data(url, params=None, cache_days=10):
+def get_data(url:str, params:dict=None, cache_days:int=10) -> list[dict]:
     """helper function builds query and formats result.  First attempts to
     retrieve data from local cache and then issues a ResT GET to the api if cache
     data not available 
@@ -303,7 +305,7 @@ def get_data(url, params=None, cache_days=10):
 
     Returns:
         dict: a dict from the deserialized JSON response from api or None
-        Note: kutils131 does not return the GET failure code (ie if not 200)
+        Note: kutil131 does not return the GET failure code (ie if not 200)
     """
     params = params if params else {}
     params["limit"] = 10

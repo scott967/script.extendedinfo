@@ -26,11 +26,11 @@ class DialogBaseInfo(windows.DialogXML):
     dialog types (eg actor info or movie info)
 
     Args:
-        windows.DialogXML (DialogXML): a kutils class derived from xbmcgui.WindowXMLDialog
-        and kutils WindowMixin classes
+        windows.DialogXML (DialogXML): a kutil131 class derived from xbmcgui.WindowXMLDialog
+        and kutil131 WindowMixin classes
 
     Returns:
-        _type_: _description_
+        DialogBaseInfo: class instance
     """
     ACTION_PREVIOUS_MENU = [92, 9]
     ACTION_EXIT_SCRIPT = [13, 10]
@@ -43,14 +43,14 @@ class DialogBaseInfo(windows.DialogXML):
         self.lists = None
         self.states = False
         self.yt_listitems = []
-        self.info = VideoItem() # kutils listitem
+        self.info = VideoItem() # kutil131 listitem
         self.last_control = None
         self.last_position = None
 
     def onInit(self, *args, **kwargs):
         super().onInit()
         # self.set_buttons()
-        self.info.to_windowprops(window_id=self.window_id)  #kutils sets dialog window
+        self.info.to_windowprops(window_id=self.window_id)  #kutil131 sets dialog window
         #properties from the info VideoItem(listitem)
         for container_id, key in self.LISTS:
             try:

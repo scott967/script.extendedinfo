@@ -2,6 +2,8 @@
 # Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
+from __future__ import annotations
+
 import datetime
 
 import xbmcgui
@@ -22,9 +24,27 @@ ID_BUTTON_DEFINITIONFILTER = 5012
 ID_BUTTON_TYPEFILTER = 5013
 
 
-def get_window(window_type):
+
+def get_window(window_type:type[xbmcgui.WindowXML]) -> type[DialogBaseList]:
+    """Creates a DialogYoutubeList class inheriting from window_type class
+
+    Args:
+        window_type (xbmcgui.WindowXML): WindowXML or one of its subclasses (DialogXML)
+
+    Returns:
+        DialogYoutubeList class: Class inheriting from WindowXML or its subclasses
+    """
 
     class DialogYoutubeList(DialogBaseList, window_type):
+        """Creates WindowXML dialog
+
+        Args:
+            DialogBaseList (class): Parent class for dialog
+            window_type (class): xbmcgui parent class
+
+        Returns:
+            DialogYoutubeList: dialog XML window
+        """
 
         TYPES = ["video", "playlist", "channel"]
 
@@ -81,7 +101,12 @@ def get_window(window_type):
             ch.serve_action(action, self.getFocusId(), self)
 
         @ch.click_by_type("video")
-        def main_list_click(self, control_id):
+        def main_list_click(self, control_id: int):
+            """handles user select action on container listitem
+
+            Args:
+                control_id (int): control id of focused container  
+            """
             listitem = self.FocusedItem(control_id)
             youtube_id = listitem.getProperty("youtube_id")
             media_type = listitem.getProperty("type")
@@ -96,6 +121,14 @@ def get_window(window_type):
 
         @ch.click(ID_BUTTON_PUBLISHEDFILTER)
         def set_published_filter(self, control_id):
+            """Sets youtube filter publishedAfter based on user input day/week/month/year/custom
+
+            Args:
+                control_id (_type_): _description_
+
+            Returns:
+                None
+            """
             options = [(1, addon.LANG(32062)),
                        (7, addon.LANG(32063)),
                        (31, addon.LANG(32064)),
@@ -120,13 +153,21 @@ def get_window(window_type):
 
         @ch.click(ID_BUTTON_LANGUAGEFILTER)
         def set_language_filter(self, control_id):
-            options = [("en", "en"),
-                       ("de", "de"),
+            """Sets Youtube relevanceLanguage filter from ISO 639-1 two-letter language code.
+
+            Args:
+                control_id (_type_): _description_
+            """
                        ("fr", "fr")]
             self.choose_filter("regionCode", 32151, options)
 
         @ch.click(ID_BUTTON_DIMENSIONFILTER)
         def set_dimension_filter(self, control_id):
+            """Sets Youtube videoDimension filter 
+
+            Args:
+                control_id (_type_): _description_
+            """
             options = [("2d", "2D"),
                        ("3d", "3D"),
                        ("any", addon.LANG(593))]
@@ -134,6 +175,13 @@ def get_window(window_type):
 
         @ch.click(ID_BUTTON_DURATIONFILTER)
         def set_duration_filter(self, control_id):
+            """Sets Youtube videoDuration filter
+            long >20 min
+            medium >4 and <20 min
+
+            Args:
+                control_id (_type_): _description_
+            """
             options = [("long", addon.LANG(33013)),
                        ("medium", addon.LANG(601)),
                        ("short", addon.LANG(33012)),
@@ -142,6 +190,11 @@ def get_window(window_type):
 
         @ch.click(ID_BUTTON_CAPTIONFILTER)
         def set_caption_filter(self, control_id):
+            """Sets Youtube videoCaption filter
+
+            Args:
+                control_id (_type_): _description_
+            """
             options = [("closedCaption", addon.LANG(107)),
                        ("none", addon.LANG(106)),
                        ("any", addon.LANG(593))]
@@ -149,6 +202,12 @@ def get_window(window_type):
 
         @ch.click(ID_BUTTON_DEFINITIONFILTER)
         def set_definition_filter(self, control_id):
+            """Sets Youtube videoCaption filter
+            high >= 720 
+
+            Args:
+                control_id (_type_): _description_
+            """
             options = [("high", addon.LANG(419)),
                        ("standard", addon.LANG(602)),
                        ("any", addon.LANG(593))]
@@ -156,6 +215,11 @@ def get_window(window_type):
 
         @ch.click(ID_BUTTON_TYPEFILTER)
         def set_type_filter(self, control_id):
+            """Sets Youtube videoType filter
+
+            Args:
+                control_id (_type_): _description_
+            """
             options = [("movie", addon.LANG(20338)),
                        ("episode", addon.LANG(20359)),
                        ("any", addon.LANG(593))]
@@ -163,6 +227,14 @@ def get_window(window_type):
 
         @ch.click(ID_BUTTON_SORTTYPE)
         def get_sort_type(self, control_id):
+            """Sets the youtube ItemList sort order
+
+            Args:
+                control_id (_type_): _description_
+
+            Returns:
+                _type_: _description_
+            """
             if not self.choose_sort_method(self.type):
                 return None
             self.update()

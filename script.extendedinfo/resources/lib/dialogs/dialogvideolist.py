@@ -52,7 +52,7 @@ def get_window(window_type):
 
         Args:
             DialogBaseList: Super class for dialog windows
-            window_type (kutils.windows class): Super class for Kodi xbmc.WindowXML
+            window_type (kutil131.windows class): Super class for Kodi xbmc.WindowXML
 
         """
 

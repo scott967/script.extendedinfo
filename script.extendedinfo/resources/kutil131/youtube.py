@@ -1,6 +1,17 @@
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
+"""Handles youtube queries using youtube api
+See: https://developers.google.com/youtube/v3/docs
+
+Public functions:
+    get_duration_in_seconds:  duration of a youtube video as int seconds
+    get_formatted_duration:  duration of youtube video as HH:MM:SS string
+    search:  build youtube query for youtbe api and _get_data  to return ItemList of VideoItems
+    get_playlist_videos:  Gets an ItemList of youtube videos for a playlist
+    get_user_playlists:  Gets an itemlist of user youtube videos
+"""
+
 from __future__ import annotations
 import html
 import itertools
@@ -16,11 +27,11 @@ PLUGIN_BASE = "plugin://script.extendedinfo/?info="
 
 def handle_videos(results:list[dict], extended=False, api_key=''):
     """
-    Process video api result to ItemList
+    Process video api results to ItemList
 
     :param api_key: api_key to pass to YouTube
     """
-    videos = ItemList(content_type="videos")
+    videos:ItemList[VideoItem] = ItemList(content_type="videos")
     for item in results:
         snippet = item["snippet"]
         thumb = snippet["thumbnails"]["high"]["url"] if "thumbnails" in snippet else ""
@@ -74,7 +85,6 @@ def handle_videos(results:list[dict], extended=False, api_key=''):
             break
     return videos
 
-
 def get_duration_in_seconds(duration:str) -> int:
     """
     convert youtube duration string to seconds int
@@ -92,7 +102,6 @@ def get_duration_in_seconds(duration:str) -> int:
     except Exception as err:
         utils.log(f'kutils131.youtube unable decode youtube duration of {duration} error {err}')
         return 0
-
 
 def get_formatted_duration(duration):
     """
@@ -143,7 +152,6 @@ def handle_playlists(results, api_key=''):
             item.set_property("itemcount", ext_item['contentDetails']['itemCount'])
     return playlists
 
-
 def handle_channels(results, api_key=''):
     """
     process channel api result to ItemList
@@ -180,10 +188,22 @@ def handle_channels(results, api_key=''):
             item.set_art("fanart", ext_item["brandingSettings"]["image"].get("bannerTvMediumImageUrl"))
     return channels
 
+def _get_data(method:str, params:dict=None, cache_days:float=0.5) -> dict | None:
+    """Formats youtube query and returns youtube search results or None
 
-def get_data(method, params=None, cache_days=0.5):
-    """
-    fetch data from youtube API
+    Args:
+        method (str): youtube method --
+            search:  Returns a collection of search results that match the query parameters specified in the API request
+                         A search result set identifies matching video, channel, and playlist resources
+            playlists:  Returns a collection of playlists that match the API request parameters
+            playlistItems:  Returns a collection of playlist items that match the API request parameters
+            channels:  Returns a collection of zero or more channel resources that match the request criteria
+            videos:  Returns a list of videos that match the API request parameters
+        params (dict, optional): youtube filters. See youtube API and DialogYoutubeList.  Defaults to None.
+        cache_days (float, optional): period cached results are valid. Defaults to 0.5.
+
+    Returns:
+        dict or None: Youtube search results videos
     """
     params = params if params else {}
 #    params["key"] = YT_KEY
@@ -195,13 +215,26 @@ def get_data(method, params=None, cache_days=0.5):
                                    cache_days=cache_days,
                                    folder="YouTube")
 
-
 def search(search_str="", hd="", orderby="relevance", limit=40, extended=True,
-           page="", filters=None, media_type="video", api_key="") -> ItemList:
-    """
-    returns ItemList according to search term, filters etc.
+           page="", filters:dict=None, media_type="video", api_key="") -> ItemList[VideoItem]:
+    """Runs youtube search method using parameters and filters
 
-    :param api_key: api_key to pass to YouTube
+    Args:
+        search_str (str, optional): youtube search string.
+            Can also use the Boolean NOT (-) and OR (| URL-escaped) operators.  Defaults to "".
+        hd (str, optional): true/false hd (>=720) video. Defaults to "".
+        orderby (str, optional): results sort order. Defaults to "relevance".
+            date, rating, relevance, title, videoCount (for channels)
+            viewCount
+        limit (int, optional): videos to return. Defaults to 40.
+        extended (bool, optional): return extended meta data. Defaults to True.
+        page (str, optional): specific page in the result set that should be returned. Defaults to "".
+        filters (dict, optional): _description_. Defaults to None.
+        media_type (str, optional): video/playlist/channel. Defaults to "video".
+        api_key (str): user youtube api key (from setting). Defaults to "".
+
+    Returns:
+        ItemList: kutils131 ItemList of VideoItems
     """
     params = {"part": "id,snippet",
               "maxResults": limit,
@@ -234,7 +267,6 @@ def search(search_str="", hd="", orderby="relevance", limit=40, extended=True,
     listitems.prev_page_token = results.get("prevPageToken", "")
     return listitems
 
-
 def get_playlist_videos(playlist_id=""):
     """
     returns ItemList from playlist with *playlist_id
@@ -249,7 +281,6 @@ def get_playlist_videos(playlist_id=""):
     if not results:
         return []
     return handle_videos(results["items"])
-
 
 def get_user_playlists(username=""):
     """
