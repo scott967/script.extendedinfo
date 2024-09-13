@@ -23,6 +23,119 @@ ID_BUTTON_CAPTIONFILTER = 5009
 ID_BUTTON_DEFINITIONFILTER = 5012
 ID_BUTTON_TYPEFILTER = 5013
 
+ISO_639_1_CODES = {
+  "ar-ae": "Arabic (U.A.E.)",
+  "ar-bh": "Arabic (Bahrain)",
+  "ar-dz": "Arabic (Algeria)",
+  "ar-eg": "Arabic (Egypt)",
+  "ar-sa": "Arabic (Saudi Arabia)",
+  "ar-sy": "Arabic (Syria)",
+  "ar": "Arabic",
+  "be": "Belarusian",
+  "bg": "Bulgarian",
+  "bn": "Bengali",
+  "bs": "Bosnian",
+  "cs": "Czech",
+  "da": "Danish",
+  "de-at": "German (Austria)",
+  "de-ch": "German (Switzerland)",
+  "de-de": "German (Germany)",
+  "de-li": "German (Liechtenstein)",
+  "de-lu": "German (Luxembourg)",
+  "de": "German",
+  "el": "Greek",
+  "en-au": "English (Australia)",
+  "en-ca": "English (Canada)",
+  "en-gb": "English (United Kingdom)",
+  "en-nz": "English (New Zealand)",
+  "en-us": "English (United States)",
+  "en-za": "English (South Africa)",
+  "en": "English",
+  "es-ar": "Spanish (Argentina)",
+  "es-cl": "Spanish (Chile)",
+  "es-es": "Spanish (Spain)",
+  "es-mx": "Spanish (Mexico)",
+  "es-pe": "Spanish (Peru)",
+  "es-pr": "Spanish (Puerto Rico)",
+  "es-us": "Spanish (United States)",
+  "es": "Spanish",
+  "et": "Estonian",
+  "fa": "Farsi",
+  "fi": "Finnish",
+  "fr-be": "French (Belgium)",
+  "fr-ca": "French (Canada)",
+  "fr-ch": "French (Switzerland)",
+  "fr-fr": "French (France)",
+  "fr-lu": "French (Luxembourg)",
+  "fr-mc": "French (Monaco)",
+  "fr": "French",
+  "ga": "Irish",
+  "he": "Hebrew",
+  "hi": "Hindi",
+  "hr-ba": "Croatian (Bosnia and Herzegovina)",
+  "hr-hr": "Croatian (Croatia)",
+  "hr": "Croatian",
+  "ht": "Haitian",
+  "hu": "Hungarian",
+  "hy": "Armenian",
+  "id": "Indonesian",
+  "in": "Indonesian",
+  "is": "Icelandic",
+  "it-ch": "Italian (Switzerland)",
+  "it-it": "Italian (Italy)",
+  "it": "Italian",
+  "iw": "Hebrew",
+  "ja": "Japanese",
+  "km": "Cambodian",
+  "kn": "Kannada",
+  "ko": "Korean",
+  "ks": "Kashmiri",
+  "ku": "Kurdish",
+  "ls": "Slovenian",
+  "lt": "Lithuanian",
+  "lv": "Latvian",
+  "ml": "Malayalam",
+  "ms-my": "Malay (Malaysia)",
+  "ms": "Malay",
+  "my": "Burmese",
+  "nl-be": "Dutch (Belgium)",
+  "nl-nl": "Dutch (Netherlands)",
+  "nl": "Dutch",
+  "nn": "Norwegian (Nynorsk)",
+  "no": "Norwegian",
+  "pa": "Punjabi",
+  "pl": "Polish",
+  "pt-br": "Portuguese (Brazil)",
+  "pt-pt": "Portuguese (Portugal)",
+  "pt": "Portuguese",
+  "ro": "Romanian",
+  "ru": "Russian",
+  "se-fi": "Sami (Finland)",
+  "se-no": "Sami (Norway)",
+  "se-se": "Sami (Sweden)",
+  "se": "Sami",
+  "sh": "Serbo-Croatian",
+  "sk": "Slovak",
+  "sl": "Slovenian",
+  "sq": "Albanian",
+  "sr-ba": "Serbian (Bosnia and Herzegovina)",
+  "sr-sp": "Serbian (Serbia and Montenegro)",
+  "sr": "Serbian",
+  "sv-fi": "Swedish (Finland)",
+  "sv-se": "Swedish (Sweden)",
+  "sv": "Swedish",
+  "ta": "Tamil",
+  "th": "Thai",
+  "tr": "Turkish",
+  "uk": "Ukrainian",
+  "vi": "Vietnamese",
+  "zh-cn": "Chinese (China)",
+  "zh-hk": "Chinese (Hong Kong SAR)",
+  "zh-mo": "Chinese (Macau SAR)",
+  "zh-sg": "Chinese (Singapore)",
+  "zh-tw": "Chinese (Taiwan)",
+  "zh": "Chinese",
+}
 
 
 def get_window(window_type:type[xbmcgui.WindowXML]) -> type[DialogBaseList]:
@@ -158,8 +271,8 @@ def get_window(window_type:type[xbmcgui.WindowXML]) -> type[DialogBaseList]:
             Args:
                 control_id (_type_): _description_
             """
-                       ("fr", "fr")]
-            self.choose_filter("regionCode", 32151, options)
+            options = [(k, v) for k, v in ISO_639_1_CODES.items()]
+            self.choose_filter("relevanceLanguage", 32151, options)
 
         @ch.click(ID_BUTTON_DIMENSIONFILTER)
         def set_dimension_filter(self, control_id):
@@ -273,8 +386,7 @@ def get_window(window_type:type[xbmcgui.WindowXML]) -> type[DialogBaseList]:
 
         def add_filter(self, **kwargs):
             kwargs["typelabel"] = self.FILTERS[kwargs["key"]]
-            super().add_filter(force_overwrite=True,
-                                                      **kwargs)
+            super().add_filter(force_overwrite=True, **kwargs)
 
         def fetch_data(self, force=False):
             self.set_filter_label()
