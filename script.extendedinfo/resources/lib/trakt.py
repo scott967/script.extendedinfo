@@ -56,57 +56,55 @@ def get_episodes(content:str) -> ItemList[VideoItem]:
     shows = ItemList(content_type="episodes")
     url = ""
     if content == "shows":
-        url = f'calendars/shows/{datetime.date.today()}/14'
+        url = f'calendars/all/shows/{datetime.date.today()}/14'
     elif content == "premieres":
-        url = f'calendars/shows/premieres/{datetime.date.today()}/14'
+        url = f'calendars/all/shows/premieres/{datetime.date.today()}/14'
     results = get_data(url=url,
                        params={"extended": "full"},
                        cache_days=0.3)
-    count = 1
     if not results:
         return None
-    #results is a dict.  Each key is an ISO date string (day) with value as a
-    #list of episodes for that date (episode), episode is a dict with keys airs-at,
-    #episode (ep), and show (tv)  Get the first 20 episodes and create an ItemList
+    #results is a list of dict.  Each dict contains "first aired" an ISO date string (day), 
+    #episode is a dict,
+    #show is a dict.  Get the first 20 episodes and create an ItemList
     #for each episode as VideoItem
-    for day in results.items():
-        for episode in day[1]: #dict of episode
-            ep = episode["episode"]
-            tv = episode["show"]
-            title = ep["title"] if ep["title"] else ""
-            label = f'{tv["title"]} - {ep["season"]}x{ep["number"]}. {title}'
-            show = VideoItem(label=label,
-                             path=f'{PLUGIN_BASE}extendedtvinfo&&tvdb_id={tv["ids"]["tvdb"]}')
-            show.set_infos({'title': title,
-                            'aired': ep["first_aired"],
-                            'season': ep["season"],
-                            'episode': ep["number"],
-                            'tvshowtitle': tv["title"],
-                            'mediatype': "episode",
-                            'year': tv.get("year"),
-                            'duration': tv["runtime"] * 60 if tv["runtime"] else "",
-                            'studio': tv["network"],
-                            'plot': tv["overview"],
-                            'country': tv["country"],
-                            'status': tv["status"],
-                            'trailer': tv["trailer"],
-                            'imdbnumber': ep["ids"]["imdb"],
-                            'rating': tv["rating"],
-                            'genre': " / ".join(tv["genres"]),
-                            'mpaa': tv["certification"]})
-            show.set_properties({'tvdb_id': ep["ids"]["tvdb"],
-                                 'id': ep["ids"]["tvdb"],
-                                 'imdb_id': ep["ids"]["imdb"],
-                                 'homepage': tv["homepage"]})
-            if tv["ids"].get("tmdb"):
-                art_info = tmdb.get_tvshow(tv["ids"]["tmdb"], light=True)
-                if art_info:
-                    show.set_artwork(tmdb.get_image_urls(poster=art_info.get("poster_path", ""),
-                                                     fanart=art_info.get("backdrop_path", "")))
-            shows.append(show)
-            count += 1
-            if count > 20:
-                break
+    count = 1
+    for airing_episode in results:
+        air_date = airing_episode["first_aired"]
+        ep:dict = airing_episode["episode"]
+        tv:dict = airing_episode["show"]
+        title = airing_episode["episode"].get("title", "")
+        label = f'{tv["title"]} - {ep["season"]}x{ep["number"]}. {title}'
+        show = VideoItem(label=label,
+                            path=f'{PLUGIN_BASE}extendedtvinfo&&tvdb_id={tv["ids"]["tvdb"]}')
+        show.set_infos({'title': title,
+                        'aired': air_date,
+                        'season': ep["season"],
+                        'episode': ep["number"],
+                        'tvshowtitle': tv["title"],
+                        'mediatype': "episode",
+                        'year': tv.get("year"),
+                        'duration': tv.get("runtime", 0) * 60,
+                        'studio': tv["network"],
+                        'plot': tv["overview"],
+                        'country': tv["country"],
+                        'status': tv["status"],
+                        'trailer': tv["trailer"],
+                        'imdbnumber': ep["ids"]["imdb"],
+                        'rating': tv["rating"],
+                        'genre': " / ".join(tv["genres"]),
+                        'mpaa': tv.get("certification","")})
+        show.set_properties({'tvdb_id': ep["ids"]["tvdb"],
+                                'id': ep["ids"]["tvdb"],
+                                'imdb_id': ep["ids"]["imdb"],
+                                'homepage': tv["homepage"]})
+        if tv["ids"].get("tmdb"):
+            art_info = tmdb.get_tvshow(tv["ids"]["tmdb"], light=True)
+            if art_info:
+                show.set_artwork(tmdb.get_image_urls(poster=art_info.get("poster_path", ""),
+                                                    fanart=art_info.get("backdrop_path", "")))
+        shows.append(show)
+        count += 1
         if count > 20:
             break
     return shows
@@ -125,18 +123,18 @@ def handle_movies(results:list[dict]) -> ItemList[VideoItem]:
     path = 'extendedinfo&&id=%s' if addon.bool_setting(
         "infodialog_onclick") else "playtrailer&&id=%s"
     for i in results:
-        item = i["movie"] if "movie" in i else i
+        item:dict = i["movie"] if "movie" in i else i
         trailer = f'{PLUGIN_BASE}youtubevideo&&id={utils.extract_youtube_id(item["trailer"])}'
         movie = VideoItem(label=item["title"],
                           path=PLUGIN_BASE + path % item["ids"]["tmdb"])
-        movie.set_infos({'title': item["title"],
+        movie.set_infos({'title': item.get("title", ""),
                          'duration': item["runtime"] * 60 if item["runtime"] else "",
-                         'tagline': item["tagline"],
+                         'tagline': item.get("tagline", ""),
                          'mediatype': "movie",
                          'trailer': trailer,
-                         'year': item["year"],
-                         'mpaa': item["certification"],
-                         'plot': item["overview"],
+                         'year': item.get("year", ""),
+                         'mpaa': item.get("certification", ""),
+                         'plot': item.get("overview", ""),
                          'imdbnumber': item["ids"]["imdb"],
                          'premiered': item["released"],
                          'rating': round(item["rating"], 1),
@@ -148,7 +146,9 @@ def handle_movies(results:list[dict]) -> ItemList[VideoItem]:
                               'watchers': item.get("watchers"),
                               'language': item.get("language"),
                               'homepage': item.get("homepage")})
-        art_info = tmdb.get_movie(item["ids"]["tmdb"], light=True)
+        if item["ids"].get("tmdb"):
+            utils.log('trakt.handle_movies get art from tmdb')
+            art_info = tmdb.get_movie(item["ids"]["tmdb"], light=True)
         if art_info:
             movie.set_artwork(tmdb.get_image_urls(poster=art_info.get("poster_path"),
                                               fanart=art_info.get("backdrop_path")))
@@ -176,27 +176,27 @@ def handle_tvshows(results):
         show = VideoItem(label=item["title"],
                          path=f'{PLUGIN_BASE}extendedtvinfo&&tvdb_id={item["ids"]["tvdb"]}')
         show.set_infos({'mediatype': "tvshow",
-                        'title': item["title"],
+                        'title': item.get("title", ""),
                         'duration': item["runtime"] * 60 if item["runtime"] else "",
                         'year': item["year"],
                         'premiered': item["first_aired"][:10],
-                        'country': item["country"],
+                        'country': item.get("country", ""),
                         'rating': round(item["rating"], 1),
                         'votes': item["votes"],
                         'imdbnumber': item['ids']["imdb"],
-                        'mpaa': item["certification"],
-                        'trailer': item["trailer"],
+                        'mpaa': item.get("certification", ""),
+                        'trailer': item.get("trailer", ""),
                         'status': item.get("status"),
-                        'studio': item["network"],
+                        'studio': item.get("network", ""),
                         'genre': " / ".join(item["genres"]),
-                        'plot': item["overview"]})
+                        'plot': item.get("overview", "")})
         show.set_properties({'id': item['ids']["tmdb"],
                              'tvdb_id': item['ids']["tvdb"],
                              'imdb_id': item['ids']["imdb"],
                              'trakt_id': item['ids']["trakt"],
-                             'language': item["language"],
+                             'language': item.get("language", ""),
                              'aired_episodes': item["aired_episodes"],
-                             'homepage': item["homepage"],
+                             'homepage': item.get("homepage", ""),
                              'airday': airs.get("day"),
                              'airshorttime': airs.get("time"),
                              'watchers': item.get("watchers")})
@@ -223,6 +223,7 @@ def get_shows(show_type):
     """
     results = get_data(url=f'shows/{show_type}',
                        params={"extended": "full"})
+    
     return handle_tvshows(results) if results else []
 
 
