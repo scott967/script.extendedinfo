@@ -973,7 +973,7 @@ def get_person_info(person_label:str, skip_dialog=False) -> dict:
     response = get_data(url="search/person",
                         params=params,
                         cache_days=30)
-    if not response or "results" not in response:
+    if not response or not response.get("results",[]):
         return False
     people: list[dict] = [i for i in response["results"] if i["name"] == person_label]
     if len(people) > 1 and not skip_dialog:
@@ -1107,7 +1107,7 @@ def get_movie_tmdb_id(imdb_id:str=None, name:str=None, dbid:int=None) ->int:
         or fall back to title
     """
     if dbid and (int(dbid) > 0):
-        imdb_id = local_db.get_imdb_id("movie", dbid)
+        imdb_id, name = local_db.get_imdb_id("movie", dbid)
     if imdb_id:
         params = {"external_source": "imdb_id",
                   "language": addon.setting("LanguageID")}
