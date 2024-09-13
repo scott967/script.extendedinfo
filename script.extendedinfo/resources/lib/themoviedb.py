@@ -1441,8 +1441,10 @@ def extended_actor_info(actor_id: int) -> tuple[VideoItem, dict[str, ItemList]]:
     """
     if not actor_id:
         return None
-    data: dict = get_data(url="person/%s" % (actor_id),
-                        params={"append_to_response": ALL_ACTOR_PROPS},
+    data: dict = get_data(url=f"person/{actor_id}",
+                        params={"append_to_response": ALL_ACTOR_PROPS,
+                        "language": addon.setting("LanguageID"),
+                        "include_image_language": f"{addon.setting('LanguageID')},null,en"},
                         cache_days=1)
     if not data:
         utils.notify("Could not find actor info")
