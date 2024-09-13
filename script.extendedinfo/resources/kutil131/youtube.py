@@ -25,7 +25,7 @@ BASE_URL = "https://www.googleapis.com/youtube/v3/"
 PLUGIN_BASE = "plugin://script.extendedinfo/?info="
 
 
-def handle_videos(results:list[dict], extended=False, api_key=''):
+def _handle_videos(results:list[dict], extended=False, api_key='') -> ItemList[VideoItem]:
     """
     Process video api results to ItemList
 
@@ -37,7 +37,7 @@ def handle_videos(results:list[dict], extended=False, api_key=''):
         thumb = snippet["thumbnails"]["high"]["url"] if "thumbnails" in snippet else ""
         try:
             video_id = item["id"]["videoId"]
-        except Exception:
+        except AttributeError:
             video_id = snippet["resourceId"]["videoId"]
         video = VideoItem(label=html.unescape(snippet["title"]),
                           path=f'{PLUGIN_BASE}youtubevideo&&id={video_id}')
@@ -56,7 +56,7 @@ def handle_videos(results:list[dict], extended=False, api_key=''):
     params = {"part": "contentDetails,statistics",
               "id": ",".join([i.get_property("youtube_id") for i in videos]),
               "key": api_key}
-    ext_results = get_data(method="videos",
+    ext_results = _get_data(method="videos",
                            params=params)
     if not ext_results or not 'items' in ext_results.keys():
         return videos
@@ -115,8 +115,7 @@ def get_formatted_duration(duration):
     else:
         return f"00:{duration[0].zfill(2)}"
 
-
-def handle_playlists(results, api_key=''):
+def _handle_playlists(results, api_key=''):
     """
     process playlist api result to ItemList
 
@@ -145,14 +144,14 @@ def handle_playlists(results, api_key=''):
     params = {"id": ",".join([i.get_property("youtube_id") for i in playlists]),
               "part": "contentDetails",
               "key": api_key}
-    ext_results = get_data(method="playlists",
+    ext_results = _get_data(method="playlists",
                            params=params)
     for item, ext_item in itertools.product(playlists, ext_results["items"]):
         if item.get_property("youtube_id") == ext_item['id']:
             item.set_property("itemcount", ext_item['contentDetails']['itemCount'])
     return playlists
 
-def handle_channels(results, api_key=''):
+def _handle_channels(results, api_key=''):
     """
     process channel api result to ItemList
 
@@ -180,7 +179,7 @@ def handle_channels(results, api_key=''):
     params = {"id": ",".join(channel_ids),
               "part": "contentDetails,statistics,brandingSettings",
               "key": api_key}
-    ext_results = get_data(method="channels",
+    ext_results = _get_data(method="channels",
                            params=params)
     for item, ext_item in itertools.product(channels, ext_results["items"]):
         if item.get_property("youtube_id") == ext_item['id']:
@@ -206,7 +205,6 @@ def _get_data(method:str, params:dict=None, cache_days:float=0.5) -> dict | None
         dict or None: Youtube search results videos
     """
     params = params if params else {}
-#    params["key"] = YT_KEY
     params = {k: str(v) for k, v in iter(params.items()) if v}
     url = f"{BASE_URL}{method}?{urllib.parse.urlencode(params)}"
     return utils.get_JSON_response(url=url,
@@ -242,10 +240,10 @@ def search(search_str="", hd="", orderby="relevance", limit=40, extended=True,
               "hd": str(hd and not hd == "false"),
               "q": search_str.replace('"', ''),
               "key" : api_key}
-    results = get_data(method="search",
+    results = _get_data(method="search",
                        params=utils.merge_dicts(params, filters if filters else {}))
-    if 'error' in results.keys():
-        utils.log('youtube get_data ERROR: {error}'.format(error=results.get('error').get('message')))
+    if results and ('error' in results.keys()):
+        utils.log(f'youtube _get_data ERROR: {results.get("error").get("message")}')
     if not results or 'items' not in results.keys():
         return None
 
@@ -254,11 +252,11 @@ def search(search_str="", hd="", orderby="relevance", limit=40, extended=True,
 
     listitems: ItemList = ItemList()
     if media_type == "video":
-        listitems = handle_videos(results["items"], extended=extended, api_key=api_key)
+        listitems = _handle_videos(results["items"], extended=extended, api_key=api_key)
     elif media_type == "playlist":
-        listitems = handle_playlists(results["items"], api_key=api_key)
+        listitems = _handle_playlists(results["items"], api_key=api_key)
     elif media_type == "channel":
-        listitems = handle_channels(results["items"], api_key=api_key)
+        listitems = _handle_channels(results["items"], api_key=api_key)
     listitems.total_pages = results["pageInfo"]["resultsPerPage"]
     listitems.totals = results["pageInfo"]["totalResults"]
     listitems.next_page_token = results.get("nextPageToken", "")
@@ -274,11 +272,11 @@ def get_playlist_videos(playlist_id=""):
     params = {"part": "id,snippet",
               "maxResults": "50",
               "playlistId": playlist_id}
-    results = get_data(method="playlistItems",
+    results = _get_data(method="playlistItems",
                        params=params)
     if not results:
         return []
-    return handle_videos(results["items"])
+    return _handle_videos(results["items"])
 
 def get_user_playlists(username=""):
     """
@@ -286,7 +284,7 @@ def get_user_playlists(username=""):
     """
     params = {"part": "contentDetails",
               "forUsername": username}
-    results = get_data(method="channels",
+    results = _get_data(method="channels",
                        params=params)
     if not results["items"]:
         return None
