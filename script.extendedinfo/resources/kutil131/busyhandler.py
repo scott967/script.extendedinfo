@@ -80,7 +80,7 @@ class BusyHandler:
                 result = func(cls, *args, **kwargs)
             except Exception:
                 utils.log(traceback.format_exc())
-                utils.notify("Error", "please contact add-on author")
+                utils.notify("Busy Error", "please contact add-on author")
             finally:
                 self.hide_busy()
                 return result
