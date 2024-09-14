@@ -117,7 +117,7 @@ def start_info_actions(info: str, params: dict[str, str]):
         if tmdb_id:
             tvshow_id = tmdb_id
         elif dbid and int(dbid) > 0:
-            tvdb_id = local_db.get_imdb_id("tvshow", dbid)
+            tvdb_id = local_db.get_imdb_id("tvshow", dbid)[0]
             if tvdb_id:
                 tvshow_id = tmdb.get_show_tmdb_id(tvdb_id)
         elif tvdb_id:
@@ -182,7 +182,7 @@ def start_info_actions(info: str, params: dict[str, str]):
     elif info == 'traktsimilarmovies':
         if params.get("id") or params.get("dbid"):
             if params.get("dbid"):
-                movie_id = local_db.get_imdb_id("movie", params["dbid"])
+                movie_id = local_db.get_imdb_id("movie", params["dbid"])[0]
             else:
                 movie_id = params["id"]
             return trakt.get_similar("movie", movie_id)
@@ -194,7 +194,7 @@ def start_info_actions(info: str, params: dict[str, str]):
                         params["dbid"])
                 else:
                     tvshow_id = local_db.get_imdb_id(media_type="tvshow",
-                                                     dbid=params["dbid"])
+                                                     dbid=params["dbid"])[0]
             else:
                 tvshow_id = params["id"]
             return trakt.get_similar("show", tvshow_id)
@@ -286,35 +286,42 @@ def start_info_actions(info: str, params: dict[str, str]):
                             dbid=params.get("dbid"),
                             resume=params.get("resume", "true"))
     elif info == "openinfodialog":
+        # ListItem.DBType is used to determine what dialog to open
+        # For Kodi video library items dbid and title are used
         if xbmc.getCondVisibility("System.HasActiveModalDialog"):
             container_id = ""
         else:
             container_id = f'Container({utils.get_infolabel("System.CurrentControlId")})'
-        dbid = utils.get_infolabel(f'{container_id}ListItem.DBID')
-        db_type = utils.get_infolabel(f'{container_id}ListItem.DBType')
+        dbid:str = utils.get_infolabel(f'{container_id}ListItem.DBID')
+        db_type:str = utils.get_infolabel(f'{container_id}ListItem.DBType')
         if db_type == "movie":
             params = {"dbid": dbid,
                       "id": utils.get_infolabel(f'{container_id}ListItem.Property(id)'),
                       "name": utils.get_infolabel(f'{container_id}ListItem.Title')}
-            utils.log(f'process.start_info_actions call exendedinfo with {params}')
+            utils.log(f'process.start_info_actions for movie call exendedinfo with {params}')
             start_info_actions("extendedinfo", params)
         elif db_type == "tvshow":
             params = {"dbid": dbid,
                       "tvdb_id": utils.get_infolabel(f'{container_id}ListItem.Property(tvdb_id)'),
                       "id": utils.get_infolabel(f'{container_id}ListItem.Property(id)'),
                       "name": utils.get_infolabel(f'{container_id}ListItem.Title')}
+            utils.log(f'process.start_info_actions for tvshow call exendedtvinfo with {params}')
             start_info_actions("extendedtvinfo", params)
         elif db_type == "season":
             params = {"tvshow": utils.get_infolabel(f'{container_id}ListItem.TVShowTitle'),
+                      "dbid": utils.get_infolabel(f'{container_id}ListItem.DBID'),
                       "season": utils.get_infolabel(f'{container_id}ListItem.Season')}
+            utils.log(f'process.start_info_actions for season call seasoninfo with {params}')
             start_info_actions("seasoninfo", params)
         elif db_type == "episode":
             params = {"tvshow": utils.get_infolabel(f'{container_id}ListItem.TVShowTitle'),
                       "season": utils.get_infolabel(f'{container_id}ListItem.Season'),
                       "episode": utils.get_infolabel(f'{container_id}ListItem.Episode')}
+            utils.log(f'process.start_info_actions for episode call exendedepisodeinfo with {params}')
             start_info_actions("extendedepisodeinfo", params)
         elif db_type in ["actor", "director"]:
             params = {"name": utils.get_infolabel(f'{container_id}ListItem.Label')}
+            utils.log(f'process.start_info_actions for actor call exendedactorinfo with {params}')
             start_info_actions("extendedactorinfo", params)
         else:
             utils.notify("Error", "Could not find valid content type")
@@ -399,9 +406,10 @@ def start_info_actions(info: str, params: dict[str, str]):
             return None
         addon.set_global('infodialogs.active', "true")
         try:
+            utils.log(f'process.start_info_actions seasoninfo tvshow {params.get("tvshow")} dbid {params.get("dbid")} season {params.get("season")}')
             wm.open_season_info(tvshow=params.get("tvshow"),
                                 dbid=params.get("dbid"),
-                                season=params.get("season"))
+                                season=int(params.get("season")))
         finally:
             addon.clear_global('infodialogs.active')
     elif info == 'extendedepisodeinfo':
@@ -435,8 +443,8 @@ def start_info_actions(info: str, params: dict[str, str]):
                                              name=params.get("name"))
         elif media_type == "tv" and params.get("dbid"):
             tvdb_id = local_db.get_imdb_id(media_type="tvshow",
-                                           dbid=params["dbid"])
-            tmdb_id = tmdb.get_show_tmdb_id(tvdb_id=tvdb_id)
+                                           dbid=params["dbid"])[0]
+            tmdb_id = tmdb.get_show_tmdb_id(tvdb_id)
         else:
             return False
         rating = utils.input_userrating()
@@ -458,7 +466,7 @@ def start_info_actions(info: str, params: dict[str, str]):
             movie_id = params["id"]
         elif int(params.get("dbid", -1)) > 0:
             movie_id = local_db.get_imdb_id(media_type="movie",
-                                            dbid=params["dbid"])
+                                            dbid=params["dbid"])[0]
         elif params.get("imdb_id"):
             movie_id = tmdb.get_movie_tmdb_id(params["imdb_id"])
         else:
