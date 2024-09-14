@@ -1138,10 +1138,19 @@ def get_movie_tmdb_id(imdb_id:str=None, name:str=None, dbid:int=None) ->int:
             return response["movie_results"][0]["id"]
     return search_media(media_name = name) if name else None
 
-def get_show_tmdb_id(tvdb_id=None, source="tvdb_id"):
+def get_show_tmdb_id(extdb_id=None, source="tvdb_id"):
+    """gets the tmdb id from source id
+
+    Args:
+        extdb_id (_type_, optional): external (imdb/tvdb) id to look up tmdb id. Defaults to None.
+        source (str, optional): the id source. Defaults to "tvdb_id".
+
+    Returns:
+        _type_: tmdb id if found or None
+    """
     params = {"external_source": source,
               "language": addon.setting("LanguageID")}
-    response = get_data(url="find/%s" % (tvdb_id),
+    response = get_data(url=f"find/{extdb_id}",
                         params=params)
     if not response or not response["tv_results"]:
         utils.notify("TVShow Info not available.")

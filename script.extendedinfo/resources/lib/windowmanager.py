@@ -87,13 +87,14 @@ class WindowManager:
         elif tvdb_id:
             tmdb_id = tmdb.get_show_tmdb_id(tvdb_id)
         elif imdb_id:
-            tmdb_id = tmdb.get_show_tmdb_id(tvdb_id=imdb_id,
+            tmdb_id = tmdb.get_show_tmdb_id(imdb_id,
                                             source="imdb_id")
         elif dbid:
-            tvdb_id = local_db.get_imdb_id(media_type="tvshow",
-                                           dbid=dbid)
-            if tvdb_id:
-                tmdb_id = tmdb.get_show_tmdb_id(tvdb_id)
+            imdb_id = local_db.get_imdb_id(media_type="tvshow",
+                                           dbid=dbid)[0]
+            if imdb_id:
+                tmdb_id = tmdb.get_show_tmdb_id(imdb_id,
+                                                source="imdb_id")
         elif name:
             tmdb_id = tmdb.search_media(media_name=name,
                                         year="",
@@ -105,7 +106,7 @@ class WindowManager:
         busy.hide_busy()
         self.open_infodialog(dialog)
 
-    def open_season_info(self, tvshow_id=None, season: int = None, tvshow=None, dbid=None):
+    def open_season_info(self, tvshow_id=None, season:int=None, tvshow:str=None, dbid:str=None):
         """
         open season info, deal with window stack
         needs *season AND (*tvshow_id OR *tvshow)
@@ -132,12 +133,12 @@ class WindowManager:
         dialog = DialogSeasonInfo(INFO_XML,
                                   addon.PATH,
                                   id=tvshow_id,
-                                  season=max(0, season),
+                                  season=max(0, int(season)),
                                   dbid=int(dbid) if dbid and int(dbid) > 0 else None)
         busy.hide_busy()
         self.open_infodialog(dialog)
 
-    def open_episode_info(self, tvshow_id=None, season=None, episode=None, tvshow=None, dbid=None):
+    def open_episode_info(self, tvshow_id=None, season:int=None, episode=None, tvshow=None, dbid=None):
         """
         open season info, deal with window stack
         needs (*tvshow_id OR *tvshow) AND *season AND *episode

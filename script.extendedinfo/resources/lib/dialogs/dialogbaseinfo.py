@@ -299,11 +299,11 @@ class DialogBaseInfo(windows.DialogXML):
             return None
         listitem = listitems[index]
         if listitem["mediatype"] == "episode":
-            wm.open_episode_info(season=listitem["season"],
+            wm.open_episode_info(season=int(listitem["season"]),
                                  episode=listitem["episode"],
                                  tvshow_id=info["media"]["id"])
         elif listitem["mediatype"] == "season":
-            wm.open_season_info(season=listitem["season"],
+            wm.open_season_info(season=int(listitem["season"]),
                                 tvshow_id=info["media"]["id"])
 
     def update_states(self):

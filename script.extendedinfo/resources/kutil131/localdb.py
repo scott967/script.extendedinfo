@@ -408,12 +408,12 @@ class LocalDB:
         mbid = data['result']['artistdetails'].get('musicbrainzartistid')
         return mbid if mbid else None
 
-    def get_imdb_id(self, media_type, dbid) -> tuple[str,str]:
+    def get_imdb_id(self, media_type:str, dbid:int) -> tuple[str,str]:
         """gets the imdb id from unique id and title
 
         Args:
-            media_type (_type_): "movie" or "tvshow"
-            dbid (_type_): The Kodi db dbid for the item
+            media_type (str): "movie" or "tvshow"
+            dbid (int): The Kodi video db dbid for the item
 
         Returns:
             tuple: the imdb and title (if not found return null string)

@@ -29,8 +29,9 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from resources.kutil131 import ItemList, addon
+import xbmc
 
+from resources.kutil131 import ItemList, addon
 from resources.kutil131 import VideoItem, local_db, utils
 from resources.lib import themoviedb as tmdb
 
@@ -73,7 +74,7 @@ def get_episodes(content:str) -> ItemList[VideoItem]:
         air_date = airing_episode["first_aired"]
         ep:dict = airing_episode["episode"]
         tv:dict = airing_episode["show"]
-        title = airing_episode["episode"].get("title", "")
+        title = airing_episode["episode"].get("title", xbmc.getLocalizedString(231))
         label = f'{tv["title"]} - {ep["season"]}x{ep["number"]}. {title}'
         show = VideoItem(label=label,
                             path=f'{PLUGIN_BASE}extendedtvinfo&&tvdb_id={tv["ids"]["tvdb"]}')
