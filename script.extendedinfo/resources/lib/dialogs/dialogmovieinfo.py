@@ -81,11 +81,13 @@ class DialogMovieInfo(DialogVideoInfo):
         Returns:  dialogmovieinfo
         """
         super().__init__(*args, **kwargs)
+        utils.log(f'DialogMovieInfo getting data from tmdb.extended_movie_info with movie_id {kwargs.get("id")} and dbid {kwargs.get("dbid")}')
         data: tuple | None = tmdb.extended_movie_info(movie_id=kwargs.get('id'),
                                                         dbid=kwargs.get('dbid'))
         if not data:
             return None
         self.info, self.lists, self.states = data
+        utils.log(f'DialogMovieInfo using info {self.info}')
         sets_thread = SetItemsThread(self.info.get_property("set_id"))
         self.omdb_thread = utils.FunctionThread(function=omdb.get_movie_info,
                                                 param=self.info.get_property("imdb_id"))
