@@ -1218,6 +1218,7 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> tuple[VideoI
     if not info or info.get('success') is False:
         utils.notify("Could not get tmdb movie information")
         return (None, None, None)
+    utils.log(f'tmdb.extended_movie_info creating a movie VideoItem with info {info}')
     mpaa = ""
     studio = [i["name"] for i in info.get("production_companies")]
     authors = [i["name"] for i in info['credits']
@@ -1233,6 +1234,7 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> tuple[VideoI
     movie_set:dict = info.get("belongs_to_collection")
     movie = VideoItem(label=info.get('title'),
                       path=PLUGIN_BASE + 'youtubevideo&&id=%s' % info.get("id", ""))
+    utils.log(f'tmdb .extended_movie_info movie VideoItem plost is {info.get("overview")}')
     movie.set_infos({'title': info.get('title'),
                      'tagline': info.get('tagline'),
                      'duration': info.get('runtime'),
@@ -1266,6 +1268,7 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> tuple[VideoI
     account_states: dict = info.get("account_states")
     if dbid:
         local_item: dict = local_db.get_movie(dbid)
+        utils.log(f'tmdb.extended_movie_info using dbid {dbid} to update movie VideoItem from local item {local_item}')
         movie.update_from_listitem(local_item)
     else:
         movie = local_db.merge_with_local("movie", [movie])[0]
@@ -1294,7 +1297,7 @@ def get_tvshow(tvshow_id, cache_days=30, light=False):
         return None
     params = {"append_to_response": None if light else ALL_TV_PROPS,
               "language": addon.setting("LanguageID"),
-              "include_image_language": "en,null,%s" % addon.setting("LanguageID")}
+              "include_image_language": f"{addon.setting('LanguageID').split('-', maxsplit=1)[0]},null,en"}
     if tmdb_login.check_login():
         params["session_id"] = tmdb_login.get_session_id()
     return get_data(url="tv/%s" % (tvshow_id),
@@ -1390,8 +1393,8 @@ def extended_season_info(tvshow_id, season_number):
     tvshow = get_tvshow(tvshow_id)
     params = {"append_to_response": ALL_SEASON_PROPS,
               "language": addon.setting("LanguageID"),
-              "include_image_language": "en,null,%s" % addon.setting("LanguageID")}
-    response = get_data(url="tv/%s/season/%s" % (tvshow_id, season_number),
+              "include_image_language": f"{addon.setting('LanguageID').split('-', maxsplit=1)[0]},null,en"}
+    response = get_data(url=f"tv/{tvshow_id}/season/{season_number}",
                         params=params,
                         cache_days=7)
     if not response:
@@ -1428,10 +1431,10 @@ def get_episode(tvshow_id, season, episode, cache_days=7):
         season = 0
     params = {"append_to_response": ALL_EPISODE_PROPS,
               "language": addon.setting("LanguageID"),
-              "include_image_language": "en,null,%s" % addon.setting("LanguageID")}
+              "include_image_language": f"{addon.setting('LanguageID').split('-', maxsplit=1)[0]},null,en"}
     if tmdb_login.check_login():
         params["session_id"] = tmdb_login.get_session_id()
-    return get_data(url="tv/%s/season/%s/episode/%s" % (tvshow_id, season, episode),
+    return get_data(url=f"tv/{tvshow_id}/season/{season}/episode/{episode}",
                     params=params,
                     cache_days=cache_days)
 
@@ -1471,7 +1474,7 @@ def extended_actor_info(actor_id: int) -> tuple[VideoItem, dict[str, ItemList]]:
     data: dict = get_data(url=f"person/{actor_id}",
                         params={"append_to_response": ALL_ACTOR_PROPS,
                         "language": addon.setting("LanguageID"),
-                        "include_image_language": f"{addon.setting('LanguageID')},null,en"},
+                        "include_image_language": f"{addon.setting('LanguageID').split('-', maxsplit=1)[0]},null,en"},
                         cache_days=1)
     if not data:
         utils.notify("Could not find actor info")
@@ -1629,7 +1632,7 @@ def get_movie(movie_id, light=False, cache_days=30) -> dict | None:
         Union[dict, None]: A dict of movie infos.  If no response from TMDB
                             returns None
     """
-    params = {"include_image_language": f"en,null,{addon.setting('LanguageID')}",
+    params = {"include_image_language": f"{addon.setting('LanguageID').split('-', maxsplit=1)[0]},null,en",
               "language": addon.setting("LanguageID"),
               "append_to_response": None if light else ALL_MOVIE_PROPS
               }
@@ -1662,7 +1665,7 @@ def get_similar_tvshows(tvshow_id):
     '''
     params = {"append_to_response": ALL_TV_PROPS,
               "language": addon.setting("LanguageID"),
-              "include_image_language": "en,null,%s" % addon.setting("LanguageID")}
+              "include_image_language": f"{addon.setting('LanguageID').split('-', maxsplit=1)[0]},null,en"}
     if tmdb_login.check_login():
         params["session_id"] = tmdb_login.get_session_id()
     response = get_data(url="tv/%s" % (tvshow_id),
@@ -1715,7 +1718,7 @@ def get_set_movies(set_id:str) -> tuple[ItemList,dict]:
     """
     params = {"append_to_response": "images",
               "language": addon.setting("LanguageID"),
-              "include_image_language": "en,null,%s" % addon.setting("LanguageID")}
+              "include_image_language": f"{addon.setting('LanguageID').split('-', maxsplit=1)[0]},null,en"}
     response = get_data(url="collection/%s" % (set_id),
                         params=params,
                         cache_days=14)
@@ -1770,7 +1773,7 @@ def search_media(media_name=None, year='', media_type="movie", cache_days=1):
     if not media_name:
         return None
     params = {"query": f"{media_name}{' ' + year if year else ''}",
-              "language": addon.setting("language"),
+              "language": addon.setting("languageID"),
               "include_adult": addon.setting("include_adults").lower()}
     response = get_data(url=f"search/{media_type}",
                         params=params,

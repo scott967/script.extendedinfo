@@ -118,7 +118,7 @@ class WindowManager:
         from .dialogs.dialogseasoninfo import DialogSeasonInfo
         if not tvshow_id:
             params = {"query": tvshow,
-                      "language": addon.setting("language")}
+                      "language": addon.setting("languageID")}
             response = tmdb.get_data(url="search/tv",
                                      params=params,
                                      cache_days=30)
@@ -126,21 +126,25 @@ class WindowManager:
                 tvshow_id = str(response['results'][0]['id'])
             else:
                 params = {"query": re.sub(r'\(.*?\)', '', tvshow),
-                          "language": addon.setting("language")}
+                          "language": addon.setting("languageID")}
                 response = tmdb.get_data(url="search/tv",
                                          params=params,
                                          cache_days=30)
                 if response["results"]:
                     tvshow_id = str(response['results'][0]['id'])
         utils.log(f'wm.open_season_info tvshowid {type(tvshow_id)} {tvshow_id} -- season {type(season)} {season} -- dbid {type(dbid)} {dbid}')
-        dialog = DialogSeasonInfo(INFO_XML,
-                                  addon.PATH,
-                                  id=tvshow_id,
-                                  season=max(0, int(season)),
-                                  dbid=int(dbid) if dbid and int(dbid) > 0 else None)
-        busy.hide_busy()
-        utils.log(f'wm.open_season_info call open_infodialog for {type(dialog)} tvshow id {tvshow_id} season {season} dbid {dbid}') #debug
-        self.open_infodialog(dialog)
+        if tvshow_id:
+            dialog = DialogSeasonInfo(INFO_XML,
+                                    addon.PATH,
+                                    id=tvshow_id,
+                                    season=max(0, int(season)),
+                                    dbid=int(dbid) if dbid and int(dbid) > 0 else None)
+            busy.hide_busy()
+            utils.log(f'wm.open_season_info call open_infodialog for {type(dialog)} tvshow id {tvshow_id} season {season} dbid {dbid}') #debug
+            self.open_infodialog(dialog)
+        else:
+            busy.hide_busy()
+            utils.notify(addon.NAME, f"TMDB - {xbmc.getLocalizedString(195)}")
 
     def open_episode_info(self, tvshow_id=None, season:int=None, episode=None, tvshow=None, dbid=None):
         """

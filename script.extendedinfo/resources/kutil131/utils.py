@@ -479,7 +479,9 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> li
                 if ("results" in results):
                     log(f'kutil131.utils.get_JSON_response results in tmdb response {type(results)} --- {results}')
                     # utils.log("download %s. time: %f" % (url, time.time() - now))
-                    if "status_code" in results and results.get("status_code") == 1:
+                    if (("status_code" in results and results.get("status_code") == 1) or
+                        not ("status_code" in results)):
+                        log(f'kutil131.utils.get_JSON_response saving {folder} results to cache file')
                         save_to_file(results, hashed_url, cache_path)
             else:
                 save_to_file(results, hashed_url, cache_path)
