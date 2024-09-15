@@ -113,12 +113,12 @@
 							<option label="Croatian">hr-HR</option>
 							<option label="Czech">cs-CZ</option>
 							<option label="Danish">da-DK</option>
-							<option label="Dutch">nl-BE</option>
-							<option label="Dutch">nl-NL</option>
+							<option label="Dutch-Bel">nl-BE</option>
+							<option label="Dutch-Nld">nl-NL</option>
 							<option label="English-Aus">en-AU</option>
 							<option label="English-Can">en-CA</option>
-							<option label="English-GB">en-GB</option>
-							<option label="English-US">en-US</option>
+							<option label="English-Gbr">en-GB</option>
+							<option label="English-Usa">en-US</option>
 							<option label="Finnish">fi-FI</option>
 							<option label="French-Can">fr-CA</option>
 							<option label="French-Fra">fr-FR</option>
@@ -132,8 +132,8 @@
 							<option label="Japanese">ja-JP</option>
 							<option label="Kannada">kn-IN</option>
 							<option label="Korean">ko-KR</option>
-							<option label="Mandarin">zh-SG</option>
-							<option label="Mandarin">zh-TW</option>
+							<option label="Mandarin-Sgp">zh-SG</option>
+							<option label="Mandarin-Twn">zh-TW</option>
 							<option label="Norwegian">no-NO</option>
 							<option label="Persian">fa-IR</option>
 							<option label="Polish">pl-PL</option>
