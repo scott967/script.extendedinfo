@@ -130,13 +130,17 @@ class WindowManager:
                 if response["results"]:
                     tvshow_id = str(response['results'][0]['id'])
 
-        dialog = DialogSeasonInfo(INFO_XML,
-                                  addon.PATH,
-                                  id=tvshow_id,
-                                  season=max(0, int(season)),
-                                  dbid=int(dbid) if dbid and int(dbid) > 0 else None)
-        busy.hide_busy()
-        self.open_infodialog(dialog)
+        if tvshow_id:
+            dialog = DialogSeasonInfo(INFO_XML,
+                                    addon.PATH,
+                                    id=tvshow_id,
+                                    season=max(0, int(season)),
+                                    dbid=int(dbid) if dbid and int(dbid) > 0 else None)
+            busy.hide_busy()
+            self.open_infodialog(dialog)
+        else:
+            busy.hide_busy()
+            utils.notify(addon.NAME, f"TMDB - {xbmc.getLocalizedString(195)}")
 
     def open_episode_info(self, tvshow_id=None, season:int=None, episode=None, tvshow=None, dbid=None):
         """
