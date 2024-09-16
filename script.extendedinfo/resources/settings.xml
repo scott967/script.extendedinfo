@@ -103,13 +103,13 @@
 				</setting>
 				<setting help="" id="LanguageID" label="32159" type="string">
 					<level>0</level>
-					<default>en</default>
+					<default>en-GB</default>
 					<constraints>
 						<options>
-							<option label="Arabic">ar</option>
-							<option label="Bulgarian">bg</option>
-							<option label="Cantonese">cn</option>
-							<option label="Catalan">ca</option>
+							<option label="Arabic-Egy">ar-EG</option>
+							<option label="Arabic-Sau">ar-SA</option>
+							<option label="Bulgarian">bg-BG</option>
+							<option label="Catalan">ca-ES</option>
 							<option label="Croatian">hr-HR</option>
 							<option label="Czech">cs-CZ</option>
 							<option label="Danish">da-DK</option>
@@ -127,11 +127,12 @@
 							<option label="Hebrew">he-IL</option>
 							<option label="Hindi">hi-IN</option>
 							<option label="Hungarian">hu-HU</option>
-							<option label="Irish">ga</option>
+							<option label="Irish">ga-IE</option>
 							<option label="Italian">it-IT</option>
 							<option label="Japanese">ja-JP</option>
 							<option label="Kannada">kn-IN</option>
 							<option label="Korean">ko-KR</option>
+							<option label="Mandarin-China">zh-CN</option>
 							<option label="Mandarin-Sgp">zh-SG</option>
 							<option label="Mandarin-Twn">zh-TW</option>
 							<option label="Norwegian">no-NO</option>
