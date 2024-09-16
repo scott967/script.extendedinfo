@@ -64,6 +64,10 @@ class Main:
         """
         utils.log(f"version {addon.VERSION} started")
         addon.set_global("extendedinfo_running", "true")
+        utils.log(f'default.Main setting setting_update is {addon.bool_setting("setting_update_6.0.9")}')
+        if not addon.bool_setting("setting_update_6.0.9"):
+            addon.update_lang_setting()
+        utils.log(f'default.Main setting LanguageIDv2 after update {addon.setting("LanguageIDv2")}')
         self._parse_argv()
         for info in self.infos:
             listitems = process.start_info_actions(info, self.params)
