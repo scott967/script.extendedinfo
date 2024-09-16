@@ -13,6 +13,49 @@ import xbmcvfs
 
 HOME = xbmcgui.Window(10000)
 
+TMDB_ISO_639 = {"ar-EG": "Arabic-Egy",
+"ar-SA": "Arabic-Sau",
+"bg-BG": "Bulgarian",
+"ca-ES": "Catalan",
+"hr-HR": "Croatian",
+"cs-CZ": "Czech",
+"da-DK": "Danish",
+"nl-BE": "Dutch-Bel",
+"nl-NL": "Dutch-Nld",
+"en-AU": "English-Aus",
+"en-CA": "English-Can",
+"en-GB": "English-Gbr",
+"en-US": "English-Usa",
+"fi-FI": "Finnish",
+"fr-CA": "French-Can",
+"fr-FR": "French-Fra",
+"de-DE": "German",
+"el-GR": "Greek",
+"he-IL": "Hebrew",
+"hi-IN": "Hindi",
+"hu-HU": "Hungarian",
+"ga-IE": "Irish",
+"it-IT": "Italian",
+"ja-JP": "Japanese",
+"kn-IN": "Kannada",
+"ko-KR": "Korean",
+"zh-CN": "Mandarin-China",
+"zh-SG": "Mandarin-Sgp",
+"zh-TW": "Mandarin-Twn",
+"no-NO": "Norwegian",
+"fa-IR": "Persian",
+"pl-PL": "Polish",
+"pt-BR": "Portuguese-Bra",
+"pt-PT": "Portuguese-Por",
+"ru-RU": "Russian",
+"sl-SL": "Slovenian",
+"es-AR": "Spanish-Arg",
+"es-ES": "Spanish-Esp",
+"es-MX": "Spanish-Mex",
+"sv-SE": "Swedish",
+"th-TH": "Thai",
+"tr-TR": "Turkish"}
+
 
 class Addon:
     """
@@ -91,6 +134,19 @@ class Addon:
         """
         HOME.setProperty(setting_name, setting_value)
         #xbmc.log(f'Setting Home window property {setting_name} {self.get_global(setting_name)}')
+
+    def update_lang_setting(self) -> None:
+        """updates user settings from old ISO 639-1 to ISO 639-1-ISO 3166 
+        """
+        xbmc.log(f'script.extendedinfo Addon.update_lang_setting called')
+        old_lang = self.addon.getSetting("LanguageID")
+        xbmc.log(f'script.extendedinfo Addon.update_lang_setting old_lang {old_lang}')
+        for lang_key in TMDB_ISO_639:
+            if lang_key.startswith(old_lang):
+                xbmc.log(f'script.extendedinfo Addon.update_lang_setting lang_key {lang_key}')
+                self.addon.setSetting("LanguageIDv2", lang_key)
+                self.addon.setSettingBool("setting_update_6.0.9", True)
+                break
 
     def get_global(self, setting_name):
         return HOME.getProperty(setting_name)
