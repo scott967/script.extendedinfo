@@ -115,7 +115,7 @@ class WindowManager:
         from .dialogs.dialogseasoninfo import DialogSeasonInfo
         if not tvshow_id:
             params = {"query": tvshow,
-                      "language": addon.setting("languageID")}
+                      "language": addon.setting("LanguageIDv2")}
             response = tmdb.get_data(url="search/tv",
                                      params=params,
                                      cache_days=30)
@@ -123,7 +123,7 @@ class WindowManager:
                 tvshow_id = str(response['results'][0]['id'])
             else:
                 params = {"query": re.sub(r'\(.*?\)', '', tvshow),
-                          "language": addon.setting("languageID")}
+                          "language": addon.setting("LanguageIDv2")}
                 response = tmdb.get_data(url="search/tv",
                                          params=params,
                                          cache_days=30)

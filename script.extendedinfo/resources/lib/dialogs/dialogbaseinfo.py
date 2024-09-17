@@ -269,7 +269,7 @@ class DialogBaseInfo(windows.DialogXML):
         try:
             youtube_list = self.getControl(ID_LIST_YOUTUBE)
         except Exception as err:
-            utils.log(f'DialogBaseInfo.get_youtube_vids threw exception {err}')
+            utils.log(f'DialogBaseInfo.get_youtube_vids getControl for ID_LIST_YOUTUBE threw exception {err}')
             return None
         if not self.yt_listitems:
             user_key = addon.setting("Youtube API Key")

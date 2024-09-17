@@ -262,7 +262,7 @@ def get_window(window_type):
 
         @ch.click(ID_BUTTON_GENREFILTER)
         def set_genre_filter(self, control_id):
-            params = {"language": addon.setting("LanguageID")}
+            params = {"language": addon.setting("LanguageIDv2")}
             response = tmdb.get_data(url="genre/%s/list" % (self.type),
                                      params=params,
                                      cache_days=100)
@@ -475,7 +475,7 @@ def get_window(window_type):
             else:  #self.mode == "filter"
                 self.set_filter_label()
                 params = {"sort_by": sort_by,
-                          "language": addon.setting("LanguageID"),
+                          "language": addon.setting("LanguageIDv2"),
                           "page": self.page,
                           "include_adult": include_adult}
                 filters = {item["type"]: item["id"] for item in self.filters}
