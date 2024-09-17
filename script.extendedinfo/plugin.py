@@ -33,7 +33,7 @@ class Main:
         utils.log(f"plugin version {addon.VERSION} started")
         addon.set_global("extendedinfo_running", "true")
         utils.log(f'default.Main setting LanguageIDv2 {addon.setting("LanguageIDv2")}')
-        if not addon.setting('LanguageIDv2'):
+        if not addon.bool_setting("setting_update_6.0.9"):
             addon.update_lang_setting()
         utils.log(f'default.Main setting after update LanguageIDv2 {addon.setting("LanguageIDv2")}')
         self._parse_argv()

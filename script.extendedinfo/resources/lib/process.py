@@ -358,7 +358,7 @@ def start_info_actions(info: str, params: dict[str, str]):
             if not search_str and params.get("search"):
                 result = xbmcgui.Dialog().input(heading=addon.LANG(16017),
                                                 type=xbmcgui.INPUT_ALPHANUM)
-                if result and result > -1:
+                if result:
                     search_str = result
                 else:
                     addon.clear_global('infodialogs.active')
