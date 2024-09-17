@@ -1297,7 +1297,7 @@ def get_tvshow(tvshow_id, cache_days=30, light=False):
         return None
     params = {"append_to_response": None if light else ALL_TV_PROPS,
               "language": addon.setting("LanguageIDv2"),
-              "include_image_language": f"{addon.setting('LanguageID').split('-', maxsplit=1)[0]},null,en"}
+              "include_image_language": f"{addon.setting('LanguageIDv2').split('-', maxsplit=1)[0]},null,en"}
     if tmdb_login.check_login():
         params["session_id"] = tmdb_login.get_session_id()
     return get_data(url="tv/%s" % (tvshow_id),
@@ -1393,7 +1393,7 @@ def extended_season_info(tvshow_id, season_number):
     tvshow = get_tvshow(tvshow_id)
     params = {"append_to_response": ALL_SEASON_PROPS,
               "language": addon.setting("LanguageIDv2"),
-              "include_image_language": f"{addon.setting('LanguageID').split('-', maxsplit=1)[0]},null,en"}
+              "include_image_language": f"{addon.setting('LanguageIDv2').split('-', maxsplit=1)[0]},null,en"}
     response = get_data(url=f"tv/{tvshow_id}/season/{season_number}",
                         params=params,
                         cache_days=7)
@@ -1431,7 +1431,7 @@ def get_episode(tvshow_id, season, episode, cache_days=7):
         season = 0
     params = {"append_to_response": ALL_EPISODE_PROPS,
               "language": addon.setting("LanguageIDv2"),
-              "include_image_language": f"{addon.setting('LanguageID').split('-', maxsplit=1)[0]},null,en"}
+              "include_image_language": f"{addon.setting('LanguageIDv2').split('-', maxsplit=1)[0]},null,en"}
     if tmdb_login.check_login():
         params["session_id"] = tmdb_login.get_session_id()
     return get_data(url=f"tv/{tvshow_id}/season/{season}/episode/{episode}",
@@ -1474,7 +1474,7 @@ def extended_actor_info(actor_id: int) -> tuple[VideoItem, dict[str, ItemList]]:
     data: dict = get_data(url=f"person/{actor_id}",
                         params={"append_to_response": ALL_ACTOR_PROPS,
                         "language": addon.setting("LanguageIDv2"),
-                        "include_image_language": f"{addon.setting('LanguageID').split('-', maxsplit=1)[0]},null,en"},
+                        "include_image_language": f"{addon.setting('LanguageIDv2').split('-', maxsplit=1)[0]},null,en"},
                         cache_days=1)
     if not data:
         utils.notify("Could not find actor info")
@@ -1632,7 +1632,7 @@ def get_movie(movie_id, light=False, cache_days=30) -> dict | None:
         Union[dict, None]: A dict of movie infos.  If no response from TMDB
                             returns None
     """
-    params = {"include_image_language": f"{addon.setting('LanguageID').split('-', maxsplit=1)[0]},null,en",
+    params = {"include_image_language": f"{addon.setting('LanguageIDv2').split('-', maxsplit=1)[0]},null,en",
               "language": addon.setting("LanguageIDv2"),
               "append_to_response": None if light else ALL_MOVIE_PROPS
               }
@@ -1665,7 +1665,7 @@ def get_similar_tvshows(tvshow_id):
     '''
     params = {"append_to_response": ALL_TV_PROPS,
               "language": addon.setting("LanguageIDv2"),
-              "include_image_language": f"{addon.setting('LanguageID').split('-', maxsplit=1)[0]},null,en"}
+              "include_image_language": f"{addon.setting('LanguageIDv2').split('-', maxsplit=1)[0]},null,en"}
     if tmdb_login.check_login():
         params["session_id"] = tmdb_login.get_session_id()
     response = get_data(url="tv/%s" % (tvshow_id),
@@ -1718,7 +1718,7 @@ def get_set_movies(set_id:str) -> tuple[ItemList,dict]:
     """
     params = {"append_to_response": "images",
               "language": addon.setting("LanguageIDv2"),
-              "include_image_language": f"{addon.setting('LanguageID').split('-', maxsplit=1)[0]},null,en"}
+              "include_image_language": f"{addon.setting('LanguageIDv2').split('-', maxsplit=1)[0]},null,en"}
     response = get_data(url="collection/%s" % (set_id),
                         params=params,
                         cache_days=14)
