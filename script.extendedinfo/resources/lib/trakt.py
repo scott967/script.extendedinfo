@@ -65,7 +65,7 @@ def get_episodes(content:str) -> ItemList[VideoItem]:
                        cache_days=0.3)
     if not results:
         return None
-    #results is a list of dict.  Each dict contains "first aired" an ISO date string (day), 
+    #results is a list of dict.  Each dict contains "first aired" an ISO date string (day),
     #episode is a dict,
     #show is a dict.  Get the first 20 episodes and create an ItemList
     #for each episode as VideoItem
@@ -224,7 +224,6 @@ def get_shows(show_type):
     """
     results = get_data(url=f'shows/{show_type}',
                        params={"extended": "full"})
-    
     return handle_tvshows(results) if results else []
 
 

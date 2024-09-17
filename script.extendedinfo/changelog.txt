@@ -12,6 +12,7 @@ v6.0.9
 -  make some functions private as needed
 - improve debug level logging- fix handling of JSON responses for various urls
 - improve query of video database uniqueid
+- fix moviedbbrowser
 
 v6.0.7
 - reworked tmdb logon / accreditation
