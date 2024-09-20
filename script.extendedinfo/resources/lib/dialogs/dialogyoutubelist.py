@@ -164,6 +164,7 @@ def get_window(window_type:type[xbmcgui.WindowXML]) -> type[DialogBaseList]:
         FILTERS = {"channelId": addon.LANG(19029),
                    "publishedAfter": addon.LANG(172),
                    "regionCode": addon.LANG(248),
+                   "relevanceLanguage": addon.LANG(248),
                    "videoDimension": addon.LANG(32057),
                    "videoDuration": addon.LANG(180),
                    "videoCaption": addon.LANG(287),
