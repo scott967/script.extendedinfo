@@ -23,12 +23,14 @@ ch = ActionHandler()
 
 class DialogVideoInfo(DialogBaseInfo):
     """
-
+    handles click events for items common for all video types
     Args:
-        DialogBaseInfo (_type_): _description_
+        DialogBaseInfo (class): The parent class for info dialogs
     """
 
     def __init__(self, *args, **kwargs):
+        """runs __init__ on DialogBaseClass
+        """
         super().__init__(*args, **kwargs)
 
     def onClick(self, control_id):
