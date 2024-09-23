@@ -222,14 +222,19 @@ class LocalDB:
         db_movie.set_cast(movie.get("cast"))
         return db_movie
 
-    def handle_tvshow(self, tvshow):
-        """
-        convert tvshow data to listitems
+    def handle_tvshow(self, tvshow:dict) -> VideoItem:
+        """converts tvshow Kodi db local data to VideoItem
+
+        Args:
+            tvshow (dict of Kodi JSON TVShowDetails): 
+
+        Returns:
+            VideoItem: a kutil131 VideoItem for the Kodi db local info
         """
         if addon.setting("infodialog_onclick") != "false":
-            path = PLUGIN_BASE + 'extendedtvinfo&&dbid=%s' % tvshow['tvshowid']
+            path = PLUGIN_BASE + f'extendedtvinfo&&dbid={tvshow["tvshowid"]}'
         else:
-            path = PLUGIN_BASE + 'action&&id=ActivateWindow(videos,videodb://tvshows/titles/%s/,return)' % tvshow['tvshowid']
+            path = PLUGIN_BASE + f'action&&id=ActivateWindow(videos,videodb://tvshows/titles/{tvshow["tvshowid"]}/,return)'
         db_tvshow = VideoItem(label=tvshow.get("label"),
                               path=path)
         db_tvshow.set_infos({'title': tvshow.get('label'),
@@ -267,9 +272,14 @@ class LocalDB:
             return self.handle_movie(response["result"]["moviedetails"])
         return {}
 
-    def get_tvshow(self, tvshow_id):
-        """
-        get info from db for tvshow with *tvshow_id
+    def get_tvshow(self, tvshow_id:int) -> VideoItem:
+        """gets info from db for tvshow with *tvshow_id
+
+        Args:
+            tvshow_id (int): the Kodi tv show dbid
+
+        Returns:
+            VideoItem: a kutil131 VideoItem for the Kodi local db tv show 
         """
         response = kodijson.get_json(method="VideoLibrary.GetTVShowDetails",
                                      params={"properties": TV_PROPS, "tvshowid": tvshow_id})
@@ -317,10 +327,18 @@ class LocalDB:
 
             self.info[media_type] = dct
 
-    def merge_with_local(self, media_type, items, library_first=True, sortkey=False):
-        """
-        merge *items from online sources with local db info (and sort)
+    def merge_with_local(self, media_type:str, items:list[VideoItem], library_first:bool=True, sortkey:str='') -> ItemList[VideoItem]:
+        """merge *items from online sources with local db info (and sort)
         works for movies and tvshows
+
+        Args:
+            media_type (str): enum movie or tvshow
+            items (list[VideoItem]): list of VideoItems to find Kodi db local info
+            library_first (bool, optional): Should library items be returned before local items in ItemList. Defaults to True.
+            sortkey (str, optional):enum  key for sorting the ItemList Defaults to ''.
+
+        Returns:
+            ItemList[VideoItem]: The ItemList sorted and with Kodi db local items added
         """
         get_list = kodijson.get_movies if media_type == "movie" else kodijson.get_tvshows
         self.get_compare_info(media_type,
