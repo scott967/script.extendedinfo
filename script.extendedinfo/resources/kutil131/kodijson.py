@@ -126,7 +126,7 @@ def set_art(media_type, art, dbid):
                             "%sid" % media_type.lower(): int(dbid)})
 
 
-def get_json(method, params):
+def get_json(method, params) -> dict:
     """
     communicate with kodi JSON-RPC
     """

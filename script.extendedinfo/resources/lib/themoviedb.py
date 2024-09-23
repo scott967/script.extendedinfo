@@ -1284,11 +1284,21 @@ def get_tvshow(tvshow_id, cache_days=30, light=False):
                     cache_days=cache_days)
 
 
-def extended_tvshow_info(tvshow_id=None, cache_days=7, dbid=None):
-    '''
-    get listitem with extended info for tvshow with *tvshow_id
-    merge in info from *dbid if available
-    '''
+def extended_tvshow_info(tvshow_id:int=None, cache_days:int=7, dbid:str=None) -> tuple[VideoItem,dict,dict]|bool:
+    """creates VideoItem for a tv show, adding any local info if in library
+    creates associated list of ListItems for the VideoItem and user tmdb account list info
+
+    Args:
+        tvshow_id (int, optional): the TVDB or TMDB id for the show. Defaults to None.
+        cache_days (int, optional): cache valid for lookups. Defaults to 7.
+        dbid (str, optional): the Kodi dbid for the item (if local). Defaults to None.
+
+    Returns:
+        tuple[VideoItem,dict,dict]|bool:  The tv show VideoItem 
+                                           a  dict of ItemLists associated with the show
+                                           a dict of user tmdb lists for tv shows
+                                           If no tmdb info return False
+    """
     info = get_tvshow(tvshow_id, cache_days)
     if not info:
         return False
