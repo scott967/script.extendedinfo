@@ -649,7 +649,7 @@ def handle_episodes(results:list[dict]) -> ItemList[VideoItem]:
     for item in results:
         title = item.get("name")
         if not title:
-            title = "%s %s" % (addon.LANG(20359), item.get('episode_number'))
+            title = f"{addon.LANG(20359)} {item.get('episode_number')}"
         listitem = {'label': title}
         listitem = VideoItem(label=title,
                              artwork=get_image_urls(still=item.get("still_path")))
@@ -792,7 +792,7 @@ def handle_seasons(results:list[dict]) -> ItemList[VideoItem]:
     listitems = ItemList(content_type="seasons")
     for item in results:
         season = item.get('season_number')
-        listitem = VideoItem(label=addon.LANG(20381) if season == 0 else "%s %s" % (addon.LANG(20373), season),
+        listitem = VideoItem(label=addon.LANG(20381) if season == 0 else f"{addon.LANG(20373)} {season}",
                              properties={'id': item.get('id')},
                              artwork=get_image_urls(poster=item.get("poster_path")))
         listitem.set_infos({'mediatype': "season",
@@ -816,7 +816,7 @@ def handle_videos(results:list[dict]) -> ItemList[VideoItem]:
     for item in results:
         listitem = VideoItem(label=item.get('name'),
                              size=item.get('size'),
-                             artwork={'thumb': "http://i.ytimg.com/vi/%s/0.jpg" % item.get('key')})
+                             artwork={'thumb': f"http://i.ytimg.com/vi/{item.get('key')}/0.jpg"})
         listitem.set_infos({'mediatype': "video"})
         listitem.set_properties({'iso_639_1': item.get('iso_639_1'),
                                  'type': item.get('type'),
@@ -951,7 +951,7 @@ def multi_search(search_str, page=1, cache_days=1):
 
 
 def get_list_movies(list_id, force):
-    url = "list/%s" % (list_id)
+    url = f"list/{list_id}"
     response = get_data(url=url,
                         params={"language": addon.setting("LanguageIDv2")},
                         cache_days=0 if force else 2)
@@ -1063,7 +1063,7 @@ def get_data(url:str = "", params:dict = None, cache_days:float = 14) -> dict|No
 def get_company_data(company_id):
     if not company_id:
         return []
-    response = get_data(url="company/%s/movies" % (company_id),
+    response = get_data(url=f"company/{company_id}/movies",
                         cache_days=30)
     if not response or not response.get("results"):
         return []
@@ -1161,7 +1161,7 @@ def get_show_tmdb_id(extdb_id=None, source="tvdb_id"):
 def get_show_id(tmdb_id=None, return_id="imdb_id"):
     params = {"append_to_response": "external_ids",
               "language": addon.setting("LanguageIDv2")}
-    response = get_data(url="tv/%s" % (tmdb_id),
+    response = get_data(url=f"tv/{tmdb_id}",
                         params=params)
     if not response:
         utils.notify("TVShow Info not available.")
@@ -1214,7 +1214,7 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> tuple[VideoI
         mpaa = info['release_dates']['results'][0]['release_dates'][0]['certification']
     movie_set:dict = info.get("belongs_to_collection")
     movie = VideoItem(label=info.get('title'),
-                      path=PLUGIN_BASE + 'youtubevideo&&id=%s' % info.get("id", ""))
+                      path=PLUGIN_BASE + f"youtubevideo&&id={info.get('id', '')}")
     movie.set_infos({'title': info.get('title'),
                      'tagline': info.get('tagline'),
                      'duration': info.get('runtime'),
@@ -1279,7 +1279,7 @@ def get_tvshow(tvshow_id, cache_days=30, light=False):
               "include_image_language": f"{addon.setting('LanguageIDv2').split('-', maxsplit=1)[0]},null,en"}
     if tmdb_login.check_login():
         params["session_id"] = tmdb_login.get_session_id()
-    return get_data(url="tv/%s" % (tvshow_id),
+    return get_data(url=f"tv/{tvshow_id}",
                     params=params,
                     cache_days=cache_days)
 
@@ -1307,10 +1307,9 @@ def extended_tvshow_info(tvshow_id:int=None, cache_days:int=7, dbid:str=None) ->
                            ) if "videos" in info else []
     tmdb_id = info.get("id", "")
     if len(info.get("episode_run_time", -1)) > 1:
-        duration = "%i - %i" % (min(info["episode_run_time"]),
-                                max(info["episode_run_time"]))
+        duration = f"{min(info['episode_run_time'])} - {max(info['episode_run_time'])}"
     elif len(info.get("episode_run_time", -1)) == 1:
-        duration = "%i" % (info["episode_run_time"][0])
+        duration = f"{info['episode_run_time'][0]}"
     else:
         duration = ""
     mpaas = info['content_ratings']['results']
@@ -1322,7 +1321,7 @@ def extended_tvshow_info(tvshow_id:int=None, cache_days:int=7, dbid:str=None) ->
     else:
         mpaa = ""
     tvshow = VideoItem(label=info.get('name'),
-                       path=PLUGIN_BASE + 'extendedtvinfo&&id=%s' % tmdb_id)
+                       path=PLUGIN_BASE + f'extendedtvinfo&&id={tmdb_id}')
     tvshow.set_infos({'title': info.get('name'),
                       'originaltitle': info.get('original_name', ""),
                       'duration': duration,
@@ -1352,7 +1351,7 @@ def extended_tvshow_info(tvshow_id:int=None, cache_days:int=7, dbid:str=None) ->
         local_item = local_db.get_tvshow(dbid)
         tvshow.update_from_listitem(local_item)
     else:
-        tvshow = local_db.merge_with_local("tvshow", [tvshow])[0]
+        tvshow:VideoItem = local_db.merge_with_local("tvshow", [tvshow])[0]
     # hack to get tmdb rating instead of local one
     tvshow.set_info("rating", round(
         info['vote_average'], 1) if info.get('vote_average') else "")
@@ -1394,7 +1393,7 @@ def extended_season_info(tvshow_id, season_number):
     elif season_number == "0":
         title = addon.LANG(20381)
     else:
-        title = "%s %s" % (addon.LANG(20373), season_number)
+        title = f"{addon.LANG(20373)} {season_number}"
     season = VideoItem(label=title)
     season.set_infos({'plot': response["overview"],
                       'tvshowtitle': tvshow.get('name'),
@@ -1511,7 +1510,7 @@ def get_movie_lists(movie_id) -> ItemList:
     return handle_lists(data["lists"]["results"])
 
 
-def get_rated_media_items(media_type, sort_by=None, page=1, cache_days=0):
+def get_rated_media_items(media_type:str, sort_by:str='', page:int=1, cache_days:int=0) -> ItemList[VideoItem]:
     '''
     takes "tv/episodes", "tv" or "movies"
     '''
@@ -1525,7 +1524,7 @@ def get_rated_media_items(media_type, sort_by=None, page=1, cache_days=0):
                   "page": page,
                   "session_id": session_id,
                   "language": addon.setting("LanguageIDv2")}
-        data = get_data(url="account/%s/rated/%s" % (account_id, media_type),
+        data = get_data(url=f"account/{account_id}/rated/{media_type}",
                         params=params,
                         cache_days=cache_days)
     else:
@@ -1535,7 +1534,7 @@ def get_rated_media_items(media_type, sort_by=None, page=1, cache_days=0):
             return []
         params = {"language": addon.setting("LanguageIDv2"),
                   "page": page}
-        data = get_data(url="guest_session/%s/rated/%s" % (session_id, media_type),
+        data = get_data(url=f"guest_session/{session_id}/rated/{media_type}",
                         params=params,
                         cache_days=0)
     if media_type == "tv/episodes":
@@ -1562,7 +1561,7 @@ def get_fav_items(media_type, sort_by=None, page=1):
               "language": addon.setting("LanguageIDv2"),
               "page": page,
               "session_id": session_id}
-    data = get_data(url="account/%s/favorite/%s" % (account_id, media_type),
+    data = get_data(url=f"account/{account_id}/favorite/{media_type}",
                     params=params,
                     cache_days=0)
     if "results" not in data:
@@ -1601,7 +1600,7 @@ def get_actor_credits(actor_id, media_type):
     '''
     media_type: movie or tv
     '''
-    response = get_data(url="person/%s/%s_credits" % (actor_id, media_type),
+    response = get_data(url=f"person/{actor_id}/{media_type}_credits",
                         cache_days=1)
     return handle_movies(response["cast"])
 
@@ -1653,7 +1652,7 @@ def get_similar_tvshows(tvshow_id):
               "include_image_language": f"{addon.setting('LanguageIDv2').split('-', maxsplit=1)[0]},null,en"}
     if tmdb_login.check_login():
         params["session_id"] = tmdb_login.get_session_id()
-    response = get_data(url="tv/%s" % (tvshow_id),
+    response = get_data(url=f"tv/{tvshow_id}",
                         params=params,
                         cache_days=10)
     if not response.get("similar"):
@@ -1666,7 +1665,7 @@ def get_tvshows(tvshow_type):
     return list with tv shows
     available types: airing, on_the_air, top_rated, popular
     '''
-    response = get_data(url="tv/%s" % (tvshow_type),
+    response = get_data(url=f"tv/{tvshow_type}",
                         params={"language": addon.setting("LanguageIDv2")},
                         cache_days=0.3)
     if not response.get("results"):
@@ -1704,7 +1703,7 @@ def get_set_movies(set_id:str) -> tuple[ItemList,dict]:
     params = {"append_to_response": "images",
               "language": addon.setting("LanguageIDv2"),
               "include_image_language": f"{addon.setting('LanguageIDv2').split('-', maxsplit=1)[0]},null,en"}
-    response = get_data(url="collection/%s" % (set_id),
+    response = get_data(url=f"collection/{set_id}",
                         params=params,
                         cache_days=14)
     if not response:
@@ -1722,7 +1721,7 @@ def get_person_movies(person_id):
     '''
     get movies from person with *person_id
     '''
-    response = get_data(url="person/%s/credits" % (person_id),
+    response = get_data(url=f"person/{person_id}/credits",
                         params={"language": addon.setting("LanguageIDv2")},
                         cache_days=14)
     # return handle_movies(response["crew"]) + handle_movies(response["cast"])

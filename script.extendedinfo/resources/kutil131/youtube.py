@@ -100,10 +100,10 @@ def get_duration_in_seconds(duration:str) -> int:
         else:
             return int(duration[0])
     except Exception as err:
-        utils.log(f'kutils131.youtube unable decode youtube duration of {duration} error {err}')
+        utils.log(f'kutil131.youtube unable decode youtube duration of {duration} error {err}')
         return 0
 
-def get_formatted_duration(duration):
+def get_formatted_duration(duration:str) -> str:
     """
     convert youtube duration string to formatted duration
     """

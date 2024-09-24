@@ -13,6 +13,7 @@ v6.0.9
 - improve debug level logging- fix handling of JSON responses for various urls
 - improve query of video database uniqueid
 - fix moviedbbrowser
+- fix issue where filters not always removed in Video List dialog
 
 v6.0.7
 - reworked tmdb logon / accreditation

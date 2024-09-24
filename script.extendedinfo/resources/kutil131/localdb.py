@@ -232,9 +232,9 @@ class LocalDB:
             VideoItem: a kutil131 VideoItem for the Kodi db local info
         """
         if addon.setting("infodialog_onclick") != "false":
-            path = PLUGIN_BASE + 'extendedtvinfo&&dbid=%s' % tvshow['tvshowid']
+            path = PLUGIN_BASE + f'extendedtvinfo&&dbid={tvshow["tvshowid"]}'
         else:
-            path = PLUGIN_BASE + 'action&&id=ActivateWindow(videos,videodb://tvshows/titles/%s/,return)' % tvshow['tvshowid']
+            path = PLUGIN_BASE + f'action&&id=ActivateWindow(videos,videodb://tvshows/titles/{tvshow["tvshowid"]}/,return)'
         db_tvshow = VideoItem(label=tvshow.get("label"),
                               path=path)
         db_tvshow.set_infos({'title': tvshow.get('label'),

@@ -37,22 +37,22 @@ include_adult: bool = addon.setting("include_adults").lower()
 
 
 def get_window(window_type):
-    """Wrapper gets new DialogVideoList instance
+    """Wrapper gets new DialogVideoList class
 
     Args:
         window_type (class instance): xbmc XML dialog window or
             xbmc XML window objects
 
     Returns:
-        [DialogVideoList]: a new XML dialog or window
+        type[DialogVideoList]: a new XML dialog or window class
     """
 
     class DialogVideoList(DialogBaseList, window_type):
         """Dialog Video List class
 
         Args:
-            DialogBaseList: Super class for dialog windows
-            window_type (kutil131.windows class): Super class for Kodi xbmc.WindowXML
+            DialogBaseList: DialogXML or WindowXML super class for dialog windows
+            window_type (kutil131.windows class): DialogXML or WindowXML super class for Kodi xbmc.WindowXML
 
         """
 
