@@ -412,7 +412,7 @@ def start_info_actions(info: str, params: dict[str, str]):
             wm.open_episode_info(tvshow=params.get("tvshow"),
                                 tvshow_id=params.get("tvshow_id"),
                                 dbid=params.get("dbid"),
-                                episode=params.get("episode"),
+                                episode=int(params.get("episode")),
                                 season=int(params.get("season")))
         finally:
             addon.clear_global('infodialogs.active')
