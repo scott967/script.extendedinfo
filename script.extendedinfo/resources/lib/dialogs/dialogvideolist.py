@@ -37,22 +37,22 @@ include_adult: bool = addon.setting("include_adults").lower()
 
 
 def get_window(window_type):
-    """Wrapper gets new DialogVideoList instance
+    """Wrapper gets new DialogVideoList class
 
     Args:
         window_type (class instance): xbmc XML dialog window or
             xbmc XML window objects
 
     Returns:
-        [DialogVideoList]: a new XML dialog or window
+        type[DialogVideoList]: a new XML dialog or window class
     """
 
     class DialogVideoList(DialogBaseList, window_type):
         """Dialog Video List class
 
         Args:
-            DialogBaseList: Super class for dialog windows
-            window_type (kutil131.windows class): Super class for Kodi xbmc.WindowXML
+            DialogBaseList: DialogXML or WindowXML super class for dialog windows
+            window_type (kutil131.windows class): DialogXML or WindowXML super class for Kodi xbmc.WindowXML
 
         """
 
@@ -202,13 +202,24 @@ def get_window(window_type):
 
         @ch.click(ID_BUTTON_SORT)
         def get_sort_type(self, control_id):
+            utils.log(f'DialogVideoList.get_sort_type for sort_key {self.sort_key} with current sort_label {self.sort_label}')
+            if self.sort_label and (self.sort_label == "Vote average"):
+                update_filter_vote = True
+            else:
+                update_filter_vote = False
             if not self.choose_sort_method(self.sort_key):
                 return None
+            utils.log(f'DialogVideoList.get_sort_type new sort is {self.sort} and sort label is {self.sort_label}')
             if self.sort == "vote_average":
                 self.add_filter(key="vote_count.gte",
                                 value="10",
                                 label="10",
                                 reset=False)
+            elif update_filter_vote:
+                utils.log(f'DialogVideoList.get_sort_type need to remove vote average filter for {self.sort}')
+                self.remove_filter(key="vote_count.gte")
+            else:
+                utils.log('DialogVideoList.get_sort_type no need to remove vote_count filter')
             self.update()
 
         def add_filter(self, **kwargs):
@@ -220,6 +231,18 @@ def get_window(window_type):
                 kwargs["label"] = "> %s" % kwargs["label"]
             super().add_filter(force_overwrite=kwargs["key"].endswith((".gte", ".lte")),
                                                     **kwargs)
+
+        def remove_filter(self, **kwargs):
+            """removes the vote_count filter if added by sort method vote_average
+
+            kwargs[key] (str):  the filter key to be removed
+            """
+            utils.log(f'DialogVideoList.remove_filter to remove {kwargs["key"]}')
+            if kwargs["key"] == 'vote_count.gte':
+                utils.log('DialogVideoList.remove_filter removing vote_count.gte')
+                super().remove_filter(kwargs["key"])
+            else:
+                utils.log('DialogVideoList.remove_filter not needed to remove')
 
         @ch.click(ID_BUTTON_ORDER)
         def toggle_order(self, control_id):
@@ -474,6 +497,7 @@ def get_window(window_type):
                                                   page=self.page,
                                                   cache_days=0)
             else:  #self.mode == "filter"
+                utils.log(f'DialogVideoList.fetch_data called to update content set filter label')
                 self.set_filter_label()
                 params = {"sort_by": sort_by,
                           "language": addon.setting("LanguageIDv2"),

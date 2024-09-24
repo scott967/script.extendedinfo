@@ -136,6 +136,7 @@ class DialogBaseList:
         """
         check if sort is valid. If not, change to default.
         """
+        utils.log(f'DialogBaseList.verify_sort from {list(self.SORTS[self.sort_key].keys())}')
         if self.sort not in [i for i in list(self.SORTS[self.sort_key].keys())]:
             self.set_sort(self.default_sort)
 
@@ -240,16 +241,19 @@ class DialogBaseList:
         build filter label for UI based on active filters
         """
         filters = []
+        self.filter_label = ''
         for item in self.filters:
             filter_label = item["label"].replace("|", " | ").replace(",", " + ")
-            filters.append("[COLOR FFAAAAAA]%s:[/COLOR] %s" % (item["typelabel"], filter_label))
+            filters.append(f"[COLOR FFAAAAAA]{item['typelabel']}:[/COLOR] {filter_label}")
             self.filter_label: str = "  -  ".join(filters)
+        utils.log(f'DialogBaseList.set_filter_label new label is {self.filter_label if self.filter_label else "None"}')
 
-    def update_content(self, force_update=False):
+    def update_content(self, force_update:bool=False):
         """
         fetch listitems and pagination info based on current state
         """
         self.data = self.fetch_data(force=force_update)
+        utils.log(f'DialogBaseList.update_content self.data {self.data}')
         if not self.data:
             return None
         self.listitems = self.data
@@ -262,6 +266,7 @@ class DialogBaseList:
         """
         add listitems to list, set focusposition, set window properties
         """
+        utils.log('DialogBaseList.update_ui')
         if not self.listitems and self.getFocusId() == self.getCurrentContainerId():
             self.setFocusId(ID_BUTTON_SEARCH)
         self.clearList()
@@ -274,6 +279,7 @@ class DialogBaseList:
             if self.column is not None:
                 self.setCurrentListPosition(self.column)
         # self.setContent(self.listitems.content_type)
+        utils.log(f'DialogBaseList.update_ui updating property from filter label {self.filter_label}')
         self.setProperty("TotalPages", str(self.total_pages))
         self.setProperty("TotalItems", str(self.total_items))
         self.setProperty("CurrentPage", str(self.page))
@@ -288,6 +294,7 @@ class DialogBaseList:
         """
         resets the container to its default mode and updates
         """
+        utils.log('DialogBaseList start a reset')
         self.page = 1
         self.mode = mode
         self.verify_sort()
@@ -327,14 +334,20 @@ class DialogBaseList:
         """
         complete refresh of both content and ui
         """
+        utils.log('DialogBaseList.update')
         self.update_content(force_update=force_update)
         self.update_ui()
 
-    def choose_sort_method(self, sort_key):
+    def choose_sort_method(self, sort_key:str) -> bool:
+        """open dialog and let user choose sortmethod
+
+        Args:
+            sort_key (str): enum string for sort options movie/tv/favorites/list/rating
+
+        Returns:
+            bool: True if sorthmethod changed
         """
-        open dialog and let user choose sortmethod
-        returns True if sorthmethod changed
-        """
+        utils.log(f'DialogBaseList.choose_sort_method get new sort key sort_key is {sort_key} and current sort_label is {self.sort_label}')
         listitems = list(self.SORTS[sort_key].values())
         sort_strings = list(self.SORTS[sort_key].keys())
         preselect = listitems.index(self.sort_label) if self.sort_label in listitems else -1
@@ -342,9 +355,11 @@ class DialogBaseList:
                                         list=listitems,
                                         preselect=preselect)
         if index == -1 or listitems[index] == self.sort_label:
+            utils.log('DialogBaseList.choose_sort_method no change in sort method')
             return False
         self.sort = sort_strings[index]
         self.sort_label = listitems[index]
+        utils.log(f'DialogBaseList.choose_sort_method new sort is {self.sort} and label {self.sort_label}')
         return True
 
     def choose_filter(self, filter_code:str, header:int, options:list[tuple]):
@@ -377,7 +392,7 @@ class DialogBaseList:
         else:
             pass  # add filter...
 
-    def find_filter_position(self, filter_code):
+    def find_filter_position(self, filter_code:str):
         """
         find position of specific filter in filter list
         """
@@ -386,13 +401,16 @@ class DialogBaseList:
                 return i
         return -1
 
-    def remove_filter(self, filter_code):
+    def remove_filter(self, filter_code:str):
         """
         remove filter with specific filter_code from filter list
         """
+        utils.log(f'DialogBaseList.remove_filter filter_code {filter_code} from filters {self.filters}')
         index = self.find_filter_position(filter_code)
+        utils.log(f'DialogBaseList.remove_filter got filter position at {index} deleting')
         if index > -1:
             del self.filters[index]
+            utils.log(f'DialogBaseList.remove_filter new filter list {self.filters}')
         self.reset()
 
     def add_filter(self, key, value, label, typelabel="", force_overwrite=False, reset=True):
