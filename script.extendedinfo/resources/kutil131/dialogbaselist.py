@@ -240,6 +240,7 @@ class DialogBaseList:
         build filter label for UI based on active filters
         """
         filters = []
+        self.filter_label = ''
         for item in self.filters:
             filter_label = item["label"].replace("|", " | ").replace(",", " + ")
             filters.append(f"[COLOR FFAAAAAA]{item['typelabel']}:[/COLOR] {filter_label}")
