@@ -14,6 +14,7 @@ v6.0.9
 - improve query of video database uniqueid
 - fix moviedbbrowser
 - fix issue where filters not always removed in Video List dialog
+- fix live Youtube videos exception on parsing duration P0D
 
 v6.0.7
 - reworked tmdb logon / accreditation
