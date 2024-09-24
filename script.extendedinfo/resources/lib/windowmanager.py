@@ -223,6 +223,7 @@ class WindowManager:
         """
         from .dialogs import dialogvideolist
         Browser = dialogvideolist.get_window(windows.DialogXML)
+        utils.log(f'WindowManager.open_video_list Browser class mro {Browser.mro()}')
         dialog = Browser(LIST_XML,
                          addon.PATH,
                          listitems=listitems,
