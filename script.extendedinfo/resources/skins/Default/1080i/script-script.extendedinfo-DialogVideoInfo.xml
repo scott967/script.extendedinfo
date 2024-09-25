@@ -1040,6 +1040,16 @@
 											<texture background="true" fallback="DefaultVideo.png">$INFO[ListItem.Art(thumb)]</texture>
 											<aspectratio aligny="center">scale</aspectratio>
 											<fadetime>0</fadetime>
+											<visible>String.IsEmpty(ListItem.dbid)</visible>
+										</control>
+										<control type="image">
+											<top>10</top>
+											<width>224</width>
+											<height>325</height>
+											<texture background="true" fallback="DefaultVideo.png">$INFO[ListItem.Art(poster)]</texture>
+											<aspectratio aligny="center">scale</aspectratio>
+											<fadetime>0</fadetime>
+											<visible>!String.IsEmpty(ListItem.dbid)</visible>
 										</control>
 										<control type="image">
 											<top>310</top>
@@ -1119,6 +1129,16 @@
 											<texture background="true" fallback="DefaultVideo.png">$INFO[ListItem.Art(thumb)]</texture>
 											<aspectratio aligny="center">scale</aspectratio>
 											<fadetime>0</fadetime>
+											<visible>String.IsEmpty(ListItem.dbid)</visible>
+										</control>
+										<control type="image">
+											<top>10</top>
+											<width>224</width>
+											<height>325</height>
+											<texture background="true" fallback="DefaultVideo.png">$INFO[ListItem.Art(poster)]</texture>
+											<aspectratio aligny="center">scale</aspectratio>
+											<fadetime>0</fadetime>
+											<visible>!String.IsEmpty(ListItem.dbid)</visible>
 										</control>
 										<control type="image">
 											<width>55</width>

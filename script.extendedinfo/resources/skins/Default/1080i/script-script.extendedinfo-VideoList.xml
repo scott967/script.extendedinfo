@@ -284,6 +284,18 @@
 								<bordersize>20</bordersize>
 								<aspectratio aligny="top">keep</aspectratio>
 								<texture background="true" fallback="DefaultVideo.png">$INFO[ListItem.Art(thumb)]</texture>
+								<visible>String.IsEmpty(ListItem.DBID)</visible>
+							</control>
+							<control type="image">
+								<left>-15</left>
+								<top>0</top>
+								<width>250</width>
+								<height>350</height>
+								<bordertexture border="20">overlays/shadow.png</bordertexture>
+								<bordersize>20</bordersize>
+								<aspectratio aligny="top">keep</aspectratio>
+								<texture background="true" fallback="DefaultVideo.png">$INFO[ListItem.Art(poster)]</texture>
+								<visible>!String.IsEmpty(ListItem.DBID)</visible>
 							</control>
 							<control type="image">
 								<width>55</width>
@@ -341,6 +353,18 @@
 								<bordersize>20</bordersize>
 								<aspectratio aligny="top">keep</aspectratio>
 								<texture background="true" fallback="DefaultVideo.png">$INFO[ListItem.Art(thumb)]</texture>
+								<visible>String.IsEmpty(ListItem.DBID)</visible>
+							</control>
+							<control type="image">
+								<left>-15</left>
+								<top>0</top>
+								<width>250</width>
+								<height>350</height>
+								<bordertexture border="20">overlays/shadow.png</bordertexture>
+								<bordersize>20</bordersize>
+								<aspectratio aligny="top">keep</aspectratio>
+								<texture background="true" fallback="DefaultVideo.png">$INFO[ListItem.Art(poster)]</texture>
+								<visible>!String.IsEmpty(ListItem.DBID)</visible>
 							</control>
 							<control type="image">
 								<width>55</width>
