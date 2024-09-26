@@ -910,7 +910,8 @@ def handle_images(results:list[dict]) -> ItemList[VideoItem]:
             if poster_path:
                 image.update_artwork(
                     {'mediaposter': IMAGE_BASE_URL + POSTER_SIZE + poster_path})
-        image.set_info("mediatype", "music")
+        #image.set_info("mediatype", "music") music stopped working testing song as hack
+        image.set_info("mediatype", "song")
         images.append(image)
     return images
 
