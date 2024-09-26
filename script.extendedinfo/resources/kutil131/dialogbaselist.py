@@ -178,7 +178,7 @@ class DialogBaseList:
         if addon.bool_setting("classic_search"):
             result = xbmcgui.Dialog().input(heading=addon.LANG(16017),
                                             type=xbmcgui.INPUT_ALPHANUM)
-            if result and result > -1:
+            if result:
                 self.search(result)
         else:
             T9Search(call=self.search,
