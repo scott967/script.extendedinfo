@@ -15,6 +15,8 @@ v6.0.9
 - fix moviedbbrowser
 - fix issue where filters not always removed in Video List dialog
 - fix live Youtube videos exception on parsing duration P0D
+- fix context menu to update local artwork not available
+- skinned dialogs not displaying local poster
 
 v6.0.7
 - reworked tmdb logon / accreditation
