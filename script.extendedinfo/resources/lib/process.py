@@ -297,7 +297,7 @@ def start_info_actions(info: str, params: dict[str, str]):
             params = {"dbid": dbid,
                       "id": utils.get_infolabel(f'{container_id}ListItem.Property(id)'),
                       "name": utils.get_infolabel(f'{container_id}ListItem.Title')}
-            utils.log(f'process.start_info_actions call exendedinfo with {params}')
+            #utils.log(f'process.start_info_actions for movie call exendedinfo with {params}')
             start_info_actions("extendedinfo", params)
         elif db_type == "tvshow":
             params = {"dbid": dbid,

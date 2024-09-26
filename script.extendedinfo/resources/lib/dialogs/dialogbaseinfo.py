@@ -111,8 +111,9 @@ class DialogBaseInfo(windows.DialogXML):
         self.clearProperty("Bounce.%s" % identifier)
         self.bouncing = False
 
-    @ch.click_by_type("music")
-    # hack: use "music" until "pictures" got added to core
+    #@ch.click_by_type("music") not working
+    @ch.click_by_type("song")
+    # hack: use "song" was "music" until "pictures" got added to core
     def open_image(self, control_id):
         key = [key for container_id,
                key in self.LISTS if container_id == control_id][0]
@@ -148,9 +149,19 @@ class DialogBaseInfo(windows.DialogXML):
                              season=info.getSeason(),
                              episode=info.getEpisode())
 
-    @ch.context("music")
-    def thumbnail_options(self, control_id):
-        listitem = self.FocusedItem(control_id)
+    #@ch.context("music")  not working testing "song" as hack
+    @ch.context("song")
+    def thumbnail_options(self, control_id:int) -> None:
+        """sets a Kodi library item poster or fanart from tmdb art
+
+        Args:
+            control_id (int): the dialog window control id that has focus (image)
+
+        Returns:
+            None
+        """
+        utils.log(f'DialogBaseInfo thumbnail_options called for contextmenu song with control id {control_id}')
+        listitem:xbmcgui.ListItem = self.FocusedItem(control_id)
         art_type = listitem.getProperty("type")
         options = []
         if self.info.get_info("dbid") and art_type == "poster":
@@ -164,9 +175,11 @@ class DialogBaseInfo(windows.DialogXML):
             return None
         action = utils.contextmenu(options=options)
         if action == "db_art":
-            kodijson.set_art(media_type=self.getProperty("type"),
-                             art={art_type: listitem.get_art("original")},
+            art_result = kodijson.set_art(media_type=self.getProperty("type"),
+                             art={art_type: listitem.getArt("original")},
                              dbid=self.info.get_info("dbid"))
+            if art_result and art_result.get('result') == 'OK':
+                utils.notify(addon.NAME, f'{addon.LANG(32119)} / {xbmc.getLocalizedString(24138)}')
         elif action == "movie_info":
             wm.open_movie_info(movie_id=listitem.getProperty("movie_id"),
                                dbid=listitem.getVideoInfoTag().getDbId())
@@ -178,6 +191,7 @@ class DialogBaseInfo(windows.DialogXML):
             #utils.download_video(self.FocusedItem(
             #    control_id).getProperty("youtube_id"))
             pass
+        utils.notify(addon.NAME, xbmc.getLocalizedString(10005))
 
     @ch.context("movie")
     def movie_context_menu(self, control_id):

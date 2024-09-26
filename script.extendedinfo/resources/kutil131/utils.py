@@ -201,9 +201,14 @@ def run_async(func):
     return async_func
 
 
-def contextmenu(options):
-    """
-    pass list of tuples (index, label), get index
+def contextmenu(options:list[tuple]) -> str:
+    """pass list of tuples (index, label), get index
+
+    Args:
+        options (list[tuple]): the context menu items with display text
+
+    Returns:
+        str: the selected option  or None if nothing selected
     """
     index = xbmcgui.Dialog().contextmenu(list=[i[1] for i in options])
     if index > -1:
