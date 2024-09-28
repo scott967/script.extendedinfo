@@ -399,7 +399,7 @@ def get_http(url, headers=False):
         headers = {'User-agent': 'Kodi/19.0 ( fbacher@kodi.tv )'}
     while (succeed < 2) and (not xbmc.Monitor().abortRequested()):
         try:
-            #log(f'kutils131.utils.get_http headers {headers}')  #debug
+            #log(f'kutil131.utils.get_http headers {headers}')  #debug
             request = requests.get(url, headers=headers, timeout=10)
             log(f'kutil131.utils.get_http response from online {request.text}')  #debug
             return request.text
@@ -410,31 +410,43 @@ def get_http(url, headers=False):
     return None
 
 
-def post(url, values, headers):
-    """
-    retuns answer to post request
+def post(url:str, values:dict, headers:str) -> dict:
+    """retuns answer to post request  {'success' : True} if succeeded
+
+    Args:
+        url (str): the api endpoint with query (if any)
+        values (dict): the body content for the post
+        headers (str): the http headers
+
+    Returns:
+        dict: results from server for the post
     """
     try:
+        log(f'utils.post post to {url} with data {json.dumps(values)}')
         request = requests.post(url=url,
                                 data=json.dumps(values),
                                 headers=headers,
                                 timeout=10)
     except requests.exceptions.RequestException as err:
         log(f"get_http: could not get data from {url} exception {err}")
+    log(f'utils.post post returns text {type(json.loads(request.text))} {json.loads(request.text)}')
+    log(f'utils.post post returns headers {type(request.headers)} {request.headers}')
     return json.loads(request.text)
 
 
-def delete(url, values, headers):
+def delete(url:str, values:dict, headers:str) ->dict:
     """
     returns answer to delete request
     """
     try:
+        log('utils.delete attempting tmdb delete request')
         request = requests.delete(url=url,
                                 data=json.dumps(values),
                                 headers=headers,
                                 timeout=10)
     except requests.exceptions.RequestException as err:
         log(f"get_http: could not get data from {url} exception {err}")
+    log(f'utils.delete returns {type(json.loads(request.text))} {json.loads(request.text)}')
     return json.loads(request.text)
 
 

@@ -87,7 +87,7 @@ class DialogMovieInfo(DialogVideoInfo):
         if not data:
             return None
         self.info, self.lists, self.states = data
-        utils.log(f'DialogMovieInfo using info {self.info}')
+        utils.log(f'DialogMovieInfo using info {self.info} and states {self.states} {id(self.states)}')
         sets_thread = SetItemsThread(self.info.get_property("set_id"))
         self.omdb_thread = utils.FunctionThread(function=omdb.get_movie_info,
                                                 param=self.info.get_property("imdb_id"))
@@ -261,6 +261,7 @@ class DialogMovieInfo(DialogVideoInfo):
         info = tmdb.get_movie(movie_id=self.info.get_property("id"),
                               cache_days=0)
         self.states = info.get("account_states")
+        utils.log(f'DialogMovieInfo.update_states from self.states {self.states} {id(self.states)} calling super')
         super().update_states()
 
     @utils.run_async

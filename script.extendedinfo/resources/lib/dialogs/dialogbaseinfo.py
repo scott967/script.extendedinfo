@@ -330,5 +330,7 @@ class DialogBaseInfo(windows.DialogXML):
     def update_states(self):
         if not self.states:
             return None
+        utils.log(f'DialogBaseInfo.update_states updating window props from self.states {self.states} {id(self.states)}')
+        utils.log(f'DialogBaseInfo.update_states updating window props from tmdb.get_account_props(self.states) {tmdb.get_account_props(self.states)}')
         utils.dict_to_windowprops(data=tmdb.get_account_props(self.states),
                                   window_id=self.window_id)
