@@ -63,10 +63,17 @@ class DialogVideoInfo(DialogBaseInfo):
             xbmc.executebuiltin(item)
 
     @ch.click(ID_BUTTON_FAV)
-    def change_list_status(self, control_id):
+    def change_list_status(self, control_id:int):
+        """toggles "starred" or "unstarred" on tmdb user fav list
+        status false means not a favorite.  The tmdb endpoint is a post
+        to account/{account_id}/favorite
+
+        Args:
+            control_id (int): the control id that was clicked
+        """
         tmdb.change_fav_status(media_id=self.info.get_property("id"),
                                media_type=self.TYPE_ALT,
-                               status=str(not bool(self.states["favorite"])).lower())
+                               status=not bool(self.states["favorite"]))
         self.update_states()
 
     @ch.click(ID_BUTTON_SETRATING)

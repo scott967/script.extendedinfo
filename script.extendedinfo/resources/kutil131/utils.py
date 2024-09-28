@@ -408,9 +408,16 @@ def get_http(url, headers=False):
     return None
 
 
-def post(url, values, headers):
-    """
-    retuns answer to post request
+def post(url:str, values:dict, headers:str) -> dict:
+    """retuns answer to post request  {'success' : True} if succeeded
+
+    Args:
+        url (str): the api endpoint with query (if any)
+        values (dict): the body content for the post
+        headers (str): the http headers
+
+    Returns:
+        dict: results from server for the post
     """
     try:
         request = requests.post(url=url,
@@ -422,7 +429,7 @@ def post(url, values, headers):
     return json.loads(request.text)
 
 
-def delete(url, values, headers):
+def delete(url:str, values:dict, headers:str) ->dict:
     """
     returns answer to delete request
     """

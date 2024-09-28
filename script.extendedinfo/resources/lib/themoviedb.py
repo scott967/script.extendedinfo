@@ -333,17 +333,17 @@ def set_rating(media_type, media_id, rating, dbid=None):
         return True
 
 
-def send_request(url, params, values, delete=False):
-    """formats a tmdb api query url
+def send_request(url:str, params:dict, values:dict, delete=False) ->dict:
+    """formats a tmdb api query url and payload for htttp delete or post
 
     Args:
-        url (_type_): _description_
-        params (_type_): _description_
-        values (_type_): _description_
-        delete (bool, optional): request is a post or delete. Defaults to False.
+        url (str): tmdb url for account data
+        params (dict): tmdb query string as dict
+        values (dict): payload to post to tmdb as json
+        delete (bool, optional): request is a post or delete. Defaults to False (post).
 
     Returns:
-        _type_: _description_
+        dict: the tmdb results {'success : True} if succeeded
     """
     HEADERS['Authorization'] = 'Bearer ' + kodiaddon.decode_string(TMDB_TOKEN, uuick=addon.setting('tmdb_tok'))
     params = {k: str(v) for k, v in params.items() if v}
@@ -354,16 +354,16 @@ def send_request(url, params, values, delete=False):
         return utils.post(url, values=values, headers=HEADERS)
 
 
-def change_fav_status(media_id=None, media_type="movie", status="true") -> str:
-    """Updates user favorites list on tmdb
+def change_fav_status(media_id:int=None, media_type:str="movie", status:bool=True) -> bool:
+    """Updates user favorites on tmdb
 
     Args:
-        media_id (_type_, optional): tmdb id. Defaults to None.
-        media_type (str, optional): _tmdb medi type. Defaults to "movie".
-        status (str, optional): tmdb favorite status. Defaults to "true".
+        media_id (int, optional): tmdb id. Defaults to None.
+        media_type (str, optional): tmdb media type movie/tv. Defaults to "movie".
+        status (bool, optional): tmdb favorite new status . Defaults to True.
 
     Returns:
-        str: tmdb result status message
+        bool: tmdb result status
     """
     session_id = tmdb_login.get_session_id()
     if not session_id:
@@ -375,9 +375,12 @@ def change_fav_status(media_id=None, media_type="movie", status="true") -> str:
     results = send_request(url=f"account/{tmdb_login.get_account_id()}/favorite",
                            params={"session_id": session_id},
                            values=values)
-    if results:
+    if results and results.get('success'):
         utils.notify(addon.NAME, results["status_message"])
-
+        return True
+    else:
+        utils.notify(addon.NAME, results.get("status_message", "No response"))
+        return False
 
 def create_list(list_name):
     '''
@@ -1079,7 +1082,7 @@ def get_credit_info(credit_id):
                     cache_days=30)
 
 
-def get_account_props(states) -> dict:
+def get_account_props(states:dict) -> dict:
     return {"FavButton_Label": addon.LANG(32155) if states.get("favorite") else addon.LANG(32154),
             "favorite": "True" if states.get("favorite") else "",
             "rated": int(states["rated"]["value"]) if states["rated"] else "",
