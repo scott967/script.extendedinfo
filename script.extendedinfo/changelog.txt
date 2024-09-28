@@ -9,14 +9,16 @@ v6.0.9
 - improve design of LoginProvider class to better manage tmdb user logins
 - use f-strings instead of %s or .format() style when modifying code
 - add documentation (docstrings and type annotations) when modifying code
--  make some functions private as needed
+- make some functions private as needed
 - improve debug level logging- fix handling of JSON responses for various urls
 - improve query of video database uniqueid
 - fix moviedbbrowser
 - fix issue where filters not always removed in Video List dialog
 - fix live Youtube videos exception on parsing duration P0D
-- fix context menu to update local artwork not available
+- fix context menu to update local artwork was not available
 - fix skinned dialogs not displaying local poster
+- fix issue where favorite status for tmdb items not correctly set/unset
+- fix classic keyboard (on screen keyboard) input exceptions
 
 v6.0.7
 - reworked tmdb logon / accreditation
