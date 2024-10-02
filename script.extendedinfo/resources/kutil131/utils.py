@@ -571,7 +571,7 @@ def fetch_musicbrainz_id(artist, artist_id=-1):
                                 cache_days=30,
                                 folder="MusicBrainz")
     if results and len(results["artists"]) > 0:
-        log(f'kutil131.utils.fetch_mbid found artist id for {artist}: {results["artists"][0]["id"]}')
+        #log(f'kutil131.utils.fetch_mbid found artist id for {artist}: {results["artists"][0]["id"]}')
         return results["artists"][0]["id"]
     else:
         return None

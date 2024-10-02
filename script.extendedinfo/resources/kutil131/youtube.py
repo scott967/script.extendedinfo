@@ -235,7 +235,7 @@ def search(search_str="", hd="", orderby="relevance", limit=40, extended=True,
         api_key (str): user youtube api key (from setting). Defaults to "".
 
     Returns:
-        ItemList: kutils131 ItemList of VideoItems
+        ItemList: kutil131 ItemList of VideoItems
     """
     params = {"part": "id,snippet",
               "maxResults": limit,

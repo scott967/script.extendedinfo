@@ -111,7 +111,6 @@ class DialogBaseInfo(windows.DialogXML):
         self.clearProperty("Bounce.%s" % identifier)
         self.bouncing = False
 
-    #@ch.click_by_type("music") not working
     @ch.click_by_type("song")
     # hack: use "song" was "music" until "pictures" got added to core
     def open_image(self, control_id):
