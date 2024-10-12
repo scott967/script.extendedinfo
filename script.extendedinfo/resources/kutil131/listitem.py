@@ -449,13 +449,13 @@ class VideoItem(ListItem):
                        "year": info.getYear()}
 
     def update_from_listitem(self, listitem: ListItem) -> VideoItem:
-        """_summary_
+        """Updates a VideoItem from Kodi xbmc.ListItem
 
         Args:
-            listitem (ListItem): _description_
+            listitem (xbmcgui.ListItem): a Kodi ListItem
 
         Returns:
-            VideoItem: _description_
+            VideoItem: the kutil131 VideoItem with added info
         """
         if not listitem:
             return None
@@ -469,7 +469,7 @@ class VideoItem(ListItem):
         """Gets Kodi ListItem and adds video-unique data from VideoItem 
 
         Returns:
-            xbmcgui.ListItem: _description_
+            xbmcgui.ListItem: the Kodi ListItem using new classes for post-Matrix
         """
         listitem = super().get_listitem()
         #Use listitem for Matrix, Nexus complains so use videoinfo tag setters
