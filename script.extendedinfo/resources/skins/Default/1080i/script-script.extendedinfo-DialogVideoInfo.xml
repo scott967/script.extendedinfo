@@ -2930,12 +2930,9 @@
 								<texture>info/upright.png</texture>
 							</control>
 							<control type="group">
-								<width>220</width>
+								<width>252</width>
 								<visible>!String.IsEmpty(Window.Property(Premiered))</visible>
 								<control type="label">
-									<left>0</left>
-									<top>8</top>
-									<width>220</width>
 									<height>38</height>
 									<align>center</align>
 									<textcolor>FFFAFAFA</textcolor>
@@ -2945,13 +2942,37 @@
 								<control type="label">
 									<left>0</left>
 									<top>37</top>
-									<width>220</width>
 									<height>38</height>
 									<align>center</align>
 									<aligny>center</aligny>
 									<textcolor>FFFAFAFA</textcolor>
 									<label fallback="172">$INFO[Window.Property(Status)]</label>
 									<font>font10</font>
+								</control>
+							</control>
+							<control type="group">
+								<description>Last episode and next episode air dates for tv shows</description>
+								<visible>String.IsEqual(Window.Property(type),tvshow)</visible>
+								<width>440</width>
+								<control type="image">
+									<height>79</height>
+									<width>2</width>
+									<texture>info/upright.png</texture>
+								</control>
+								<control type="label">
+									<description>Last episode air date</description>
+									<left>5</left>
+									<height>39</height>
+									<textcolor>FFFAFAFA</textcolor>
+									<label>$INFO[Window.Property(last_air_date),$ADDON[script.extendedinfo 32194]: ]</label>
+								</control>
+								<control type="label">
+									<description>Next episode air date</description>
+									<left>5</left>
+									<height>39</height>
+									<top>40</top>
+									<textcolor>FFFAFAFA</textcolor>
+									<label>$INFO[Window.Property(next_air_date),$ADDON[script.extendedinfo 32195]: ]</label>
 								</control>
 							</control>
 							<control type="group">
