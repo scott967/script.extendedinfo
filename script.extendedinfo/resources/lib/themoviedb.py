@@ -1375,6 +1375,7 @@ def extended_tvshow_info(tvshow_id:int=None, cache_days:int=7, dbid:str=None) ->
                            'showtype': info.get('type'),
                            'homepage': info.get('homepage'),
                            'last_air_date': info.get('last_air_date'),
+                           'next_air_date': info.get('next_episode_to_air')['air_date'] if info.get('next_episode_to_air') else '',
                            'totalepisodes': info.get('number_of_episodes'),
                            'totalseasons': info.get('number_of_seasons'),
                            'in_production': info.get('in_production')})
