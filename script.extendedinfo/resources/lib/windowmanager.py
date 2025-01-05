@@ -314,8 +314,8 @@ class WindowManager:
         play youtube vid with info from *listitem
         """
         if self.active_dialog and self.active_dialog.window_type == "dialog":
-            self.active_dialog.close()
             utils.log(f'wm.play_youtube_video close the {type(self.active_dialog)} dialog and movieinfo')
+            self.active_dialog.close()
         xbmc.executebuiltin("Dialog.Close(movieinformation)")
         xbmc.executebuiltin("PlayMedia(plugin://plugin.video.youtube/play/?video_id=" +
                             youtube_id + "&screensaver=true&incognito=true)")
@@ -326,7 +326,7 @@ class WindowManager:
             player.wait_for_video_end() #method returns when video ends or failed/timed out
             utils.log('wm.play_youtube_video exited (player stopped)')
             if not self.window_monitor.abortRequested():
-                utils.log('wm.play_youtube_video YT player end restore active dialog doModal')
+                utils.log(f'wm.play_youtube_video YT player end restore {type(self.active_dialog)} doModal')
                 self.active_dialog.doModal()
 
 
