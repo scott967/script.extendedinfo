@@ -283,6 +283,7 @@ class DialogBaseInfo(windows.DialogXML):
 
     @ch.action("previousmenu", "*")
     def exit_script(self, *args):
+        utils.log('dialogbaseinfo.exit_script call exit')
         self.exit()
 
     # @utils.run_async

@@ -55,7 +55,7 @@ class WindowManager:
         self.saved_dialogstate = xbmc.getCondVisibility(
             "Window.IsActive(Movieinformation)")
         # self.monitor = SettingsMonitor()
-        self.monitor = xbmc.Monitor()
+        self.window_monitor = xbmc.Monitor()
 
     def open_movie_info(self, movie_id:str=None, dbid:str=None, name:str=None, imdb_id:str=None):
         """
@@ -293,12 +293,12 @@ class WindowManager:
 #            return None
         utils.log('WM.open_dialog return from dialog.doModal') #debug
 #
-#        if self.window_stack and not self.monitor.abortRequested():
+#        if self.window_stack and not self.window_monitor.abortRequested():
 #
         if self.window_stack:
             utils.log(f'windowmanager.WM.open_dialog wait for video player status to pop and domodal last dialog started: {player.started} stopped/fail to play: {player.stopped} ')  #debug
-            while not self.monitor.abortRequested() and player.started and not player.stopped:
-                self.monitor.waitForAbort(2)
+            while not self.window_monitor.abortRequested() and player.started and not player.stopped:
+                self.window_monitor.waitForAbort(2)
             utils.log(f'windowmanager.WM.open_dialog player stopped status: {player.stopped} Pop dialog from stack, set as active and open doModal')  #debug
             self.active_dialog = self.window_stack.pop()
             xbmc.sleep(300)
@@ -315,14 +315,18 @@ class WindowManager:
         """
         if self.active_dialog and self.active_dialog.window_type == "dialog":
             self.active_dialog.close()
+            utils.log(f'wm.play_youtube_video close the {type(self.active_dialog)} dialog and movieinfo')
         xbmc.executebuiltin("Dialog.Close(movieinformation)")
         xbmc.executebuiltin("PlayMedia(plugin://plugin.video.youtube/play/?video_id=" +
                             youtube_id + "&screensaver=true&incognito=true)")
         if self.active_dialog and self.active_dialog.window_type == "dialog":
-            player.wait_for_video_start() #30 sec timeout
-            player.wait_for_video_end() #method returns when video ends
-            if not self.monitor.abortRequested():
-                utils.log('YT player end restore active dialog doModal') #debug
+            utils.log('wm play_youtube_video while active dialog wait for start')
+            player.wait_for_video_start() #poll youtube try_play win property
+            utils.log('wm play_youtube_video while active dialog video started or failed/timed out')
+            player.wait_for_video_end() #method returns when video ends or failed/timed out
+            utils.log('wm.play_youtube_video exited (player stopped)')
+            if not self.window_monitor.abortRequested():
+                utils.log('wm.play_youtube_video YT player end restore active dialog doModal')
                 self.active_dialog.doModal()
 
 
