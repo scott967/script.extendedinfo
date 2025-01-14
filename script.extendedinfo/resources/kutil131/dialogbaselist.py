@@ -119,6 +119,7 @@ class DialogBaseList:
         """
         save viewtype and last focusposition
         """
+        utils.log('dialogbaselist.DialogBaseList close')
         addon.set_setting("viewtype_selection", str(self.getCurrentContainerId()))
         self.last_position = self.getCurrentListPosition()
         xbmc.executebuiltin("Container.SetViewMode(%s)" % self.cur_viewtype)

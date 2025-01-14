@@ -127,6 +127,7 @@ class DialogBaseInfo(windows.DialogXML):
 
     @ch.click_by_type("video")
     def play_youtube_video(self, control_id):
+        utils.log('DialogBaseInfo.click_by_type(video) call wm.play_youtube_video')
         wm.play_youtube_video(youtube_id=self.FocusedItem(control_id).getProperty("youtube_id"),
                               listitem=self.FocusedItem(control_id))
 
@@ -283,6 +284,7 @@ class DialogBaseInfo(windows.DialogXML):
 
     @ch.action("previousmenu", "*")
     def exit_script(self, *args):
+        utils.log('dialogbaseinfo.exit_script call exit')
         self.exit()
 
     # @utils.run_async
