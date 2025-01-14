@@ -1,36 +1,45 @@
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
 # This program is Free Software see LICENSE file for details
+"""Provides a VideoPlayer class to wrap xbmc.Player
+"""
 
 import xbmc
-import xbmcgui
 
 from resources.kutil131 import busy, utils
-
+from resources.kutil131.kodimonitor import Xbmcmonitor
 
 class VideoPlayer(xbmc.Player):
+    """Helper class for xbmc.Player
+
+    Args:
+        xbmc.Player: Player class provides callbacks for status
+        of player
+    """
 
     def __init__(self, *args, **kwargs):
+        """Constructor to initialize VideoPlayer instance state vars
+        """
         super().__init__()
         self.stopped = False
         self.started = False
 
-    def onPlayBackEnded(self):
+    def onPlayBackEnded(self): #Kodi Player callback
         self.stopped = True
         self.started = False
 
-    def onPlayBackStopped(self):
+    def onPlayBackStopped(self): #Kodi Player callback
         self.stopped = True
         self.started = False
 
-    def onPlayBackError(self):
+    def onPlayBackError(self): #Kodi Player callback
         self.stopped = True
         self.started = False
 
-    def onAVStarted(self):
+    def onAVStarted(self): #Kodi Player callback
         self.started = True
         self.stopped = False
 
-    def onPlayBackStarted(self):
+    def onPlayBackStarted(self): #Kodi Player callback
         self.started = True
         self.stopped = False
         utils.log(f'kutil131.player.Videoplayer.onPlayBackStarted {self.started} stopped {self.stopped}') #debug
@@ -40,10 +49,10 @@ class VideoPlayer(xbmc.Player):
         """function uses inop YTStreamextractor
 
         Args:
-            youtube_id (_type_): _description_
+            youtube_id(str): youtube video id
 
         Returns:
-            _type_: function retained for future use
+            None : method retained for future use
         """
         #vid = utils.get_youtube_info(youtube_id)
         vid = {}
@@ -57,31 +66,40 @@ class VideoPlayer(xbmc.Player):
         #return vid.streamURL(), listitem
 
     def wait_for_video_end(self):
-        monitor: xbmc.Monitor = xbmc.Monitor()
-        while not monitor.waitForAbort(1.0):
-            if monitor.abortRequested():
-                break
-            if self.stopped:
-                break
+        """Monitor loop that waits for playing video to stop
+        kodi xbmc.Player callback sets self.stopped
+        """
+        if not self.stopped:
+            monitor: Xbmcmonitor = Xbmcmonitor()
+            while not monitor.waitForAbort(1.0):
+                if monitor.abortRequested():
+                    break
+                if self.stopped:
+                    break
+            del monitor
         self.stopped = False
 
     def wait_for_video_start(self):
-        """Timer that checks if Youtube can play selected listitem
-        Hard coded to 15 sec
+        """Monitor that waits for plugin.video.youtube to send a
+        Notifyall JSON callback to signal start of playback or
+        failure to play eg, no streams found, etc
         """
-        monitor = xbmc.Monitor()
-        timeout = 15
-        while not monitor.waitForAbort(1.5):  #wait to see if video starts
-            if monitor.abortRequested():
+        _monitor: Xbmcmonitor = Xbmcmonitor()
+        timeout = 45
+        while not _monitor.waitForAbort(1.5):  #wait to see if video starts
+            if _monitor.abortRequested():
                 break
-            timeout += -1
-            if self.started:
-                utils.log('kutils.player.wait_for_video_start av started') #debug
+            if self.started or _monitor.ytplaystart:
+                utils.log('kutil.player.wait_for_video_start av started') #debug
+                self.started = True
                 break
-            if timeout == 0:
+            if _monitor.ytplayfail or (timeout == 0):
+                utils.log('kutil.player.wait_for_video_start yt fail') #debug
                 self.stopped = True
-            utils.log(f'kutil.player.wait_for_video_start start timeout self.stopped {self.stopped}') #debug
-            break
+                break
+            utils.log('kutil.player.wait_for_video_start NO try_play or Notifyall so sleep')
+            timeout += -1
+        del _monitor
 
     def wait_for_kodivideo_start(self):
         """Timer called from dialogmovieinfo that checks if Kodi can play selected listitem
