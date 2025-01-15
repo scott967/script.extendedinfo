@@ -132,7 +132,7 @@ class WindowManager:
                                          cache_days=30)
                 if response["results"]:
                     tvshow_id = str(response['results'][0]['id'])
-        utils.log(f'wm.open_season_info tvshowid {type(tvshow_id)} {tvshow_id} -- season {type(season)} {season} -- dbid {type(dbid)} {dbid}')
+        #utils.log(f'wm.open_season_info tvshowid {type(tvshow_id)} {tvshow_id} -- season {type(season)} {season} -- dbid {type(dbid)} {dbid}')
         if tvshow_id:
             dialog = DialogSeasonInfo(INFO_XML,
                                     addon.PATH,
@@ -140,7 +140,7 @@ class WindowManager:
                                     season=max(0, int(season)),
                                     dbid=int(dbid) if dbid and int(dbid) > 0 else None)
             busy.hide_busy()
-            utils.log(f'wm.open_season_info call open_infodialog for {type(dialog)} tvshow id {tvshow_id} season {season} dbid {dbid}') #debug
+            #utils.log(f'wm.open_season_info call open_infodialog for {type(dialog)} tvshow id {tvshow_id} season {season} dbid {dbid}') #debug
             self.open_infodialog(dialog)
         else:
             busy.hide_busy()
@@ -162,7 +162,7 @@ class WindowManager:
                                    season=max(0, season),
                                    episode=episode,
                                    dbid=int(dbid) if dbid and int(dbid) > 0 else None)
-        utils.log(f'wm.open_episode_info call open_infodialog for {type(dialog)}') #debug
+        #utils.log(f'wm.open_episode_info call open_infodialog for {type(dialog)}') #debug
         self.open_infodialog(dialog)
 
     def open_actor_info(self, actor_id: int=None, name: str=None):
@@ -275,6 +275,7 @@ class WindowManager:
         if self.active_dialog:
             utils.log(f'wm.open_dialog save active_dialog to stack and close {self.active_dialog}') #debug
             self.window_stack.append(self.active_dialog)
+            utils.log('wm.open_dialog close active_dialog')
             self.active_dialog.close()
         utils.check_version()
         if not addon.setting("first_start_infodialog"):

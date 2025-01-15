@@ -173,7 +173,7 @@ def handle_tvshows(results):
     shows = ItemList(content_type="tvshows")
     for i in results:
         item = i["show"] if "show" in i else i
-        utils.log(f'trakt.handle_tvshows show item data {item}')
+        #utils.log(f'trakt.handle_tvshows show item data {item}')
         airs = item.get("airs", {})
         show = VideoItem(label=item["title"],
                          path=f'{PLUGIN_BASE}extendedtvinfo&&tvdb_id={item["ids"]["tvdb"]}')
@@ -312,7 +312,7 @@ def get_data(url:str, params:dict=None, cache_days:int=10) -> list[dict]:
     params = params if params else {}
     params["limit"] = 10
     url = f"{BASE_URL}{url}?{urllib.parse.urlencode(params)}"
-    utils.log(f'trakt.get_data url : {url}')
+    #utils.log(f'trakt.get_data url : {url}')
     return utils.get_JSON_response(url=url,
                                    folder="Trakt",
                                    headers=HEADERS,

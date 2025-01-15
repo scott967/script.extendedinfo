@@ -401,7 +401,7 @@ def get_http(url, headers=False):
         try:
             #log(f'kutil131.utils.get_http headers {headers}')  #debug
             request = requests.get(url, headers=headers, timeout=10)
-            log(f'kutil131.utils.get_http response from online {request.text}')  #debug
+            #log(f'kutil131.utils.get_http response from online {request.text}')  #debug
             return request.text
         except requests.exceptions.RequestException as err:
             log(f"get_http: could not get data from {url} exception {err}")
@@ -422,15 +422,15 @@ def post(url:str, values:dict, headers:str) -> dict:
         dict: results from server for the post
     """
     try:
-        log(f'utils.post post to {url} with data {json.dumps(values)}')
+        #log(f'utils.post post to {url} with data {json.dumps(values)}')
         request = requests.post(url=url,
                                 data=json.dumps(values),
                                 headers=headers,
                                 timeout=10)
     except requests.exceptions.RequestException as err:
         log(f"get_http: could not get data from {url} exception {err}")
-    log(f'utils.post post returns text {type(json.loads(request.text))} {json.loads(request.text)}')
-    log(f'utils.post post returns headers {type(request.headers)} {request.headers}')
+    #log(f'utils.post post returns text {type(json.loads(request.text))} {json.loads(request.text)}')
+    #log(f'utils.post post returns headers {type(request.headers)} {request.headers}')
     return json.loads(request.text)
 
 
@@ -439,14 +439,14 @@ def delete(url:str, values:dict, headers:str) ->dict:
     returns answer to delete request
     """
     try:
-        log('utils.delete attempting tmdb delete request')
+        #log('utils.delete attempting tmdb delete request')
         request = requests.delete(url=url,
                                 data=json.dumps(values),
                                 headers=headers,
                                 timeout=10)
     except requests.exceptions.RequestException as err:
         log(f"get_http: could not get data from {url} exception {err}")
-    log(f'utils.delete returns {type(json.loads(request.text))} {json.loads(request.text)}')
+    #log(f'utils.delete returns {type(json.loads(request.text))} {json.loads(request.text)}')
     return json.loads(request.text)
 
 
@@ -475,7 +475,7 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> li
         try:
             prop = json.loads(addon.get_global(hashed_url))
             if prop:
-                log(f'kutil131.utils.get_JSON_repsonse got kodi window hashed_url prop {prop}') #debug
+                #log(f'kutil131.utils.get_JSON_repsonse got kodi window hashed_url prop {prop}') #debug
                 return prop
         except Exception:
             log(f"could not load window prop data for {url}") #debug
@@ -485,7 +485,7 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> li
     if xbmcvfs.exists(path) and ((now - os.path.getmtime(path)) < cache_seconds):
         results = read_from_file(path)
         #for trakt acticipatedmovies results is list of dict per movie
-        log(f"kutil131.utils.get_JSON_response loaded local file for {url}. time: {(time.time() - now):f} and results {results}") #debug
+        #log(f"kutil131.utils.get_JSON_response loaded local file for {url}. time: {(time.time() - now):f} and results {results}") #debug
     else:
         #log(f'kutil131.utils.get_JSON_response get_http headers {headers}') #debug
         #  data not cached query online source
@@ -494,21 +494,21 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> li
             results = json.loads(response)
             if folder == 'TheMovieDB':
                 if ("results" in results):
-                    log(f'kutil131.utils.get_JSON_response results in tmdb response {type(results)} --- {results}')
+                    #log(f'kutil131.utils.get_JSON_response results in tmdb response {type(results)} --- {results}')
                     # utils.log("download %s. time: %f" % (url, time.time() - now))
                     if (("status_code" in results and results.get("status_code") == 1) or
                         not ("status_code" in results)):
-                        log(f'kutil131.utils.get_JSON_response saving {folder} results to cache file')
+                        #log(f'kutil131.utils.get_JSON_response saving {folder} results to cache file')
                         save_to_file(results, hashed_url, cache_path)
             else:
                 save_to_file(results, hashed_url, cache_path)
-                log(f'kutil131.utils.get_JSON_response saved non-tmdb results to cache file in {folder}')  #debug
+                #log(f'kutil131.utils.get_JSON_response saved non-tmdb results to cache file in {folder}')  #debug
         except Exception as err:
             log(f"kutil131.utils.get_JSON_response Exception: Could not get new JSON data from {url} "
                 f"with error {err}. Trying to fallback to cache")
             #log(f'kutils131.utils.get_JSON_response {response}')
             results = read_from_file(path) if xbmcvfs.exists(path) else []
-    log(f'kutil131.utils.get_JSON_response response (local cache or online) type {type(results)} -- {results}') #debug
+    #log(f'kutil131.utils.get_JSON_response response (local cache or online) type {type(results)} -- {results}') #debug
     if not results:
         return None
     addon.set_global(hashed_url + "_timestamp", str(now))
@@ -544,13 +544,13 @@ def get_file(url):
                                   cached_thumb[:-4] + ".jpg").replace("\\", "/")
     cache_file_png = cache_file_jpg[:-4] + ".png"
     if xbmcvfs.exists(cache_file_jpg):
-        log("cache_file_jpg Image: " + url + "-->" + cache_file_jpg)
+        #log("cache_file_jpg Image: " + url + "-->" + cache_file_jpg)
         return translate_path(cache_file_jpg)
     elif xbmcvfs.exists(cache_file_png):
-        log("cache_file_png Image: " + url + "-->" + cache_file_png)
+        #log("cache_file_png Image: " + url + "-->" + cache_file_png)
         return cache_file_png
     elif xbmcvfs.exists(vid_cache_file):
-        log("vid_cache_file Image: " + url + "-->" + vid_cache_file)
+        #log("vid_cache_file Image: " + url + "-->" + vid_cache_file)
         return vid_cache_file
     try:
         request = urllib.request.Request(clean_url)
@@ -585,7 +585,7 @@ def fetch_musicbrainz_id(artist, artist_id=-1):
                                 cache_days=30,
                                 folder="MusicBrainz")
     if results and len(results["artists"]) > 0:
-        log(f'kutil131.utils.fetch_mbid found artist id for {artist}: {results["artists"][0]["id"]}')
+        #log(f'kutil131.utils.fetch_mbid found artist id for {artist}: {results["artists"][0]["id"]}')
         return results["artists"][0]["id"]
     else:
         return None
@@ -598,7 +598,7 @@ class FunctionThread(threading.Thread):
         self.function = function
         self.param = param
         self.setName(self.function.__name__)
-        log("init " + self.function.__name__)
+        #log("init " + self.function.__name__)
 
     def run(self):
         self.listitems = self.function(self.param)

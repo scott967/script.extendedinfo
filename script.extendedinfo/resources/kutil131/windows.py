@@ -2,6 +2,7 @@
 # This program is Free Software see LICENSE file for details
 
 import xbmcgui
+import xbmc
 
 
 class WindowMixin:
@@ -36,6 +37,7 @@ class WindowMixin:
 
     def exit(self):
         self.cancelled = True
+        xbmc.log('kutil131.windows.WindowMixin close called')
         self.close()
 
 

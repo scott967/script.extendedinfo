@@ -138,12 +138,12 @@ class Addon:
     def update_lang_setting(self) -> None:
         """updates user settings from old ISO 639-1 to ISO 639-1-ISO 3166 
         """
-        xbmc.log(f'script.extendedinfo Addon.update_lang_setting called')
+        #xbmc.log(f'script.extendedinfo Addon.update_lang_setting called')
         old_lang = self.addon.getSetting("LanguageID")
-        xbmc.log(f'script.extendedinfo Addon.update_lang_setting old_lang {old_lang}')
+        #xbmc.log(f'script.extendedinfo Addon.update_lang_setting old_lang {old_lang}')
         for lang_key in TMDB_ISO_639:
             if lang_key.startswith(old_lang):
-                xbmc.log(f'script.extendedinfo Addon.update_lang_setting lang_key {lang_key}')
+                #xbmc.log(f'script.extendedinfo Addon.update_lang_setting lang_key {lang_key}')
                 self.addon.setSetting("LanguageIDv2", lang_key)
                 self.addon.setSettingBool("setting_update_6.0.9", True)
                 break

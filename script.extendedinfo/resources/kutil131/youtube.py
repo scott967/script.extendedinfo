@@ -89,7 +89,7 @@ def get_duration_in_seconds(duration:str) -> int:
     """
     convert youtube duration string to seconds int
     """
-    utils.log(f'kutil131.youtube.get_duraction_in_secs duration {duration}')  #debug
+    #utils.log(f'kutil131.youtube.get_duraction_in_secs duration {duration}')  #debug
     if duration == ('P0D' or 'P0D0S'):  #live stream so no duration
         return 0
     if not duration.endswith('S'):
@@ -103,7 +103,7 @@ def get_duration_in_seconds(duration:str) -> int:
         else:
             return int(duration[0])
     except Exception as err:
-        utils.log(f'kutil131.youtube unable decode youtube duration of {duration} error {err}')
+        #utils.log(f'kutil131.youtube unable decode youtube duration of {duration} error {err}')
         return 0
 
 def get_formatted_duration(duration:str) -> str:

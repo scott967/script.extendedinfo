@@ -104,7 +104,7 @@ def start_info_actions(info: str, params: dict[str, str]):
         if not movie_id:
             movie_id = tmdb.get_movie_tmdb_id(imdb_id=params.get("imdb_id"),
                                               dbid=params.get("dbid"))
-        utils.log(f'process.start_info_actions for similarmovies got {"tmdb_id " + str(movie_id) if movie_id else "no id"}')
+        #utils.log(f'process.start_info_actions for similarmovies got {"tmdb_id " + str(movie_id) if movie_id else "no id"}')
         if movie_id:
             return tmdb.get_similar_movies(movie_id)
     elif info == 'similartvshows':
@@ -298,30 +298,30 @@ def start_info_actions(info: str, params: dict[str, str]):
             params = {"dbid": dbid,
                       "id": utils.get_infolabel(f'{container_id}ListItem.Property(id)'),
                       "name": utils.get_infolabel(f'{container_id}ListItem.Title')}
-            utils.log(f'process.start_info_actions for movie call exendedinfo with {params}')
+            #utils.log(f'process.start_info_actions for movie call exendedinfo with {params}')
             start_info_actions("extendedinfo", params)
         elif db_type == "tvshow":
             params = {"dbid": dbid,
                       "tvdb_id": utils.get_infolabel(f'{container_id}ListItem.Property(tvdb_id)'),
                       "id": utils.get_infolabel(f'{container_id}ListItem.Property(id)'),
                       "name": utils.get_infolabel(f'{container_id}ListItem.Title')}
-            utils.log(f'process.start_info_actions for tvshow call exendedtvinfo with {params}')
+            #utils.log(f'process.start_info_actions for tvshow call exendedtvinfo with {params}')
             start_info_actions("extendedtvinfo", params)
         elif db_type == "season":
             params = {"tvshow": utils.get_infolabel(f'{container_id}ListItem.TVShowTitle'),
                       "dbid": utils.get_infolabel(f'{container_id}ListItem.DBID'),
                       "season": utils.get_infolabel(f'{container_id}ListItem.Season')}
-            utils.log(f'process.start_info_actions for season call seasoninfo with {params}')
+            #utils.log(f'process.start_info_actions for season call seasoninfo with {params}')
             start_info_actions("seasoninfo", params)
         elif db_type == "episode":
             params = {"tvshow": utils.get_infolabel(f'{container_id}ListItem.TVShowTitle'),
                       "season": utils.get_infolabel(f'{container_id}ListItem.Season'),
                       "episode": utils.get_infolabel(f'{container_id}ListItem.Episode')}
-            utils.log(f'process.start_info_actions for episode call exendedepisodeinfo with {params}')
+            #utils.log(f'process.start_info_actions for episode call exendedepisodeinfo with {params}')
             start_info_actions("extendedepisodeinfo", params)
         elif db_type in ["actor", "director"]:
             params = {"name": utils.get_infolabel(f'{container_id}ListItem.Label')}
-            utils.log(f'process.start_info_actions for actor call exendedactorinfo with {params}')
+            #utils.log(f'process.start_info_actions for actor call exendedactorinfo with {params}')
             start_info_actions("extendedactorinfo", params)
         else:
             utils.notify("Error", "Could not find valid content type")
@@ -406,7 +406,7 @@ def start_info_actions(info: str, params: dict[str, str]):
             return None
         addon.set_global('infodialogs.active', "true")
         try:
-            utils.log(f'process.start_info_actions seasoninfo tvshow {params.get("tvshow")} dbid {params.get("dbid")} season {params.get("season")}')
+            #utils.log(f'process.start_info_actions seasoninfo tvshow {params.get("tvshow")} dbid {params.get("dbid")} season {params.get("season")}')
             wm.open_season_info(tvshow=params.get("tvshow"),
                                 dbid=params.get("dbid"),
                                 season=int(params.get("season")))
@@ -458,6 +458,7 @@ def start_info_actions(info: str, params: dict[str, str]):
         for builtin in params.get("id", "").split("$$"):
             xbmc.executebuiltin(builtin)
     elif info == "youtubevideo":
+        utils.log('process.start_info_actions builtin Dialog.Close')
         xbmc.executebuiltin("Dialog.Close(all,true)")
         wm.play_youtube_video(params.get("id", ""))
     elif info == 'playtrailer':
