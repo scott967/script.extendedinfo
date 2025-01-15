@@ -55,7 +55,7 @@ class LocalDB:
         """
         simi_artists = self.last_fm.get_similar_artists(artist_id)
         if simi_artists is None:
-            utils.log('Last.fm didn\'t return proper response')
+            #utils.log('Last.fm didn\'t return proper response')
             return None
         if not self.artists:
             self.artists = self.get_artists()
@@ -441,7 +441,7 @@ class LocalDB:
         if media_type == "movie":
             data = kodijson.get_json(method="VideoLibrary.GetMovieDetails",
                                      params={"properties": ["uniqueid", "title", "year"], "movieid": int(dbid)})
-            utils.log(f'localdb.get_imdb_id json data for movie {data}')
+            #utils.log(f'localdb.get_imdb_id json data for movie {data}')
             if "result" in data and "moviedetails" in data["result"]:
                 try:
                     return data['result']['moviedetails']['uniqueid']['imdb'], ''
@@ -450,7 +450,7 @@ class LocalDB:
         elif media_type == "tvshow":
             data = kodijson.get_json(method="VideoLibrary.GetTVShowDetails",
                                      params={"properties": ["uniqueid", "title", "year"], "tvshowid": int(dbid)})
-            utils.log(f'localdb.get_imdb_id json data for tvshow {data}')
+            #utils.log(f'localdb.get_imdb_id json data for tvshow {data}')
             if "result" in data and "tvshowdetails" in data["result"]:
                 try:
                     return data['result']['tvshowdetails']['uniqueid']['imdb'], ''

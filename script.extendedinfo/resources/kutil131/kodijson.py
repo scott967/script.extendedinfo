@@ -128,7 +128,7 @@ def set_art(media_type:str, art:dict, dbid:int) -> dict:
     Returns:
         dict: the JSON results from Kodi
     """
-    xbmc.log(f'script.extendedinfo 6.0.8 kodijson.set_art args type art {type(art)} {art} dbid {type(dbid)}')
+    #xbmc.log(f'script.extendedinfo 6.0.8 kodijson.set_art args type art {type(art)} {art} dbid {type(dbid)}')
     return get_json(method=f"VideoLibrary.Set{media_type}Details",
                     params={"art": art,
                             f"{media_type.lower()}id": int(dbid)})
@@ -144,6 +144,6 @@ def get_json(method:str, params) -> dict:
     Returns:
         dict: JSON_RPC results
     """
-    xbmc.log(f'script.extendedinfo 6.0.8 kodijson.get_json string is {{"jsonrpc": "2.0", "method": "{method}", "params": {json.dumps(params)}, "id": 1}}')
+    #xbmc.log(f'script.extendedinfo 6.0.8 kodijson.get_json string is {{"jsonrpc": "2.0", "method": "{method}", "params": {json.dumps(params)}, "id": 1}}')
     json_query = xbmc.executeJSONRPC(f'{{"jsonrpc": "2.0", "method": "{method}", "params": {json.dumps(params)}, "id": 1}}')
     return json.loads(json_query)

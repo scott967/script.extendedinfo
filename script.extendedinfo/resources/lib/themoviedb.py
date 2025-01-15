@@ -207,9 +207,9 @@ class LoginProvider:
         if LoginProvider.LOGIN_VALID:
             return True
         if self.username and self.password:
-            utils.log('tmdb.LoginProvider.check_login session id') #debug
+            #utils.log('tmdb.LoginProvider.check_login session id') #debug
             return bool(self.get_session_id())
-        utils.log('tmdb.LoginProvider.check_login No login credentials') #debug
+        #utils.log('tmdb.LoginProvider.check_login No login credentials') #debug
         return False
 
     def get_account_id(self) -> str:
@@ -218,7 +218,7 @@ class LoginProvider:
         Returns:
             str: the tmdb account id or None
         """
-        utils.log('tmdb.LoginProvider.get_account_id') #debug
+        #utils.log('tmdb.LoginProvider.get_account_id') #debug
         if self.account_id:
             return self.account_id
         self.session_id = self.get_session_id()
@@ -228,7 +228,7 @@ class LoginProvider:
         if not response:
             return None
         self.account_id = response.get("id")
-        utils.log(f'LoginProvider.get_account_id got {self.account_id}')
+        #utils.log(f'LoginProvider.get_account_id got {self.account_id}')
         return self.account_id
 
     def get_guest_session_id(self) -> str:
@@ -254,12 +254,12 @@ class LoginProvider:
             bool: True if session_id got and account_id
         """
         if LoginProvider.LOGIN_VALID:
-            utils.log('Loginprovider.test_session_id LOGIN is VALID return addon setting')
+            #utils.log('Loginprovider.test_session_id LOGIN is VALID return addon setting')
             return addon.setting("session_id")
         response = get_data(url="account",
                             params={"session_id": session_id},
                             cache_days=999999)
-        utils.log(f'tmdb.LoginProvider.test_session_id returns as {type(response.get("id"))} {response and response.get("id")}')
+        #utils.log(f'tmdb.LoginProvider.test_session_id returns as {type(response.get("id"))} {response and response.get("id")}')
         return response and response.get("id")
 
     def get_session_id(self, cache_days=999) -> str:
@@ -274,12 +274,12 @@ class LoginProvider:
         """
         if addon.setting("session_id"):
             self.session_id = addon.setting("session_id")
-            utils.log('tmdb.LoginProvider.get_session_id got id from addon settings -- testing')
+            #utils.log('tmdb.LoginProvider.get_session_id got id from addon settings -- testing')
             if self.test_session_id(self.session_id):
-                utils.log('tmdb.LoginProvider.get_session_id addon setting session_id valid')
+                #utils.log('tmdb.LoginProvider.get_session_id addon setting session_id valid')
                 LoginProvider.update_login(True)
                 return addon.setting("session_id")
-        utils.log('tmdb.LoginProvider.get_session_id addon setting session_id not valid or no setting -- create new session id')
+        #utils.log('tmdb.LoginProvider.get_session_id addon setting session_id not valid or no setting -- create new session id')
         self.create_session_id()
         if self.session_id:
             LoginProvider.update_login(True)
@@ -301,13 +301,13 @@ class LoginProvider:
                                 cache_days=0)
         else:
             return
-        utils.log(f'tmdb.LoginProvider.create_session_id session with login {response}') #debug
+        #utils.log(f'tmdb.LoginProvider.create_session_id session with login {response}') #debug
         if response and response.get("success"):
             request_token = response["request_token"]
             response = get_data(url="authentication/session/new",
                                 params={"request_token": request_token})
             if response and "success" in response:
-                utils.log(f'tmdb.LoginProvider.create_session_in got new session id {response}')  #debug
+                #utils.log(f'tmdb.LoginProvider.create_session_in got new session id {response}')  #debug
                 self.session_id = str(response["session_id"])
                 addon.set_setting("session_id", self.session_id)
 
@@ -326,10 +326,10 @@ def set_rating(media_type, media_id, rating, dbid=None):
     params = {}
     if tmdb_login.check_login():
         params["session_id"] = tmdb_login.get_session_id()
-        utils.log('tmdb.set_rating got login session id')
+        #utils.log('tmdb.set_rating got login session id')
     else:
         params["guest_session_id"] = tmdb_login.get_guest_session_id()
-        utils.log('tmdb.set_rating no login use guest session id')
+        #utils.log('tmdb.set_rating no login use guest session id')
     if media_type == "episode":
         if not media_id[1]:
             media_id[1] = "0"
@@ -363,10 +363,10 @@ def send_request(url:str, params:dict, values:dict, delete=False) ->dict:
     params = {k: str(v) for k, v in params.items() if v}
     url = f"{URL_BASE}{url}?{urllib.parse.urlencode(params)}"
     if delete:
-        utils.log(f'tmdb.send_request deleting {delete} from {url}')
+        #utils.log(f'tmdb.send_request deleting {delete} from {url}')
         return utils.delete(url, values=values, headers=HEADERS)
     else:
-        utils.log(f'delete {delete} instead post to {url} these values {values}')
+        #utils.log(f'delete {delete} instead post to {url} these values {values}')
         return utils.post(url, values=values, headers=HEADERS)
 
 
@@ -1071,7 +1071,7 @@ def get_data(url:str = "", params:dict = None, cache_days:float = 14) -> dict|No
     HEADERS['Authorization'] = 'Bearer ' + kodiaddon.decode_string(TMDB_TOKEN, uuick=addon.setting('tmdb_tok'))
     params = {k: str(v) for k, v in params.items() if v}
     url = f"{URL_BASE}{url}?{urllib.parse.urlencode(params)}"
-    utils.log(f'tmdb.get_data query url: {url} with headers {HEADERS}') #debug
+    #utils.log(f'tmdb.get_data query url: {url} with headers {HEADERS}') #debug
     response = utils.get_JSON_response(url, cache_days, folder='TheMovieDB', headers=HEADERS)
     if not response:
         utils.log("tmdb.get_data No response from TMDB")
@@ -1081,7 +1081,7 @@ def get_data(url:str = "", params:dict = None, cache_days:float = 14) -> dict|No
         if response.get('status_code') == 3:
             tmdb_login.reset_session_id()
         return None
-    utils.log(f'tmdb.get_data returns response {type(response)} -- {response}')
+    #utils.log(f'tmdb.get_data returns response {type(response)} -- {response}')
     return response
 
 
@@ -1104,8 +1104,8 @@ def get_credit_info(credit_id):
 
 
 def get_account_props(states:dict) -> dict:
-    utils.log(f'tmdb.get_account_props are {type(states)} {states}')
-    utils.log(f'tmdb.get_account_props FavButton_Label {addon.LANG(32155) if states.get("favorite") else addon.LANG(32154)} and favorite {"True" if states.get("favorite") else ""}')
+    #utils.log(f'tmdb.get_account_props are {type(states)} {states}')
+    #utils.log(f'tmdb.get_account_props FavButton_Label {addon.LANG(32155) if states.get("favorite") else addon.LANG(32154)} and favorite {"True" if states.get("favorite") else ""}')
     return {"FavButton_Label": addon.LANG(32155) if states.get("favorite") else addon.LANG(32154),
             "favorite": "True" if states.get("favorite") else "",
             "rated": int(states["rated"]["value"]) if states["rated"] else "",
@@ -1157,7 +1157,7 @@ def get_movie_tmdb_id(imdb_id:str=None, name:str=None, dbid:int=None) ->int:
     utils.log(f'tmdb.get_movie_tmdb_id dbid is {dbid}')
     if dbid and (int(dbid) > 0):
         imdb_id, name = local_db.get_imdb_id("movie", dbid)
-        utils.log(f'tmdb.get_movie_tmdb_id found {"imdb_id" + imdb_id if imdb_id else "no imdb_id"} from dbid {dbid}')
+        #utils.log(f'tmdb.get_movie_tmdb_id found {"imdb_id" + imdb_id if imdb_id else "no imdb_id"} from dbid {dbid}')
     if imdb_id:
         params = {"external_source": "imdb_id",
                   "language": addon.setting("LanguageIDv2")}
@@ -1223,14 +1223,14 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> tuple[VideoI
                 dict of key str value kutils131 ItemList
                 dict of account states
     """
-    utils.log(f'tmdb.extended_movie_info for {movie_id}')  #debug
+    #utils.log(f'tmdb.extended_movie_info for {movie_id}')  #debug
     if not movie_id:
         return None
     info: dict | None = get_movie(movie_id=movie_id, cache_days=cache_days)
     if not info or info.get('success') is False:
         utils.notify("Could not get tmdb movie information")
         return (None, None, None)
-    utils.log(f'tmdb.extended_movie_info creating a movie VideoItem with info {info}')
+    #utils.log(f'tmdb.extended_movie_info creating a movie VideoItem with info {info}')
     mpaa = ""
     studio = [i["name"] for i in info.get("production_companies")]
     authors = [i["name"] for i in info['credits']
@@ -1246,7 +1246,7 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> tuple[VideoI
     movie_set:dict = info.get("belongs_to_collection")
     movie = VideoItem(label=info.get('title'),
                       path=PLUGIN_BASE + f"youtubevideo&&id={info.get('id', '')}")
-    utils.log(f'tmdb .extended_movie_info movie VideoItem plost is {info.get("overview")}')
+    #utils.log(f'tmdb .extended_movie_info movie VideoItem plost is {info.get("overview")}')
     movie.set_infos({'title': info.get('title'),
                      'tagline': info.get('tagline'),
                      'duration': info.get('runtime'),
@@ -1280,7 +1280,7 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> tuple[VideoI
     account_states: dict = info.get("account_states")
     if dbid:
         local_item: dict = local_db.get_movie(dbid)
-        utils.log(f'tmdb.extended_movie_info using dbid {dbid} to update movie VideoItem from local item {local_item}')
+        #utils.log(f'tmdb.extended_movie_info using dbid {dbid} to update movie VideoItem from local item {local_item}')
         movie.update_from_listitem(local_item)
     else:
         movie = local_db.merge_with_local("movie", [movie])[0]
@@ -1560,7 +1560,7 @@ def get_rated_media_items(media_type:str, sort_by:str='', page:int=1, cache_days
         data = get_data(url=f"account/{account_id}/rated/{media_type}",
                         params=params,
                         cache_days=cache_days)
-        utils.log(f'tmdb.get_rated_media_itmes logged in got {data}')  #debug
+        #utils.log(f'tmdb.get_rated_media_itmes logged in got {data}')  #debug
     else:
         session_id = tmdb_login.get_guest_session_id()
         if not session_id:
@@ -1571,7 +1571,7 @@ def get_rated_media_items(media_type:str, sort_by:str='', page:int=1, cache_days
         data = get_data(url=f"guest_session/{session_id}/rated/{media_type}",
                         params=params,
                         cache_days=0)
-        utils.log(f'tmdb.get_rated_media_itmes guest got {data}')  #debug
+        #utils.log(f'tmdb.get_rated_media_itmes guest got {data}')  #debug
     if media_type == "tv/episodes":
         utils.log('tmdb.get_rated_media_items handling episodes')
         itemlist = handle_episodes(data["results"])
@@ -1660,10 +1660,10 @@ def get_movie(movie_id, light=False, cache_days=30) -> dict | None:
               "language": addon.setting("LanguageIDv2"),
               "append_to_response": None if light else ALL_MOVIE_PROPS
               }
-    utils.log('tmdb.get_movie call check_login')
+    #utils.log('tmdb.get_movie call check_login')
     if tmdb_login.check_login():
         #params["session_id"] = tmdb_login.get_session_id()
-        utils.log(f'tmdb.get_movie valid login addon session_id setting type {type(addon.setting("session_id"))}')
+        #utils.log(f'tmdb.get_movie valid login addon session_id setting type {type(addon.setting("session_id"))}')
         params["session_id"] = addon.setting("session_id")
     return get_data(url=f"movie/{movie_id}",
                     params=params,
@@ -1679,7 +1679,7 @@ def get_similar_movies(movie_id:int) ->ItemList[VideoItem]:
         ItemList[VideoItem]: list of kutil131 videoitems of similar movies
     """
     response = get_movie(movie_id)
-    utils.log(f'tmdb.get_similar_movies returns dict of {response.get("similar")}') #debug
+    #utils.log(f'tmdb.get_similar_movies returns dict of {response.get("similar")}') #debug
     if not response or not response.get("similar"):
         return []
     return handle_movies(response["similar"]["results"])
@@ -1794,7 +1794,7 @@ def search_media(media_name=None, year='', media_type="movie", cache_days=1):
     '''
     return list of items with type *media_type for search with *media_name
     '''
-    utils.log(f'tmdb.search_media searching {media_name if media_name else "None"}')
+    #utils.log(f'tmdb.search_media searching {media_name if media_name else "None"}')
     if not media_name:
         return None
     params = {"query": f"{media_name}{' ' + year if year else ''}",
@@ -1808,7 +1808,7 @@ def search_media(media_name=None, year='', media_type="movie", cache_days=1):
         return None
     for item in response['results']:
         if item['id']:
-            utils.log(f'tmdb.search_media returning {item["id"]}')
+            #utils.log(f'tmdb.search_media returning {item["id"]}')
             return item['id']
 
 

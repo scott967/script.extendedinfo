@@ -64,7 +64,7 @@ class Main:
         """
         utils.log(f"version {addon.VERSION} started")
         addon.set_global("extendedinfo_running", "true")
-        utils.log(f'default.Main setting setting_update is {addon.bool_setting("setting_update_6.0.9")}')
+        #utils.log(f'default.Main setting setting_update is {addon.bool_setting("setting_update_6.0.9")}')
         if not addon.bool_setting("setting_update_6.0.9"):
             addon.update_lang_setting()
         utils.log(f'default.Main setting LanguageIDv2 after update {addon.setting("LanguageIDv2")}')
@@ -93,11 +93,11 @@ class Main:
         self.params: dict[str, str] = {"handle": None}
         utils.log(f'default._parse_argv argv[1:] {sys.argv[1:]}')
         for arg in sys.argv[1:]:
-            utils.log(f'default._parse_argv arg is {arg}')
+            #utils.log(f'default._parse_argv arg is {arg}')
             param = arg.replace('"', '').replace("'", " ")
             if param.startswith('info='):
                 self.infos.append(param[5:])
-                utils.log(f'default._parse_argv self.infos is {self.infos}')
+                #utils.log(f'default._parse_argv self.infos is {self.infos}')
             else:
                 try:
                     self.params[param.split('=', maxsplit=1)[0].lower()] = "=".join(

@@ -137,7 +137,7 @@ class DialogBaseList:
         """
         check if sort is valid. If not, change to default.
         """
-        utils.log(f'DialogBaseList.verify_sort from {list(self.SORTS[self.sort_key].keys())}')
+        #utils.log(f'DialogBaseList.verify_sort from {list(self.SORTS[self.sort_key].keys())}')
         if self.sort not in [i for i in list(self.SORTS[self.sort_key].keys())]:
             self.set_sort(self.default_sort)
 
@@ -348,7 +348,7 @@ class DialogBaseList:
         Returns:
             bool: True if sorthmethod changed
         """
-        utils.log(f'DialogBaseList.choose_sort_method get new sort key sort_key is {sort_key} and current sort_label is {self.sort_label}')
+        #utils.log(f'DialogBaseList.choose_sort_method get new sort key sort_key is {sort_key} and current sort_label is {self.sort_label}')
         listitems = list(self.SORTS[sort_key].values())
         sort_strings = list(self.SORTS[sort_key].keys())
         preselect = listitems.index(self.sort_label) if self.sort_label in listitems else -1
@@ -356,11 +356,11 @@ class DialogBaseList:
                                         list=listitems,
                                         preselect=preselect)
         if index == -1 or listitems[index] == self.sort_label:
-            utils.log('DialogBaseList.choose_sort_method no change in sort method')
+            #utils.log('DialogBaseList.choose_sort_method no change in sort method')
             return False
         self.sort = sort_strings[index]
         self.sort_label = listitems[index]
-        utils.log(f'DialogBaseList.choose_sort_method new sort is {self.sort} and label {self.sort_label}')
+        #utils.log(f'DialogBaseList.choose_sort_method new sort is {self.sort} and label {self.sort_label}')
         return True
 
     def choose_filter(self, filter_code:str, header:int, options:list[tuple]):
@@ -406,12 +406,12 @@ class DialogBaseList:
         """
         remove filter with specific filter_code from filter list
         """
-        utils.log(f'DialogBaseList.remove_filter filter_code {filter_code} from filters {self.filters}')
+        #utils.log(f'DialogBaseList.remove_filter filter_code {filter_code} from filters {self.filters}')
         index = self.find_filter_position(filter_code)
-        utils.log(f'DialogBaseList.remove_filter got filter position at {index} deleting')
+        #utils.log(f'DialogBaseList.remove_filter got filter position at {index} deleting')
         if index > -1:
             del self.filters[index]
-            utils.log(f'DialogBaseList.remove_filter new filter list {self.filters}')
+            #utils.log(f'DialogBaseList.remove_filter new filter list {self.filters}')
         self.reset()
 
     def add_filter(self, key, value, label, typelabel="", force_overwrite=False, reset=True):
