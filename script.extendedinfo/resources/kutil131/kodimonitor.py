@@ -21,6 +21,8 @@ class Xbmcmonitor(xbmc.Monitor):
         utils.log(f'onNotification sender {sender} method {method} data {data}')
         if (sender == 'plugin.video.youtube') and (method == 'Other.playback_init'):
             utils.log('Youtube notify Xbmcmonitor video play init')
+        elif (sender == 'plugin.video.youtube') and (method == 'Other.playback_started'):
+            utils.log('Youtube notify Xbmcmonitor video play started')
             self.ytplaystart = True
         elif (sender == 'plugin.video.youtube') and (method == 'Other.playback_failed'):
             utils.log('Youtube notify Xbmcmonitor video play fail')

@@ -38,6 +38,7 @@ class VideoPlayer(xbmc.Player):
     def onAVStarted(self): #Kodi Player callback
         self.started = True
         self.stopped = False
+        utils.log(f'kutil131.player.Videoplayer.onAVStarted {self.started} stopped {self.stopped}')
 
     def onPlayBackStarted(self): #Kodi Player callback
         self.started = True
@@ -86,10 +87,10 @@ class VideoPlayer(xbmc.Player):
         """
         _monitor: Xbmcmonitor = Xbmcmonitor()
         timeout = 45
-        while not _monitor.waitForAbort(1.5):  #wait to see if video starts
+        while not _monitor.waitForAbort(1.0):  #wait to see if video starts
             if _monitor.abortRequested():
                 break
-            if self.started or _monitor.ytplaystart:
+            if _monitor.ytplaystart:
                 utils.log('kutil.player.wait_for_video_start av started') #debug
                 self.started = True
                 break
@@ -97,7 +98,7 @@ class VideoPlayer(xbmc.Player):
                 utils.log('kutil.player.wait_for_video_start yt fail') #debug
                 self.stopped = True
                 break
-            utils.log('kutil.player.wait_for_video_start NO try_play or Notifyall so sleep')
+            utils.log('kutil.player.wait_for_video_start no timeout or Notifyall so sleep')
             timeout += -1
         del _monitor
 
