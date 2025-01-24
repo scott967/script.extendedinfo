@@ -15,7 +15,6 @@ class Xbmcmonitor(xbmc.Monitor):
         super().__init__()
         self.ytplaystart = False
         self.ytplayfail = False
-        #self.notify_ws = KodiWebSocket(port=9090)
 
     def onNotification(self, sender, method, data):
         utils.log(f'onNotification sender {sender} method {method} data {data}')
@@ -26,4 +25,7 @@ class Xbmcmonitor(xbmc.Monitor):
             self.ytplaystart = True
         elif (sender == 'plugin.video.youtube') and (method == 'Other.playback_failed'):
             utils.log('Youtube notify Xbmcmonitor video play fail')
+            self.ytplayfail = True
+        elif (sender == 'xbmc') and (method == 'Player.OnStop'):
+            utils.log('xbmc notify Xbmcmonitor play stopped yt failed?')
             self.ytplayfail = True

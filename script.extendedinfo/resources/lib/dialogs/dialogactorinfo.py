@@ -76,6 +76,7 @@ class DialogActorInfo(DialogBaseInfo):
         Also calls onInit in parent classes to set all info in the
         dialog window
         """
+        utils.log('DialogActorInfo onInit callback')
         self.get_youtube_vids(self.info.label)
         #utils.log('DialogActorInfo.onInit get_youtube_vids thread spun')
         super().onInit()
