@@ -245,6 +245,7 @@ def search(search_str="", hd="", orderby="relevance", limit=40, extended=True,
               "hd": str(hd and not hd == "false"),
               "q": search_str.replace('"', ''),
               "key" : api_key}
+    utils.log(f'kutil131.youtube.search params {params}')
     results = _get_data(method="search",
                        params=utils.merge_dicts(params, filters if filters else {}))
     if results and ('error' in results.keys()):

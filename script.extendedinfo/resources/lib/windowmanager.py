@@ -327,6 +327,7 @@ class WindowManager:
             player.wait_for_video_end() #method returns when video ends or failed/timed out
             utils.log('wm.play_youtube_video exited (player stopped)')
             if not self.window_monitor.abortRequested():
+                #xbmc.Monitor().waitForAbort(1.0)
                 utils.log(f'wm.play_youtube_video YT player end restore {type(self.active_dialog)} doModal')
                 self.active_dialog.doModal()
 
