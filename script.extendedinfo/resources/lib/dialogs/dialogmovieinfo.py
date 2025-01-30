@@ -13,6 +13,7 @@ from resources.kutil131 import ActionHandler, addon, busy, kodijson
 from resources.kutil131 import imagetools, utils
 from resources.lib import themoviedb as tmdb
 from resources.lib import omdb
+from resources.lib.dialogs.dialogconstants import XML_ITEM_DICT
 from resources.lib.windowmanager import wm
 
 from .dialogvideoinfo import DialogVideoInfo
@@ -111,13 +112,14 @@ class DialogMovieInfo(DialogVideoInfo):
         utils.log('DialogMovieInfo onInit callback')
         super().onInit()
         super().update_states()
+        utils.log('DialogMovieInfo.onInit get_youtube_vids')
         self.get_youtube_vids("%s %s, movie" % (self.info.label,
                                                 self.info.get_info("year")))
         self.set_omdb_infos_async()
         utils.log('DialogMovieInfo onInit done')
 
     def onClick(self, control_id):
-        utils.log(f'dialogmovieinfo.onClick got click on {control_id}')   #debug
+        utils.log(f'dialogmovieinfo.onClick got click on {XML_ITEM_DICT.get(control_id, "unknown")} - {control_id}')   #debug
         super().onClick(control_id)
         ch.serve(control_id, self)
 

@@ -28,4 +28,4 @@ class Xbmcmonitor(xbmc.Monitor):
             self.ytplayfail = True
         elif (sender == 'xbmc') and (method == 'Player.OnStop'):
             utils.log('xbmc notify Xbmcmonitor play stopped yt failed?')
-            self.ytplayfail = True
+            #self.ytplayfail = True

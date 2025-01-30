@@ -43,7 +43,7 @@ class VideoPlayer(xbmc.Player):
     def onPlayBackStarted(self): #Kodi Player callback
         self.started = True
         self.stopped = False
-        utils.log(f'kutil131.player.Videoplayer.onPlayBackStarted {self.started} stopped {self.stopped}') #debug
+        utils.log(f'kutil131.player.Videoplayer.onPlayBackStarted callback {self.started} stopped {self.stopped}') #debug
 
     @busy.set_busy
     def youtube_info_by_id(self, youtube_id) -> None:

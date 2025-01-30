@@ -78,7 +78,7 @@ class DialogActorInfo(DialogBaseInfo):
         """
         utils.log('DialogActorInfo onInit callback')
         self.get_youtube_vids(self.info.label)
-        #utils.log('DialogActorInfo.onInit get_youtube_vids thread spun')
+        utils.log('DialogActorInfo.onInit get_youtube_vids thread spun')
         super().onInit()
         #utils.log('DialogActorinfo.onInit done : DialogBaseInfo.oninit done')
 

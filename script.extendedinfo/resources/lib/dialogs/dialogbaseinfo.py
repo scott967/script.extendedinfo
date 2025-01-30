@@ -311,7 +311,9 @@ class DialogBaseInfo(windows.DialogXML):
             self.yt_listitems = youtube.search(
                 search_str, limit=15, api_key=user_key)
         if not self.yt_listitems:
+            utils.log('DialogBaseInfo.get_youtube_vids no results')
             return None
+        utils.log(f'DialogBaseInfo.get_youtube_vids returned {len(self.yt_listitems)}')
         vid_ids = [item.get_property(
             "key") for item in self.lists["videos"]] if "videos" in self.lists else []
         youtube_list.reset()
