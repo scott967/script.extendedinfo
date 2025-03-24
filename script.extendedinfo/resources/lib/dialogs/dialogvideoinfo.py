@@ -29,13 +29,13 @@ class DialogVideoInfo(DialogBaseInfo):
     """
 
     def __init__(self, *args, **kwargs):
-        """runs __init__ on DialogBaseClass
+        """runs __init__ on DialogBaseInfo class
         """
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs) #DialogBaseInfo
         #utils.log(f'DialogVideoInfo.__init__ self.states {self.states} {id(self.states)}')
 
     def onClick(self, control_id):
-        super().onClick(control_id)
+        super().onClick(control_id) #DialogBaseInfo
         ch.serve(control_id, self)
 
     def set_buttons(self):

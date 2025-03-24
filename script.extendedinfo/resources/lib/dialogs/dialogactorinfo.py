@@ -63,11 +63,11 @@ class DialogActorInfo(DialogBaseInfo):
             None: if no tmdb extended actor info available
             self.info and self.lists are set from extended actor info
         """
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs) #DialogBaseInfo
         data: tuple = tmdb.extended_actor_info(actor_id=kwargs.get('id'))
         if not data:
             return None
-        self.info, self.lists = data
+        self.info, self.lists = data #VideoItem, dict[str, ItemList], dict 
         self.info.update_properties(
             imagetools.blur(self.info.get_art("thumb")))
 
@@ -79,7 +79,7 @@ class DialogActorInfo(DialogBaseInfo):
         utils.log('DialogActorInfo onInit callback')
         self.get_youtube_vids(self.info.label)
         utils.log('DialogActorInfo.onInit get_youtube_vids thread spun')
-        super().onInit()
+        super().onInit() #DialogBaseInfo
         #utils.log('DialogActorinfo.onInit done : DialogBaseInfo.oninit done')
 
     def onClick(self, control_id):

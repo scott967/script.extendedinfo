@@ -81,13 +81,13 @@ class DialogMovieInfo(DialogVideoInfo):
 
         Returns:  dialogmovieinfo
         """
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs) #DialogVideoInfo
         #utils.log(f'DialogMovieInfo getting data from tmdb.extended_movie_info with movie_id {kwargs.get("id")} and dbid {kwargs.get("dbid")}')
         data: tuple | None = tmdb.extended_movie_info(movie_id=kwargs.get('id'),
                                                         dbid=kwargs.get('dbid'))
         if not data:
             return None
-        self.info, self.lists, self.states = data
+        self.info, self.lists, self.states = data #VideoItem, dict[str, ItemList], dict 
         #utils.log(f'DialogMovieInfo using info {self.info} and states {self.states} {id(self.states)}')
         sets_thread = SetItemsThread(self.info.get_property("set_id"))
         self.omdb_thread = utils.FunctionThread(function=omdb.get_movie_info,
@@ -110,8 +110,8 @@ class DialogMovieInfo(DialogVideoInfo):
 
     def onInit(self):
         utils.log('DialogMovieInfo onInit callback')
-        super().onInit()
-        super().update_states()
+        super().onInit() #DialogBaseInfo
+        super().update_states() #DialogBaseInfo
         utils.log('DialogMovieInfo.onInit get_youtube_vids')
         self.get_youtube_vids("%s %s, movie" % (self.info.label,
                                                 self.info.get_info("year")))
