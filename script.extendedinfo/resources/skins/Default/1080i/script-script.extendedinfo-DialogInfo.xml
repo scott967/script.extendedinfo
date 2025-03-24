@@ -218,7 +218,7 @@
 							<autoscroll delay="10000" time="2000" repeat="10000">true</autoscroll>
 						</control>
 					</control>
-					<control type="group" id="1500">
+					<control type="group" id="1500"> <!-- Actor movie roles -->
 						<visible>Integer.IsGreater(Container(150).NumItems,0)</visible>
 						<height>540</height>
 						<control type="label">
@@ -250,7 +250,7 @@
 							<animation effect="slide" start="150" end="0" delay="640" time="320" tween="cubic">WindowOpen</animation>
 							<visible>Container(150).HasNext + Control.HasFocus(150)</visible>
 						</control>
-						<control type="panel" id="150">
+						<control type="panel" id="150"> <!-- Actor movie roles -->
 							<top>30</top>
 							<left>-45</left>
 							<width>1950</width>
@@ -421,7 +421,7 @@
 							</focusedlayout>
 						</control>
 					</control>
-					<control type="group" id="2500">
+					<control type="group" id="2500"> <!-- Actor tv show roles -->
 						<height>540</height>
 						<visible>Integer.IsGreater(Container(250).NumItems,0)</visible>
 						<control type="label">
@@ -453,7 +453,7 @@
 							<animation effect="slide" start="150" end="0" delay="640" time="320" tween="cubic">WindowOpen</animation>
 							<visible>Container(250).HasNext + Control.HasFocus(250)</visible>
 						</control>
-						<control type="panel" id="250">
+						<control type="panel" id="250"> <!-- Actor tv show roles -->
 							<top>30</top>
 							<left>-45</left>
 							<width>1950</width>
@@ -624,7 +624,7 @@
 							</focusedlayout>
 						</control>
 					</control>
-					<control type="group" id="5500">
+					<control type="group" id="5500"> <!-- Actor movie crew roles -->
 						<visible>Integer.IsGreater(Container(550).NumItems,0)</visible>
 						<height>540</height>
 						<control type="label">
@@ -656,7 +656,7 @@
 							<animation effect="slide" start="150" end="0" delay="640" time="320" tween="cubic">WindowOpen</animation>
 							<visible>Container(550).HasNext + Control.HasFocus(550)</visible>
 						</control>
-						<control type="panel" id="550">
+						<control type="panel" id="550"> <!-- Actor movie crew roles -->
 							<top>30</top>
 							<left>-45</left>
 							<width>1950</width>
@@ -827,7 +827,7 @@
 							</focusedlayout>
 						</control>
 					</control>
-					<control type="group" id="6500">
+					<control type="group" id="6500"> <!-- Actor tv show crew roles -->
 						<height>540</height>
 						<visible>Integer.IsGreater(Container(650).NumItems,0)</visible>
 						<control type="label">
@@ -859,7 +859,7 @@
 							<animation effect="slide" start="150" end="0" delay="640" time="320" tween="cubic">WindowOpen</animation>
 							<visible>Container(650).HasNext + Control.HasFocus(650)</visible>
 						</control>
-						<control type="panel" id="650">
+						<control type="panel" id="650"> <!-- Actor tv show crew roles -->
 							<top>30</top>
 							<left>-45</left>
 							<width>1950</width>
@@ -1030,7 +1030,7 @@
 							</focusedlayout>
 						</control>
 					</control>
-					<control type="group">
+					<control type="group"> <!-- Base youtube videos -->
 						<visible>Integer.IsGreater(Container(350).NumItems,0)</visible>
 						<height>440</height>
 						<control type="label">
@@ -1062,7 +1062,7 @@
 							<animation effect="slide" start="150" end="0" delay="640" time="320" tween="cubic">WindowOpen</animation>
 							<visible>Container(350).HasNext + Control.HasFocus(350)</visible>
 						</control>
-						<control type="panel" id="350">
+						<control type="panel" id="350"> <!-- Base youtube videos -->
 							<left>-45</left>
 							<top>30</top>
 							<width>1950</width>
@@ -1148,7 +1148,7 @@
 							</focusedlayout>
 						</control>
 					</control>
-					<control type="group" id="4500">
+					<control type="group" id="4500"> <!-- Actors images -->
 						<height>450</height>
 						<visible>Integer.IsGreater(Container(450).NumItems,0)</visible>
 						<control type="label">
@@ -1180,7 +1180,7 @@
 							<animation effect="slide" start="150" end="0" delay="640" time="320" tween="cubic">WindowOpen</animation>
 							<visible>Container(450).HasNext + Control.HasFocus(450)</visible>
 						</control>
-						<control type="panel" id="450">
+						<control type="panel" id="450"> <!-- Actors images -->
 							<top>30</top>
 							<left>-45</left>
 							<width>1950</width>
@@ -1245,7 +1245,7 @@
 							</focusedlayout>
 						</control>
 					</control>
-					<control type="group" id="7500">
+					<control type="group" id="7500"> <!-- Actors tagged images (fanart) -->
 						<height>550</height>
 						<visible>Integer.IsGreater(Container(750).NumItems,0)</visible>
 						<control type="label">
@@ -1277,7 +1277,7 @@
 							<animation effect="slide" start="150" end="0" delay="640" time="320" tween="cubic">WindowOpen</animation>
 							<visible>Container(750).HasNext + Control.HasFocus(750)</visible>
 						</control>
-						<control type="panel" id="750">
+						<control type="panel" id="750"> <!-- Actors tagged images (fanart) -->
 							<top>30</top>
 							<left>-45</left>
 							<width>1950</width>

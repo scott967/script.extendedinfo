@@ -39,7 +39,7 @@ class DialogBaseInfo(windows.DialogXML):
     ACTION_EXIT_SCRIPT = [13, 10]
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs) #kutil131 windows.DialogXML
         #utils.log('DialogBaseInfo check login status')
         self.logged_in: bool = tmdb.tmdb_login.check_login()
         #utils.log(f'DialogBaseInfo tmdb logged in? {self.logged_in}')
@@ -56,12 +56,14 @@ class DialogBaseInfo(windows.DialogXML):
         """callback from Dialog*Info when window is opened
         """
         utils.log('onInit callback to DialogBaseInfo')
-        super().onInit()
+        super().onInit() #kutil131 windows.DialogXML
         # self.set_buttons()
         self.info.to_windowprops(window_id=self.window_id)  #kutil131 sets dialog window
         #properties from the info VideoItem(listitem)
-        for container_id, key in self.LISTS:
+        for container_id, key in self.LISTS: #LISTS defined in child classes
             try:
+                if container_id in [ID_LIST_IMAGES, 1350]:
+                    utils.log(f'DialogBaseInfo set items in {key} panel')
                 self.getControl(container_id).reset()
                 items = [i.get_listitem() for i in self.lists[key]] # lists is a dict of ItemList get_listitem gets xbmc listitem from VideoItem
                 self.getControl(container_id).addItems(items)
@@ -86,7 +88,7 @@ class DialogBaseInfo(windows.DialogXML):
         utils.log('DialogBaseInfo onInit done')
 
     def onAction(self, action:xbmcgui.Action):
-        utils.log(f'DialogBaseInfo got onAction for {ACTION_LIST[action.getId()]} from {self.getFocusId()} {XML_ITEM_DICT.get(self.getFocusId(), "unknown")}')
+        utils.log(f'DialogBaseInfo got onAction for {ACTION_LIST[action.getId()]} on {self.getFocusId()} {XML_ITEM_DICT.get(self.getFocusId(), "unknown")}')
         ch.serve_action(action, self.getFocusId(), self)
 
     def onClick(self, control_id:int):
