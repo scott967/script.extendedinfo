@@ -89,7 +89,7 @@ class DialogMovieInfo(DialogVideoInfo):
             return None
         self.info, self.lists, self.states = data #VideoItem, dict[str, ItemList], dict 
         #utils.log(f'DialogMovieInfo using info {self.info} and states {self.states} {id(self.states)}')
-        sets_thread = SetItemsThread(self.info.get_property("set_id"))
+        sets_thread = SetItemsThread(self.info.get_property("set_id")) #retuns empty list if no tmdb set_id
         self.omdb_thread = utils.FunctionThread(function=omdb.get_movie_info,
                                                 param=self.info.get_property("imdb_id"))
         self.omdb_thread.start()

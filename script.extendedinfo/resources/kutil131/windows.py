@@ -6,7 +6,6 @@ import xbmc
 
 from resources.kutil131 import utils
 
-
 class WindowMixin:
 
     def __init__(self, *args, **kwargs):
