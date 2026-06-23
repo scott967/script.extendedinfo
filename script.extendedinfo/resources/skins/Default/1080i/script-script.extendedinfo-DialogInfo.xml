@@ -215,21 +215,7 @@
 							<align>left</align>
 							<label fallback="19055">$INFO[Window.Property(Biography)]</label>
 							<font>font12</font>
-							<textcolor>FFFAFAFA</textcolor>
 							<autoscroll delay="10000" time="2000" repeat="10000">true</autoscroll>
-							<visible>!Control.HasFocus(132)</visible>
-						</control>
-						<control type="textbox" id="800">
-							<left>55</left>
-							<top>30</top>
-							<width>1010</width>
-							<height>188</height>
-							<align>left</align>
-							<label fallback="19055">$INFO[Window.Property(Biography)]</label>
-							<font>font12</font>
-							<textcolor>FF101010</textcolor>
-							<autoscroll delay="10000" time="2000" repeat="10000">true</autoscroll>
-							<visible>Control.HasFocus(132)</visible>
 						</control>
 					</control>
 					<control type="group" id="1500"> <!-- Actor movie roles -->
