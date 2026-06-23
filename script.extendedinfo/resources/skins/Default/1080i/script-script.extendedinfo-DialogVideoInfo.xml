@@ -81,19 +81,6 @@
 							<label fallback="19055">[B]$INFO[Window.Property(TagLine),,[CR]][/B]$INFO[Window.Property(Plot)]</label>
 							<font>font12</font>
 							<autoscroll delay="10000" time="2000" repeat="10000">true</autoscroll>
-							<visible>!Control.HasFocus(132)</visible>
-						</control>
-						<control type="textbox" id="800">
-							<left>55</left>
-							<top>30</top>
-							<width>980</width>
-							<height>188</height>
-							<textcolor>FF101010</textcolor>
-							<align>left</align>
-							<label fallback="19055">[B]$INFO[Window.Property(TagLine),,[CR]][/B]$INFO[Window.Property(Plot)]</label>
-							<font>font12</font>
-							<autoscroll delay="10000" time="2000" repeat="10000">true</autoscroll>
-							<visible>Control.HasFocus(132)</visible>
 						</control>
 					</control>
 					<control type="group" id="50000">
