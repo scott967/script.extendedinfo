@@ -13,11 +13,10 @@ Public functions:
 """
 
 from __future__ import annotations
+
 import html
 import itertools
-import urllib.error
 import urllib.parse
-import urllib.request
 
 from resources.kutil131 import ItemList, VideoItem, utils
 
@@ -25,19 +24,19 @@ BASE_URL = "https://www.googleapis.com/youtube/v3/"
 PLUGIN_BASE = "plugin://script.extendedinfo/?info="
 
 
-def _handle_videos(results:list[dict], extended=False, api_key='') -> ItemList[VideoItem]:
+def _handle_videos(results: list[dict], extended=False, api_key='') -> ItemList:
     """
     Process video api results to ItemList
 
     :param api_key: api_key to pass to YouTube
     """
-    videos:ItemList[VideoItem] = ItemList(content_type="videos")
+    videos: ItemList = ItemList(content_type="videos")
     for item in results:
         snippet = item["snippet"]
         thumb = snippet["thumbnails"]["high"]["url"] if "thumbnails" in snippet else ""
         try:
             video_id = item["id"]["videoId"]
-        except AttributeError:
+        except (AttributeError, KeyError):
             video_id = snippet["resourceId"]["videoId"]
         video = VideoItem(label=html.unescape(snippet["title"]),
                           path=f'{PLUGIN_BASE}youtubevideo&&id={video_id}')
@@ -57,7 +56,7 @@ def _handle_videos(results:list[dict], extended=False, api_key='') -> ItemList[V
               "id": ",".join([i.get_property("youtube_id") for i in videos]),
               "key": api_key}
     ext_results = _get_data(method="videos",
-                           params=params)
+                            params=params)
     if not ext_results or not 'items' in ext_results.keys():
         return videos
     for item in videos:
@@ -68,7 +67,8 @@ def _handle_videos(results:list[dict], extended=False, api_key='') -> ItemList[V
             stats = ext_item['statistics']
             likes = stats.get('likeCount')
             dislikes = stats.get('dislikeCount')
-            item.update_infos({"duration": get_duration_in_seconds(details['duration'])})
+            item.update_infos(
+                {"duration": get_duration_in_seconds(details['duration'])})
             props = {"duration": details['duration'][2:].lower(),
                      "formatted_duration": get_formatted_duration(details['duration']),
                      "dimension": details['dimension'],
@@ -81,16 +81,18 @@ def _handle_videos(results:list[dict], extended=False, api_key='') -> ItemList[V
             if likes and dislikes:
                 vote_count = int(likes) + int(dislikes)
                 if vote_count > 0:
-                    item.set_info("rating", round(float(likes) / vote_count * 10, 1))
+                    item.set_info("rating", round(
+                        float(likes) / vote_count * 10, 1))
             break
     return videos
 
-def get_duration_in_seconds(duration:str) -> int:
+
+def get_duration_in_seconds(duration: str) -> int:
     """
     convert youtube duration string to seconds int
     """
-    #utils.log(f'kutil131.youtube.get_duration_in_secs duration {duration}')  #debug
-    if duration == ('P0D' or 'P0D0S'):  #live stream so no duration
+    # utils.log(f'kutil131.youtube.get_duration_in_secs duration {duration}')  #debug
+    if duration == ('P0D' or 'P0D0S'):  # live stream so no duration
         return 0
     if not duration.endswith('S'):
         duration = duration + '0S'
@@ -103,22 +105,24 @@ def get_duration_in_seconds(duration:str) -> int:
         else:
             return int(duration[0])
     except Exception as err:
-        #utils.log(f'kutil131.youtube unable decode youtube duration of {duration} error {err}')
+        # utils.log(f'kutil131.youtube unable decode youtube duration of {duration} error {err}')
         return 0
 
-def get_formatted_duration(duration:str) -> str:
+
+def get_formatted_duration(duration: str) -> str:
     """
     convert youtube duration string to formatted duration
     """
-    if duration == ('P0D' or 'P0D0S'):  #live stream so no duration
+    if duration == ('P0D' or 'P0D0S'):  # live stream so no duration
         return "00:00"
-    duration:list = duration[2:-1].replace("H", "M").split("M")
+    duration: list = duration[2:-1].replace("H", "M").split("M")
     if len(duration) == 3:
         return f"{duration[0].zfill(2)}:{duration[1].zfill(2)}:{duration[2].zfill(2)}"
     elif len(duration) == 2:
         return f"{duration[0].zfill(2)}:{duration[1].zfill(2)}"
     else:
         return f"00:{duration[0].zfill(2)}"
+
 
 def _handle_playlists(results, api_key=''):
     """
@@ -133,7 +137,7 @@ def _handle_playlists(results, api_key=''):
         thumb = snippet["thumbnails"]["high"]["url"] if "thumbnails" in snippet else ""
         try:
             playlist_id = item["id"]["playlistId"]
-        except Exception:
+        except (AttributeError, KeyError):
             playlist_id = snippet["resourceId"]["playlistId"]
         playlist = VideoItem(label=snippet["title"],
                              path=f'{PLUGIN_BASE}youtubeplaylist&&id={playlist_id}')
@@ -150,11 +154,13 @@ def _handle_playlists(results, api_key=''):
               "part": "contentDetails",
               "key": api_key}
     ext_results = _get_data(method="playlists",
-                           params=params)
+                            params=params)
     for item, ext_item in itertools.product(playlists, ext_results["items"]):
         if item.get_property("youtube_id") == ext_item['id']:
-            item.set_property("itemcount", ext_item['contentDetails']['itemCount'])
+            item.set_property(
+                "itemcount", ext_item['contentDetails']['itemCount'])
     return playlists
+
 
 def _handle_channels(results, api_key=''):
     """
@@ -169,7 +175,7 @@ def _handle_channels(results, api_key=''):
         thumb = snippet["thumbnails"]["high"]["url"] if "thumbnails" in snippet else ""
         try:
             channel_id = item["id"]["channelId"]
-        except Exception:
+        except (AttributeError, KeyError):
             channel_id = snippet["resourceId"]["channelId"]
         channel = VideoItem(label=html.unescape(snippet["title"]),
                             path=f'{PLUGIN_BASE}youtubechannel&&id={channel_id}')
@@ -185,14 +191,17 @@ def _handle_channels(results, api_key=''):
               "part": "contentDetails,statistics,brandingSettings",
               "key": api_key}
     ext_results = _get_data(method="channels",
-                           params=params)
+                            params=params)
     for item, ext_item in itertools.product(channels, ext_results["items"]):
         if item.get_property("youtube_id") == ext_item['id']:
-            item.set_property("itemcount", ext_item['statistics']['videoCount'])
-            item.set_art("fanart", ext_item["brandingSettings"]["image"].get("bannerTvMediumImageUrl"))
+            item.set_property(
+                "itemcount", ext_item['statistics']['videoCount'])
+            item.set_art("fanart", ext_item["brandingSettings"]["image"].get(
+                "bannerTvMediumImageUrl"))
     return channels
 
-def _get_data(method:str, params:dict=None, cache_days:float=0.5) -> dict | None:
+
+def _get_data(method: str, params: dict = None, cache_days: float = 0.5) -> dict | None:
     """Formats youtube query and returns youtube search results or None
 
     Args:
@@ -216,8 +225,9 @@ def _get_data(method:str, params:dict=None, cache_days:float=0.5) -> dict | None
                                    cache_days=cache_days,
                                    folder="YouTube")
 
+
 def search(search_str="", hd="", orderby="relevance", limit=40, extended=True,
-           page="", filters:dict=None, media_type="video", api_key="") -> ItemList[VideoItem]:
+           page="", filters: dict = None, media_type="video", api_key="") -> ItemList:
     """Runs youtube search method using parameters and filters
 
     Args:
@@ -242,23 +252,25 @@ def search(search_str="", hd="", orderby="relevance", limit=40, extended=True,
               "type": media_type,
               "order": orderby,
               "pageToken": page,
-              "hd": str(hd and not hd == "false"),
+              "hd": str(hd and hd != "false"),
               "q": search_str.replace('"', ''),
-              "key" : api_key}
+              "key": api_key}
     utils.log(f'kutil131.youtube.search params {params}')
     results = _get_data(method="search",
-                       params=utils.merge_dicts(params, filters if filters else {}))
+                        params=utils.merge_dicts(params, filters if filters else {}))
     if results and ('error' in results.keys()):
-        utils.log(f'youtube _get_data ERROR: {results.get("error").get("message")}')
+        utils.log(
+            f'youtube _get_data ERROR: {results.get("error").get("message")}')
     if not results or 'items' not in results.keys():
         return None
 
-	# Give initial value to keep IDE happy as well as in case we drop through all
-	# choices
+        # Give initial value to keep IDE happy as well as in case we drop through all
+        # choices
 
     listitems: ItemList = ItemList()
     if media_type == "video":
-        listitems = _handle_videos(results["items"], extended=extended, api_key=api_key)
+        listitems = _handle_videos(
+            results["items"], extended=extended, api_key=api_key)
     elif media_type == "playlist":
         listitems = _handle_playlists(results["items"], api_key=api_key)
     elif media_type == "channel":
@@ -268,6 +280,7 @@ def search(search_str="", hd="", orderby="relevance", limit=40, extended=True,
     listitems.next_page_token = results.get("nextPageToken", "")
     listitems.prev_page_token = results.get("prevPageToken", "")
     return listitems
+
 
 def get_playlist_videos(playlist_id=""):
     """
@@ -279,10 +292,11 @@ def get_playlist_videos(playlist_id=""):
               "maxResults": "50",
               "playlistId": playlist_id}
     results = _get_data(method="playlistItems",
-                       params=params)
+                        params=params)
     if not results:
         return []
     return _handle_videos(results["items"])
+
 
 def get_user_playlists(username=""):
     """
@@ -291,7 +305,7 @@ def get_user_playlists(username=""):
     params = {"part": "contentDetails",
               "forUsername": username}
     results = _get_data(method="channels",
-                       params=params)
+                        params=params)
     if not results["items"]:
         return None
     return results["items"][0]["contentDetails"]["relatedPlaylists"]
