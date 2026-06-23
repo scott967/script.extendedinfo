@@ -1,37 +1,48 @@
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
 # This program is Free Software see LICENSE file for details
+"""Functions for processing images using Pillow and caching them in the Kodi Thumbnails folder.
+
+"""
 
 import os
 import threading
-import urllib.parse
 
 import PIL.Image
 import PIL.ImageFilter
 import xbmc
 import xbmcvfs
-
 from resources.kutil131 import addon, utils
 
 THUMBS_CACHE_PATH = utils.translate_path("special://profile/Thumbnails/Video")
 IMAGE_PATH = os.path.join(addon.DATA_PATH, "images")
 
 
-def blur(input_img, radius=25):
+def blur(input_img, radius=25) -> dict:
+    """Blurs an image and saves it to cache
+
+    Args:
+        input_img (string): file to use as source of blur
+        radius (int, optional): radius of the blur. Defaults to 25.
+
+    Returns:
+        dict: A dictionary containing the path to the blurred image and its dominant colors.
+    """
     if not input_img:
         return {}
     if not xbmcvfs.exists(IMAGE_PATH):
         xbmcvfs.mkdir(IMAGE_PATH)
-    #input_img = utils.translate_path(urllib.parse.unquote(input_img))
+    # input_img = utils.translate_path(urllib.parse.unquote(input_img))
     # input_img = input_img.replace("image://video@", "").rstrip("/") not working
-    #input_img = input_img.rstrip("/")
+    # input_img = input_img.rstrip("/")
     cachedthumb = xbmc.getCacheThumbName(input_img)
-    filename = "%s-radius_%i.png" % (cachedthumb, radius)
+    filename = f"{cachedthumb}-radius_{radius}.png"
     targetfile = os.path.join(IMAGE_PATH, filename)
-    vid_cache_file = os.path.join("special://profile/Thumbnails/Video", cachedthumb[0], cachedthumb)
-    cache_file = os.path.join("special://profile/Thumbnails", cachedthumb[0], cachedthumb[:-4] + ".jpg")
+    vid_cache_file = os.path.join(
+        "special://profile/Thumbnails/Video", cachedthumb[0], cachedthumb)
+    cache_file = os.path.join(
+        "special://profile/Thumbnails", cachedthumb[0], cachedthumb[:-4] + ".jpg")
     if xbmcvfs.exists(targetfile):
         img = PIL.Image.open(targetfile)
-        utils.log(f'Blur returns good {{{"ImageFilter": targetfile, "ImageColor": get_colors(img)}}}')
         return {"ImageFilter": targetfile,
                 "ImageColor": get_colors(img)}
     try:
@@ -49,12 +60,19 @@ def blur(input_img, radius=25):
     except Exception as err:
         utils.log(f"Could not get image for {input_img} due to: {err}")
         return {}
-    utils.log(f'Blur returns good {{{"ImageFilter": targetfile, "ImageColor": get_colors(img)}}}')
     return {"ImageFilter": targetfile,
             "ImageColor": get_colors(img)}
 
 
-def get_cached_thumb(filename):
+def get_cached_thumb(filename) -> str:
+    """Finds the cached thumbnail for a given filename in the Kodi Thumbnails folder.
+
+    Args:
+        filename (str): The filename for which to find the cached thumbnail.
+
+    Returns:
+        str: The path to the cached thumbnail.
+    """
     if filename.startswith("stack://"):
         filename = filename[8:].split(" , ")[0]
     cachedthumb = xbmc.getCacheThumbName(filename)
@@ -66,7 +84,15 @@ def get_cached_thumb(filename):
     return os.path.join(THUMBS_CACHE_PATH, cachedthumb[0], cachedthumb).replace("/Video", "")
 
 
-def get_colors(img):
+def get_colors(img) -> str:
+    """
+
+    Args:
+        img (PIL.Image): The image for which to extract colors.
+
+    Returns:
+        str: The average color of the image in hexadecimal format.
+    """
     width, height = img.size
     try:
         pixels = img.load()
@@ -75,7 +101,8 @@ def get_colors(img):
     data = []
     for x in range(width // 2):
         data += [pixels[x * 2, y * 2] for y in range(height // 2)]
-    pix_values = [(x[0], x[1], x[2]) for x in data if 150 < (x[0] + x[1] + x[2]) < 720]
+    pix_values = [(x[0], x[1], x[2])
+                  for x in data if 150 < (x[0] + x[1] + x[2]) < 720]
     if len(pix_values) == 0:
         return "FFF0F0F0"
     r_avg = int(sum([i[0] for i in pix_values]) / len(pix_values))
@@ -92,6 +119,11 @@ def get_colors(img):
 
 
 class FilterImageThread(threading.Thread):
+    """Thread class for filtering an image in the background.
+
+    Args:
+        threading.Thread: The base class for creating a new thread.
+    """
 
     def __init__(self, image="", radius=25):
         super().__init__()
@@ -107,10 +139,18 @@ class FilterImageThread(threading.Thread):
 
 
 class MyGaussianBlur(PIL.ImageFilter.Filter):
+    """wrapper class for PIL.ImageFilter.GaussianBlur to allow radius to be set in constructor
+
+    Args:
+        PIL.ImageFilter.Filter: The base class for creating a new filter.
+
+    Returns:
+        PIL.ImageFilter.Filter: The filtered image.
+    """
     name = "GaussianBlur"
 
     def __init__(self, radius=2):
         self.radius = radius
 
     def filter(self, image):
-        return image.gaussian_blur(self.radius)
+        return image.gaussian_blur((self.radius, self.radius))
