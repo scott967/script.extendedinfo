@@ -31,6 +31,7 @@ def blur(input_img, radius=25):
     cache_file = os.path.join("special://profile/Thumbnails", cachedthumb[0], cachedthumb[:-4] + ".jpg")
     if xbmcvfs.exists(targetfile):
         img = PIL.Image.open(targetfile)
+        utils.log(f'Blur returns good {{{"ImageFilter": targetfile, "ImageColor": get_colors(img)}}}')
         return {"ImageFilter": targetfile,
                 "ImageColor": get_colors(img)}
     try:
@@ -41,13 +42,14 @@ def blur(input_img, radius=25):
         else:
             xbmcvfs.copy(input_img, targetfile)
             img = PIL.Image.open(targetfile)
-        img.thumbnail((200, 200), PIL.Image.ANTIALIAS)
+        img.thumbnail((200, 200), PIL.Image.Resampling.LANCZOS)
         imgfilter = MyGaussianBlur(radius=radius)
         img = img.convert('RGB').filter(imgfilter)
         img.save(targetfile)
-    except Exception:
-        utils.log("Could not get image for %s" % input_img)
+    except Exception as err:
+        utils.log(f"Could not get image for {input_img} due to: {err}")
         return {}
+    utils.log(f'Blur returns good {{{"ImageFilter": targetfile, "ImageColor": get_colors(img)}}}')
     return {"ImageFilter": targetfile,
             "ImageColor": get_colors(img)}
 
