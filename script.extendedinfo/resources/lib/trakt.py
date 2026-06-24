@@ -30,22 +30,21 @@ import urllib.parse
 import urllib.request
 
 import xbmc
-
-from resources.kutil131 import ItemList, addon
-from resources.kutil131 import VideoItem, local_db, utils
+from resources.kutil131 import ItemList, VideoItem, addon, local_db, utils
 from resources.lib import themoviedb as tmdb
 
-TRAKT_KEY = 'e9a7fba3fa1b527c08c073770869c258804124c5d7c984ce77206e695fbaddd5'
+TRAKT_KEY = 'd86d55f0368ab02c2c665b27f51d975896e0a889797e3fb4f528c441cef35ad9'
 BASE_URL = "https://api.trakt.tv/"
 HEADERS = {
     'Content-Type': 'application/json',
+    'User-Agent': 'Kodi/19.0 (scott967@kodi.tv)',
     'trakt-api-key': TRAKT_KEY,
     'trakt-api-version': '2'
 }
 PLUGIN_BASE = "plugin://script.extendedinfo/?info="
 
 
-def get_episodes(content:str) -> ItemList[VideoItem]:
+def get_episodes(content:str) -> ItemList:
     """gets upcoming 14 days/premiering episodes from today
 
     Args:
@@ -111,7 +110,7 @@ def get_episodes(content:str) -> ItemList[VideoItem]:
     return shows
 
 
-def handle_movies(results:list[dict]) -> ItemList[VideoItem]:
+def handle_movies(results:list[dict]) -> ItemList:
     """helper function creates kutil131 VideoItems and adds to an ItemList
 
     Args:
@@ -124,6 +123,7 @@ def handle_movies(results:list[dict]) -> ItemList[VideoItem]:
     path = 'extendedinfo&&id=%s' if addon.bool_setting(
         "infodialog_onclick") else "playtrailer&&id=%s"
     for i in results:
+        art_info = None
         item:dict = i["movie"] if "movie" in i else i
         trailer = f'{PLUGIN_BASE}youtubevideo&&id={utils.extract_youtube_id(item["trailer"])}'
         movie = VideoItem(label=item["title"],
@@ -173,7 +173,7 @@ def handle_tvshows(results):
     shows = ItemList(content_type="tvshows")
     for i in results:
         item = i["show"] if "show" in i else i
-        #utils.log(f'trakt.handle_tvshows show item data {item}')
+        utils.log(f'trakt.handle_tvshows show item data {item}', adb=True)
         airs = item.get("airs", {})
         show = VideoItem(label=item["title"],
                          path=f'{PLUGIN_BASE}extendedtvinfo&&tvdb_id={item["ids"]["tvdb"]}')
@@ -228,7 +228,7 @@ def get_shows(show_type):
     return handle_tvshows(results) if results else []
 
 
-def get_shows_from_time(show_type, period="monthly"):
+def get_shows_from_time(show_type, period="monthly") -> ItemList:
     """gets Trakt full data for shows of enumerated type for enumerated period
 
     Args:
@@ -243,7 +243,7 @@ def get_shows_from_time(show_type, period="monthly"):
     return handle_tvshows(results) if results else []
 
 
-def get_movies(movie_type:str) -> ItemList[VideoItem]:
+def get_movies(movie_type:str) -> ItemList:
     """gets Trakt full data for movies of enumerated type
 
     Args:
@@ -257,7 +257,7 @@ def get_movies(movie_type:str) -> ItemList[VideoItem]:
     return handle_movies(results) if results else []
 
 
-def get_movies_from_time(movie_type:str, period="monthly") -> ItemList[VideoItem]:
+def get_movies_from_time(movie_type:str, period="monthly") -> ItemList:
     """gets Trakt full data for movies of enumerated type for enumerated period
 
     Args:
@@ -294,7 +294,7 @@ def get_similar(media_type, imdb_id):
         return handle_movies(results)
 
 
-def get_data(url:str, params:dict=None, cache_days:int=10) -> list[dict]:
+def get_data(url:str, params:dict=None, cache_days:float=10) -> list[dict]:
     """helper function builds query and formats result.  First attempts to
     retrieve data from local cache and then issues a ResT GET to the api if cache
     data not available 
@@ -302,7 +302,7 @@ def get_data(url:str, params:dict=None, cache_days:int=10) -> list[dict]:
     Args:
         url (str): the url for GET operation on api
         params (dict, optional): GET query (?) Defaults to None.
-        cache_days (int, optional): Max age of cached data before requesting new.
+        cache_days (float, optional): Max age of cached data before requesting new.
         Defaults to 10.
 
     Returns:
@@ -312,7 +312,7 @@ def get_data(url:str, params:dict=None, cache_days:int=10) -> list[dict]:
     params = params if params else {}
     params["limit"] = 10
     url = f"{BASE_URL}{url}?{urllib.parse.urlencode(params)}"
-    #utils.log(f'trakt.get_data url : {url}')
+    utils.log(f'trakt.get_data url : {url}', adb=True)
     return utils.get_JSON_response(url=url,
                                    folder="Trakt",
                                    headers=HEADERS,
