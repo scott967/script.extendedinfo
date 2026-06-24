@@ -400,7 +400,7 @@ def get_http(url, headers=False):
     while (succeed < 2) and (not xbmc.Monitor().abortRequested()):
         try:
             #log(f'kutil131.utils.get_http headers {headers}')  #debug
-            request = requests.get(url, headers=headers, timeout=10)
+            request = requests.get(url, headers=headers, timeout=20)
             #log(f'kutil131.utils.get_http response from online {request.text}')  #debug
             return request.text
         except requests.exceptions.RequestException as err:
