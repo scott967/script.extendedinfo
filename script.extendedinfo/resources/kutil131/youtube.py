@@ -34,12 +34,12 @@ def _handle_videos(results: list[dict], extended=False, api_key='') -> ItemList:
     for item in results:
         snippet = item["snippet"]
         thumb = snippet["thumbnails"]["high"]["url"] if "thumbnails" in snippet else ""
-        utils.log(f'kutil131.youtube._handle_videos yt result item {item["id"]}')
-        utils.log(f'kutil131.youtube._handle_videos yt result snippet {snippet}')
+        utils.log(f'kutil131.youtube._handle_videos yt result item {item["id"]}', adb=True)
+        utils.log(f'kutil131.youtube._handle_videos yt result snippet {snippet}', adb=True)
         try:
             video_id = item["id"]["videoId"]
         except (AttributeError, KeyError):
-            utils.log(f'kutil131.youtube._handle_videos unable to get videoId from {item}')
+            utils.log(f'kutil131.youtube._handle_videos unable to get videoId from {item}', adb=True)
             continue
         video = VideoItem(label=html.unescape(snippet["title"]),
                           path=f'{PLUGIN_BASE}youtubevideo&&id={video_id}')
@@ -258,7 +258,7 @@ def search(search_str="", hd="", orderby="relevance", limit=40, extended=True,
               "hd": str(hd and hd != "false"),
               "q": search_str.replace('"', ''),
               "key": api_key}
-    utils.log(f'kutil131.youtube.search params {params}')
+    utils.log(f'kutil131.youtube.search params {params}', adb=True)
     results = _get_data(method="search",
                         params=utils.merge_dicts(params, filters if filters else {}))
     if results and ('error' in results.keys()):

@@ -60,4 +60,4 @@ class DialogXML(xbmcgui.WindowXMLDialog, WindowMixin):
 
     def onInit(self):
         self.window_id = xbmcgui.getCurrentWindowDialogId()
-        utils.log(f'kutil131.windows.DialogXML.onInit dialog window id is {self.window_id}')
+        utils.log(f'kutil131.windows.DialogXML.onInit dialog window id is {self.window_id}', adb=True)

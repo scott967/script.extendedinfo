@@ -38,12 +38,12 @@ class VideoPlayer(xbmc.Player):
     def onAVStarted(self): #Kodi Player callback
         self.started = True
         self.stopped = False
-        utils.log(f'kutil131.player.Videoplayer.onAVStarted {self.started} stopped {self.stopped}')
+        utils.log(f'kutil131.player.Videoplayer.onAVStarted {self.started} stopped {self.stopped}', adb=True) #debug
 
     def onPlayBackStarted(self): #Kodi Player callback
         self.started = True
         self.stopped = False
-        utils.log(f'kutil131.player.Videoplayer.onPlayBackStarted callback {self.started} stopped {self.stopped}') #debug
+        utils.log(f'kutil131.player.Videoplayer.onPlayBackStarted callback {self.started} stopped {self.stopped}', adb=True) #debug
 
     @busy.set_busy
     def youtube_info_by_id(self, youtube_id) -> None:
@@ -91,14 +91,14 @@ class VideoPlayer(xbmc.Player):
             if _monitor.abortRequested():
                 break
             if _monitor.ytplaystart:
-                utils.log('kutil.player.wait_for_video_start av started') #debug
+                utils.log('kutil.player.wait_for_video_start av started', adb=True) #debug
                 self.started = True
                 break
             if _monitor.ytplayfail or (timeout == 0):
-                utils.log('kutil.player.wait_for_video_start yt fail') #debug
+                utils.log('kutil.player.wait_for_video_start yt fail', adb=True) #debug
                 self.stopped = True
                 break
-            utils.log('kutil.player.wait_for_video_start no timeout or Notifyall so sleep')
+            utils.log('kutil.player.wait_for_video_start no timeout or Notifyall so sleep', adb=True)
             timeout += -1
         del _monitor
 
@@ -107,7 +107,7 @@ class VideoPlayer(xbmc.Player):
         Sets a 20 sec timer to attempt play local db media.  If
         timer ends videoplayer self.stopped is set
         """
-        utils.log('kutil131.player.Videoplayer.wait_for_kodivideo_start start timer')  #debug
+        utils.log('kutil131.player.Videoplayer.wait_for_kodivideo_start start timer', adb=True)  #debug
         monitor = xbmc.Monitor()
         timeout = 20
         while not monitor.waitForAbort(1):  #wait to see if video starts
@@ -115,9 +115,9 @@ class VideoPlayer(xbmc.Player):
                 break
             timeout += -1
             if self.started:
-                utils.log('kutil131.player.VideoPlayer av started exit wait_for_kodivideo_start') #debug
+                utils.log('kutil131.player.VideoPlayer av started exit wait_for_kodivideo_start', adb=True) #debug
                 break
             if timeout == 0:
                 self.stopped = True
-                utils.log(f'kutil131.player.VideoPlayer.wait_for_kodivideo_start exit start timeout self.stopped {self.stopped}') #debug
+                utils.log(f'kutil131.player.VideoPlayer.wait_for_kodivideo_start exit start timeout self.stopped {self.stopped}', adb=True) #debug
                 break

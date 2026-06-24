@@ -372,7 +372,7 @@ def start_info_actions(info: str, params: dict[str, str]):
             return None
         addon.set_global('infodialogs.active', "true")
         try:
-            utils.log('process.start_info_actions call wm.open_movie_info') #debug
+            utils.log('process.start_info_actions call wm.open_movie_info', adb=True)  #debug
             wm.open_movie_info(movie_id=params.get("id"),
                             dbid=params.get("dbid"),
                             imdb_id=params.get("imdb_id"),
@@ -381,7 +381,7 @@ def start_info_actions(info: str, params: dict[str, str]):
             addon.clear_global('infodialogs.active')
     elif info == 'extendedactorinfo':
         if addon.get_global('infodialogs.active'):
-            utils.log('process already running wait for complete')  #debug
+            utils.log('process already running wait for complete', adb=True)  #debug
             return None
         addon.set_global('infodialogs.active', "true")
         try:
@@ -406,7 +406,7 @@ def start_info_actions(info: str, params: dict[str, str]):
             return None
         addon.set_global('infodialogs.active', "true")
         try:
-            #utils.log(f'process.start_info_actions seasoninfo tvshow {params.get("tvshow")} dbid {params.get("dbid")} season {params.get("season")}')
+            #utils.log(f'process.start_info_actions seasoninfo tvshow {params.get("tvshow")} dbid {params.get("dbid")} season {params.get("season")}', adb=True)
             wm.open_season_info(tvshow=params.get("tvshow"),
                                 dbid=params.get("dbid"),
                                 season=int(params.get("season")))
@@ -458,7 +458,7 @@ def start_info_actions(info: str, params: dict[str, str]):
         for builtin in params.get("id", "").split("$$"):
             xbmc.executebuiltin(builtin)
     elif info == "youtubevideo":
-        utils.log('process.start_info_actions builtin Dialog.Close')
+        utils.log('process.start_info_actions builtin Dialog.Close', adb=True)  #debug
         xbmc.executebuiltin("Dialog.Close(all,true)")
         wm.play_youtube_video(params.get("id", ""))
     elif info == 'playtrailer':

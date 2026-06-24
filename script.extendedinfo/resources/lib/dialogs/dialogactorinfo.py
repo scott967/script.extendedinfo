@@ -76,11 +76,11 @@ class DialogActorInfo(DialogBaseInfo):
         Also calls onInit in parent classes to set all info in the
         dialog window
         """
-        utils.log('DialogActorInfo onInit callback')
+        utils.log('DialogActorInfo onInit callback', adb=True)
         self.get_youtube_vids(self.info.label)
-        utils.log('DialogActorInfo.onInit get_youtube_vids thread spun')
+        utils.log('DialogActorInfo.onInit get_youtube_vids thread spun', adb=True)
         super().onInit() #DialogBaseInfo
-        #utils.log('DialogActorinfo.onInit done : DialogBaseInfo.oninit done')
+        #utils.log('DialogActorinfo.onInit done : DialogBaseInfo.oninit done', adb=True)
 
     def onClick(self, control_id):
         """callback function from Kodi when control in window is

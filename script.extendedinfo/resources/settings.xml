@@ -306,5 +306,14 @@
 				</setting>
 			</group>
 		</category>
+		<category help="" id="Debug" label="14260">
+			<group id="1">
+				<setting help="" id="addon_debug" label="20191" type="boolean">
+					<level>0</level>
+					<default>false</default>
+					<control type="toggle"/>
+				</setting>
+			</group>
+		</category>
 	</section>
 </settings>

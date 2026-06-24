@@ -40,9 +40,9 @@ class DialogBaseInfo(windows.DialogXML):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs) #kutil131 windows.DialogXML
-        #utils.log('DialogBaseInfo check login status')
+        #utils.log('DialogBaseInfo check login status', adb=True)
         self.logged_in: bool = tmdb.tmdb_login.check_login()
-        #utils.log(f'DialogBaseInfo tmdb logged in? {self.logged_in}')
+        #utils.log(f'DialogBaseInfo tmdb logged in? {self.logged_in}', adb=True)
         self.bouncing = False
         self.last_focus = None
         self.lists = None
@@ -55,7 +55,7 @@ class DialogBaseInfo(windows.DialogXML):
     def onInit(self, *args, **kwargs):
         """callback from Dialog*Info when window is opened
         """
-        utils.log('onInit callback to DialogBaseInfo')
+        utils.log('onInit callback to DialogBaseInfo', adb=True)
         super().onInit() #kutil131 windows.DialogXML
         # self.set_buttons()
         self.info.to_windowprops(window_id=self.window_id)  #kutil131 sets dialog window
@@ -63,7 +63,7 @@ class DialogBaseInfo(windows.DialogXML):
         for container_id, key in self.LISTS: #LISTS defined in child classes
             try:
                 if container_id in [ID_LIST_IMAGES, 1350]:
-                    utils.log(f'DialogBaseInfo set items in {key} panel')
+                    utils.log(f'DialogBaseInfo set items in {key} panel', adb=True)
                 self.getControl(container_id).reset()
                 items = [i.get_listitem() for i in self.lists[key]] # lists is a dict of ItemList get_listitem gets xbmc listitem from VideoItem
                 self.getControl(container_id).addItems(items)
@@ -85,10 +85,10 @@ class DialogBaseInfo(windows.DialogXML):
         addon.set_global("infobackground", self.info.get_art('fanart_small'))
         self.setProperty("type", self.TYPE)
         self.setProperty("tmdb_logged_in", "true" if self.logged_in else "")
-        utils.log('DialogBaseInfo onInit done')
+        utils.log('DialogBaseInfo onInit done', adb=True)
 
     def onAction(self, action:xbmcgui.Action):
-        utils.log(f'DialogBaseInfo got onAction for {ACTION_LIST[action.getId()]} on {self.getFocusId()} {XML_ITEM_DICT.get(self.getFocusId(), "unknown")}')
+        utils.log(f'DialogBaseInfo got onAction for {ACTION_LIST[action.getId()]} on {self.getFocusId()} {XML_ITEM_DICT.get(self.getFocusId(), "unknown")}', adb=True)
         ch.serve_action(action, self.getFocusId(), self)
 
     def onClick(self, control_id:int):
@@ -107,16 +107,16 @@ class DialogBaseInfo(windows.DialogXML):
         self.last_focus = control_id
 
     def close(self):
-        utils.log('DialogBaseInfo.close')
+        utils.log('DialogBaseInfo.close', adb=True)  #debug
         try:
             self.last_position = self.getFocus().getSelectedPosition()
         except Exception:
             self.last_position = None
         addon.set_global("infobackground", "")
         self.last_control = self.getFocusId()
-        utils.log('dialogbaseinfo.DialogBaseInfo call DialogXML.close()')  #debug
+        utils.log('dialogbaseinfo.DialogBaseInfo call DialogXML.close()', adb=True)  #debug
         super().close()
-        utils.log('dialogbaseinfo.close returned ')  #debug
+        utils.log('dialogbaseinfo.close returned ', adb=True)  #debug
 
     @utils.run_async
     def bounce(self, identifier):
@@ -138,7 +138,7 @@ class DialogBaseInfo(windows.DialogXML):
 
     @ch.click_by_type("video")
     def play_youtube_video(self, control_id):
-        utils.log('DialogBaseInfo.click_by_type(video) call wm.play_youtube_video')
+        utils.log('DialogBaseInfo.click_by_type(video) call wm.play_youtube_video', adb=True)
         wm.play_youtube_video(youtube_id=self.FocusedItem(control_id).getProperty("youtube_id"),
                               listitem=self.FocusedItem(control_id))
 
@@ -176,7 +176,7 @@ class DialogBaseInfo(windows.DialogXML):
         Returns:
             None
         """
-        #utils.log(f'DialogBaseInfo thumbnail_options called for contextmenu song with control id {control_id}')
+        #utils.log(f'DialogBaseInfo thumbnail_options called for contextmenu song with control id {control_id}', adb=True)
         listitem:xbmcgui.ListItem = self.FocusedItem(control_id)
         art_type = listitem.getProperty("type")
         options = []
@@ -185,18 +185,18 @@ class DialogBaseInfo(windows.DialogXML):
         if self.info.get_info("dbid") and art_type == "fanart":
             options.append(("db_art", addon.LANG(32007)))
         movie_id = listitem.getProperty("movie_id")
-        #utils.log(f'DialogBaseInfo.thumbnail_options options are : {options} and movie_id {movie_id if movie_id else "None"}')
+        #utils.log(f'DialogBaseInfo.thumbnail_options options are : {options} and movie_id {movie_id if movie_id else "None"}', adb=True)
         if movie_id:
             options.append(("movie_info", addon.LANG(10524)))
         if not options:
             return None
         action = utils.contextmenu(options=options)
         if action == "db_art":
-            #utils.log('DialogBaseInfo.thumbnail_options setting db_art on item')
+            #utils.log('DialogBaseInfo.thumbnail_options setting db_art on item', adb=True)
             art_result = kodijson.set_art(media_type=self.getProperty("type"),
                              art={art_type: listitem.getArt("original")},
                              dbid=self.info.get_info("dbid"))
-            #utils.log(f'DialogBaseInfo.thumbnail_options seting json results {art_result}')
+            #utils.log(f'DialogBaseInfo.thumbnail_options seting json results {art_result}', adb=True)
             if art_result and art_result.get('result') == 'OK':
                 utils.notify(addon.NAME, f'{addon.LANG(32119)} / {xbmc.getLocalizedString(24138)}')
         elif action == "movie_info":
@@ -288,16 +288,16 @@ class DialogBaseInfo(windows.DialogXML):
     @ch.action("parentfolder", "*")
     def previous_menu(self, control_id):
         onback = self.getProperty("%i_onback" % control_id)
-        utils.log(f'DialogBaseInfo.previous_menu onback {onback} control_id {control_id}')
+        utils.log(f'DialogBaseInfo.previous_menu onback {onback} control_id {control_id}', adb=True)
         if onback:
             xbmc.executebuiltin(onback)
         else:
-            utils.log('DialogBaseInfo.previous_menu close dialog')
+            utils.log('DialogBaseInfo.previous_menu close dialog', adb=True)
             self.close()
 
     @ch.action("previousmenu", "*")
     def exit_script(self, *args):
-        utils.log('dialogbaseinfo.exit_script call exit')
+        utils.log('dialogbaseinfo.exit_script call exit', adb=True)
         self.exit()
 
     # @utils.run_async
@@ -315,7 +315,7 @@ class DialogBaseInfo(windows.DialogXML):
         if not self.yt_listitems:
             utils.log('DialogBaseInfo.get_youtube_vids no results')
             return None
-        utils.log(f'DialogBaseInfo.get_youtube_vids returned {len(self.yt_listitems)}')
+        utils.log(f'DialogBaseInfo.get_youtube_vids returned {len(self.yt_listitems)}', adb=True)
         vid_ids = [item.get_property(
             "key") for item in self.lists["videos"]] if "videos" in self.lists else []
         youtube_list.reset()
@@ -347,7 +347,7 @@ class DialogBaseInfo(windows.DialogXML):
     def update_states(self):
         if not self.states:
             return None
-        #utils.log(f'DialogBaseInfo.update_states updating window props from self.states {self.states} {id(self.states)}')
-        #utils.log(f'DialogBaseInfo.update_states updating window props from tmdb.get_account_props(self.states) {tmdb.get_account_props(self.states)}')
+        #utils.log(f'DialogBaseInfo.update_states updating window props from self.states {self.states} {id(self.states)}', adb=True)
+        #utils.log(f'DialogBaseInfo.update_states updating window props from tmdb.get_account_props(self.states) {tmdb.get_account_props(self.states)}', adb=True)
         utils.dict_to_windowprops(data=tmdb.get_account_props(self.states),
                                   window_id=self.window_id)

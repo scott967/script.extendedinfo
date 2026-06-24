@@ -32,7 +32,7 @@ class DialogVideoInfo(DialogBaseInfo):
         """runs __init__ on DialogBaseInfo class
         """
         super().__init__(*args, **kwargs) #DialogBaseInfo
-        #utils.log(f'DialogVideoInfo.__init__ self.states {self.states} {id(self.states)}')
+        #utils.log(f'DialogVideoInfo.__init__ self.states {self.states} {id(self.states)}', adb=True)
 
     def onClick(self, control_id):
         super().onClick(control_id) #DialogBaseInfo
@@ -72,11 +72,11 @@ class DialogVideoInfo(DialogBaseInfo):
         Args:
             control_id (int): the control id that was clicked
         """
-        #utils.log(f'DialogVideoInfo.change_list_status star status change clicked self.states favorite is {type(self.states["favorite"])} {self.states["favorite"]} movie tmdb id {self.info.get_property("id")} with NEW status str/lower  {str(not bool(self.states["favorite"])).lower()}')
+        #utils.log(f'DialogVideoInfo.change_list_status star status change clicked self.states favorite is {type(self.states["favorite"])} {self.states["favorite"]} movie tmdb id {self.info.get_property("id")} with NEW status str/lower  {str(not bool(self.states["favorite"])).lower()}', adb=True)
         tmdb.change_fav_status(media_id=self.info.get_property("id"),
                                media_type=self.TYPE_ALT,
                                status=not bool(self.states["favorite"]))
-        #utils.log(f'DialogVideoInfo.change_list_status update_states with self.states {id(self.states)} favorite {self.states["favorite"]}')
+        #utils.log(f'DialogVideoInfo.change_list_status update_states with self.states {id(self.states)} favorite {self.states["favorite"]}', adb=True)
         self.update_states()
 
     @ch.click(ID_BUTTON_SETRATING)

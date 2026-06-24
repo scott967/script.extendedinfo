@@ -82,13 +82,13 @@ class DialogMovieInfo(DialogVideoInfo):
         Returns:  dialogmovieinfo
         """
         super().__init__(*args, **kwargs) #DialogVideoInfo
-        #utils.log(f'DialogMovieInfo getting data from tmdb.extended_movie_info with movie_id {kwargs.get("id")} and dbid {kwargs.get("dbid")}')
+        #utils.log(f'DialogMovieInfo getting data from tmdb.extended_movie_info with movie_id {kwargs.get("id")} and dbid {kwargs.get("dbid")}', adb=True)
         data: tuple | None = tmdb.extended_movie_info(movie_id=kwargs.get('id'),
                                                         dbid=kwargs.get('dbid'))
         if not data:
             return None
         self.info, self.lists, self.states = data #VideoItem, dict[str, ItemList], dict 
-        #utils.log(f'DialogMovieInfo using info {self.info} and states {self.states} {id(self.states)}')
+        #utils.log(f'DialogMovieInfo using info {self.info} and states {self.states} {id(self.states)}', adb=True)
         sets_thread = SetItemsThread(self.info.get_property("set_id")) #retuns empty list if no tmdb set_id
         self.omdb_thread = utils.FunctionThread(function=omdb.get_movie_info,
                                                 param=self.info.get_property("imdb_id"))
@@ -116,10 +116,10 @@ class DialogMovieInfo(DialogVideoInfo):
         self.get_youtube_vids("%s %s, movie" % (self.info.label,
                                                 self.info.get_info("year")))
         self.set_omdb_infos_async()
-        utils.log('DialogMovieInfo onInit done')
+        utils.log('DialogMovieInfo onInit done', adb=True)
 
     def onClick(self, control_id):
-        utils.log(f'dialogmovieinfo.onClick got click on {XML_ITEM_DICT.get(control_id, "unknown")} - {control_id}')   #debug
+        utils.log(f'dialogmovieinfo.onClick got click on {XML_ITEM_DICT.get(control_id, "unknown")} - {control_id}', adb=True)   #debug
         super().onClick(control_id)
         ch.serve(control_id, self)
 
@@ -265,7 +265,7 @@ class DialogMovieInfo(DialogVideoInfo):
         info = tmdb.get_movie(movie_id=self.info.get_property("id"),
                               cache_days=0)
         self.states = info.get("account_states")
-        #utils.log(f'DialogMovieInfo.update_states from self.states {self.states} {id(self.states)} calling super')
+        #utils.log(f'DialogMovieInfo.update_states from self.states {self.states} {id(self.states)} calling super', adb=True)
         super().update_states()
 
     @utils.run_async

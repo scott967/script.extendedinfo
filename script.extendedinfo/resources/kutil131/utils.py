@@ -22,7 +22,6 @@ import requests
 import xbmc
 import xbmcgui
 import xbmcvfs
-
 #import YDStreamExtractor
 from resources.kutil131 import addon
 
@@ -57,14 +56,20 @@ def youtube_info_by_id(youtube_id) -> tuple:
 #                                          quality=1)
 
 
-def log(*args):
-    for arg in args:
-        message = '%s: %s' % (addon.ID, arg)
-        xbmc.log(msg=message,
-                 level=xbmc.LOGDEBUG)
+def log(*args, adb=False):
+    """Wrapper for Kodi log function.  Logs at debug level.  If adb then log
+    addon debug info as well (uses setting)
+
+    Args:
+        adb (bool, optional): Only log if addon_debug set. Defaults to False.
+    """
+    if (not adb) or (addon.setting("addon_debug") == "true" and adb):
+        for arg in args:
+            message = f'{addon.ID}: {arg}'
+            xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
 
-def dump_all_threads(delay: float = None) -> None:
+def dump_all_threads(delay: float | None = None) -> None:
     """
         Dumps all Python stacks, including those in other plugins
 
@@ -75,7 +80,7 @@ def dump_all_threads(delay: float = None) -> None:
         _dump_all_threads()
     else:
         dump_threads = threading.Timer(delay, _dump_all_threads)
-        dump_threads.setName('dump_threads')
+        dump_threads.name = 'dump_threads'
         dump_threads.start()
 
 
@@ -93,7 +98,7 @@ def _dump_all_threads() -> None:
     #  Monitor.dump_wait_counts()
     #  for threadId, stack in sys._current_frames().items():
     for th in threading.enumerate():
-        sio.write(f'\n# ThreadID: {th.name} Daemon: {th.isDaemon()}\n\n')
+        sio.write(f'\n# ThreadID: {th.name} Daemon: {th.daemon}\n\n')
         stack = sys._current_frames().get(th.ident, None)
         if stack is not None:
             traceback.print_stack(stack, file=sio)
@@ -117,15 +122,31 @@ def _dump_all_threads() -> None:
     '''
 
 
-def format_seconds(seconds):
+def format_seconds(seconds:int) -> str | None:
+    """Convert seconds into hours/mins/secs
+
+    Args:
+        seconds (int): The number of seconds to convert
+
+    Returns:
+        str | None: The formatted time string or None if seconds is 0
+    """
     if not seconds:
         return None
     hours, remainder = divmod(seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
-    return '%02d:%02d:%02d' % (hours, minutes, seconds)
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
 
-def dump_dict(dct):
+def dump_dict(dct:dict) -> str:
+    """Create a formatted string of a dict 
+
+    Args:
+        dct (dict): The dictionary to format
+
+    Returns:
+        str: The formatted string
+    """
     return json.dumps(dct,
                       ensure_ascii=False,
                       sort_keys=True,
@@ -172,14 +193,14 @@ def check_version():
     #     addon.set_setting("changelog_version", addon.VERSION)
 
 
-def get_skin_string(name):
+def get_skin_string(name:str) -> str:
     """
     get String with name *name
     """
     return xbmc.getInfoLabel(f"Skin.String({name})")
 
 
-def set_skin_string(name, value):
+def set_skin_string(name:str, value:str):
     """
     Set String *name to value *value
     """
@@ -201,18 +222,19 @@ def run_async(func):
     return async_func
 
 
-def contextmenu(options:list[tuple]) -> str:
+def contextmenu(options:list[tuple]) -> str | None:
     """pass list of tuples (index, label), get index
 
     Args:
         options (list[tuple]): the context menu items with display text
 
     Returns:
-        str: the selected option  or None if nothing selected
+        str | None: the selected option  or None if nothing selected
     """
     index = xbmcgui.Dialog().contextmenu(list=[i[1] for i in options])
     if index > -1:
         return [i[0] for i in options][index]
+    return None
 
 
 def extract_youtube_id(raw_string):
@@ -221,9 +243,13 @@ def extract_youtube_id(raw_string):
     """
     vid_ids = None
     if raw_string and 'youtube.com/v' in raw_string:
-        vid_ids = re.findall('http://www.youtube.com/v/(.{11})\??', raw_string, re.DOTALL)
+        log(f'kutil131.utils.extract_youtube_id found youtube.com/v in {raw_string}', adb=True) #debug
+        vid_ids = re.findall(r'http://www.youtube.com/v/(.{11})\??', raw_string, re.DOTALL)
+        log(f'kutil131.utils.extract_youtube_id found youtube.com/v vid_ids {vid_ids}', adb=True) #debug
     elif raw_string and 'youtube.com/watch' in raw_string:
-        vid_ids = re.findall('youtube.com/watch\?v=(.{11})\??', raw_string, re.DOTALL)
+        log(f'kutil131.utils.extract_youtube_id found youtube.com/watch in {raw_string}', adb=True) #debug
+        vid_ids = re.findall(r'youtube.com/watch\?v=(.{11})\??', raw_string, re.DOTALL)
+        log(f'kutil131.utils.extract_youtube_id found youtube.com/watch vid_ids {vid_ids}', adb=True) #debug
     if vid_ids:
         return vid_ids[0]
     else:
@@ -261,19 +287,18 @@ def millify(n):
     char_count = len(str(n))
     millidx = int(char_count / 3) - 1
     if millidx == 3 or char_count == 9:
-        return '%.2f%s' % (n / 10 ** (3 * millidx), millnames[millidx])
-    else:
-        return '%.0f%s' % (n / 10 ** (3 * millidx), millnames[millidx])
+        return f"{n / 10 ** (3 * millidx):.2f}{millnames[millidx]}"
+    return f"{n / 10 ** (3 * millidx):.0f}{millnames[millidx]}"
 
 
-def get_year(year_string):
+def get_year(year_string:str) -> str:
     """
     return last 4 chars of string
     """
     return year_string[:4] if year_string else ""
 
 
-def format_time(ftime:int, time_format=None):
+def format_time(ftime:int, time_format=None) -> str:
     """
     get formatted time
     time (int): duration in secs
@@ -294,9 +319,9 @@ def format_time(ftime:int, time_format=None):
     elif time_format == 's':
         return str(second)
     elif intTime >= 3600:
-        return hour + " h " + minute + " min"
+        return f"{hour} h {minute} min"
     else:
-        return minute + " min"
+        return f"{minute} min"
 
 
 def input_userrating(preselect=-1):
@@ -331,8 +356,8 @@ def read_from_file(path, raw=False):
     if not xbmcvfs.exists(path):
         return False
     try:
-        with open(path) as f:
-            # utils.log("opened textfile %s." % (path))
+        with open(path, encoding='utf-8') as f:
+            # utils.log("opened textfile %s." % (path), adb=True)
             if not raw:
                 result = json.load(f)
             else:
@@ -351,17 +376,26 @@ def create_listitems(data=None, preload_images=0):
 
 
 def translate_path(arg1, *args):
+    """wrapper for translatePath with optional join
+
+    Args:
+        arg1 (str): The first argument for translatePath
+        *args (str): Additional arguments for os.path.join
+
+    Returns:
+        str: The translated path
+    """
     return xbmcvfs.translatePath(os.path.join(arg1, *args))
 
 
-def get_infolabel(name):
+def get_infolabel(name:str) -> str:
     """
     returns infolabel with *name
     """
     return xbmc.getInfoLabel(name)
 
 
-def calculate_age(born, died=False):
+def calculate_age(born:str, died:str="") -> int | str:
     """
     calculate age based on born / died
     display notification for birthday
@@ -390,7 +424,7 @@ def calculate_age(born, died=False):
     return base_age
 
 
-def get_http(url, headers=False):
+def get_http(url:str, headers:dict|None=None) -> str | None:
     """
     fetches data from *url as http GET, returns it as a string
     """
@@ -399,9 +433,9 @@ def get_http(url, headers=False):
         headers = {'User-agent': 'Kodi/19.0 ( fbacher@kodi.tv )'}
     while (succeed < 2) and (not xbmc.Monitor().abortRequested()):
         try:
-            #log(f'kutil131.utils.get_http headers {headers}')  #debug
+            #log(f'kutil131.utils.get_http headers {headers}', adb=True)  #debug
             request = requests.get(url, headers=headers, timeout=20)
-            #log(f'kutil131.utils.get_http response from online {request.text}')  #debug
+            #log(f'kutil131.utils.get_http response from online {request.text}', adb=True)  #debug
             return request.text
         except requests.exceptions.RequestException as err:
             log(f"get_http: could not get data from {url} exception {err}")
@@ -410,7 +444,7 @@ def get_http(url, headers=False):
     return None
 
 
-def post(url:str, values:dict, headers:str) -> dict:
+def post(url:str, values:dict, headers:str) -> dict | None:
     """retuns answer to post request  {'success' : True} if succeeded
 
     Args:
@@ -421,33 +455,35 @@ def post(url:str, values:dict, headers:str) -> dict:
     Returns:
         dict: results from server for the post
     """
+    request = None
     try:
-        #log(f'utils.post post to {url} with data {json.dumps(values)}')
+        #log(f'utils.post post to {url} with data {json.dumps(values)}', adb=True) #debug
         request = requests.post(url=url,
                                 data=json.dumps(values),
                                 headers=headers,
                                 timeout=10)
     except requests.exceptions.RequestException as err:
         log(f"get_http: could not get data from {url} exception {err}")
-    #log(f'utils.post post returns text {type(json.loads(request.text))} {json.loads(request.text)}')
-    #log(f'utils.post post returns headers {type(request.headers)} {request.headers}')
-    return json.loads(request.text)
+    #log(f'utils.post post returns text {type(json.loads(request.text))} {json.loads(request.text)}', adb=True) #debug
+    #log(f'utils.post post returns headers {type(request.headers)} {request.headers}', adb=True)
+    return json.loads(request.text) if request else None
 
 
-def delete(url:str, values:dict, headers:str) ->dict:
+def delete(url:str, values:dict, headers:str) ->dict | None:
     """
     returns answer to delete request
     """
+    request = None
     try:
-        #log('utils.delete attempting tmdb delete request')
+        #log('utils.delete attempting tmdb delete request', adb=True)
         request = requests.delete(url=url,
                                 data=json.dumps(values),
                                 headers=headers,
                                 timeout=10)
     except requests.exceptions.RequestException as err:
         log(f"get_http: could not get data from {url} exception {err}")
-    #log(f'utils.delete returns {type(json.loads(request.text))} {json.loads(request.text)}')
-    return json.loads(request.text)
+    #log(f'utils.delete returns {type(json.loads(request.text))} {json.loads(request.text)}', adb=True) #debug
+    return json.loads(request.text) if request else None
 
 
 def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> list[dict] | dict:
@@ -478,37 +514,38 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> li
                 #log(f'kutil131.utils.get_JSON_repsonse got kodi window hashed_url prop {prop}') #debug
                 return prop
         except Exception:
-            log(f"could not load window prop data for {url}") #debug
+            log(f"could not load window prop data for {url}", adb=True) #debug
             pass
     # get data from local disk cache file
     path = os.path.join(cache_path, hashed_url + ".txt")
     if xbmcvfs.exists(path) and ((now - os.path.getmtime(path)) < cache_seconds):
         results = read_from_file(path)
         #for trakt acticipatedmovies results is list of dict per movie
-        #log(f"kutil131.utils.get_JSON_response loaded local file for {url}. time: {(time.time() - now):f} and results {results}") #debug
+        #log(f"kutil131.utils.get_JSON_response loaded local file for {url}. time: {(time.time() - now):f} and results {results}", adb=True) #debug
     else:
-        #log(f'kutil131.utils.get_JSON_response get_http headers {headers}') #debug
+        #log(f'kutil131.utils.get_JSON_response get_http headers {headers}', adb=True) #debug
         #  data not cached query online source
         response = get_http(url, headers)
+        #log(f'kutil131.utils.get_JSON_response get_http response from online {type(response)} {response}', adb=True) #debug
         try:
             results = json.loads(response)
             if folder == 'TheMovieDB':
                 if ("results" in results):
-                    #log(f'kutil131.utils.get_JSON_response results in tmdb response {type(results)} --- {results}')
+                    #log(f'kutil131.utils.get_JSON_response results in tmdb response {type(results)} --- {results}', adb=True) #debug
                     # utils.log("download %s. time: %f" % (url, time.time() - now))
                     if (("status_code" in results and results.get("status_code") == 1) or
                         not ("status_code" in results)):
-                        #log(f'kutil131.utils.get_JSON_response saving {folder} results to cache file')
+                        #log(f'kutil131.utils.get_JSON_response saving {folder} results to cache file', adb=True) #debug
                         save_to_file(results, hashed_url, cache_path)
             else:
                 save_to_file(results, hashed_url, cache_path)
-                #log(f'kutil131.utils.get_JSON_response saved non-tmdb results to cache file in {folder}')  #debug
+                #log(f'kutil131.utils.get_JSON_response saved non-tmdb results to cache file in {folder}', adb=True)  #debug
         except Exception as err:
             log(f"kutil131.utils.get_JSON_response Exception: Could not get new JSON data from {url} "
                 f"with error {err}. Trying to fallback to cache")
-            #log(f'kutils131.utils.get_JSON_response {response}')
+            #log(f'kutils131.utils.get_JSON_response {response}', adb=True) #debug
             results = read_from_file(path) if xbmcvfs.exists(path) else []
-    #log(f'kutil131.utils.get_JSON_response response (local cache or online) type {type(results)} -- {results}') #debug
+    #log(f'kutil131.utils.get_JSON_response response (local cache or online) type {type(results)} -- {results}', adb=True) #debug
     if not results:
         return None
     addon.set_global(hashed_url + "_timestamp", str(now))
@@ -516,7 +553,7 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> li
     return results
 
 
-def dict_to_windowprops(data:dict=None, prefix="", window_id=10000):
+def dict_to_windowprops(data:dict|None=None, prefix="", window_id=10000):
     """Sets window property keys / values from dict
 
     Args:
@@ -544,13 +581,13 @@ def get_file(url):
                                   cached_thumb[:-4] + ".jpg").replace("\\", "/")
     cache_file_png = cache_file_jpg[:-4] + ".png"
     if xbmcvfs.exists(cache_file_jpg):
-        #log("cache_file_jpg Image: " + url + "-->" + cache_file_jpg)
+        #log("cache_file_jpg Image: " + url + "-->" + cache_file_jpg, adb=True)
         return translate_path(cache_file_jpg)
     elif xbmcvfs.exists(cache_file_png):
-        #log("cache_file_png Image: " + url + "-->" + cache_file_png)
+        #log("cache_file_png Image: " + url + "-->" + cache_file_png, adb=True)
         return cache_file_png
     elif xbmcvfs.exists(vid_cache_file):
-        #log("vid_cache_file Image: " + url + "-->" + vid_cache_file)
+        #log("vid_cache_file Image: " + url + "-->" + vid_cache_file, adb=True)
         return vid_cache_file
     try:
         request = urllib.request.Request(clean_url)
@@ -558,7 +595,7 @@ def get_file(url):
         response = urllib.request.urlopen(request, timeout=3)
         data = response.read()
         response.close()
-        log(f'image downloaded: {clean_url}')
+        log(f'image downloaded: {clean_url}', adb=True)
     except Exception:
         log(f'image download failed: {clean_url}')
         return ""
@@ -585,7 +622,7 @@ def fetch_musicbrainz_id(artist, artist_id=-1):
                                 cache_days=30,
                                 folder="MusicBrainz")
     if results and len(results["artists"]) > 0:
-        #log(f'kutil131.utils.fetch_mbid found artist id for {artist}: {results["artists"][0]["id"]}')
+        #log(f'kutil131.utils.fetch_mbid found artist id for {artist}: {results["artists"][0]["id"]}', adb=True) #debug
         return results["artists"][0]["id"]
     else:
         return None
@@ -597,8 +634,8 @@ class FunctionThread(threading.Thread):
         super().__init__()
         self.function = function
         self.param = param
-        self.setName(self.function.__name__)
-        #log("init " + self.function.__name__)
+        self.name = self.function.__name__ if self.function else ""
+        #log("init " + self.function.__name__, adb=True)
 
     def run(self):
         self.listitems = self.function(self.param)
@@ -627,7 +664,7 @@ def dict_to_listitems(data=None):
                 listitem.setLabel2(value)
             elif key.lower() in ["path"]:
                 listitem.setPath(path=value)
-            listitem.setProperty('%s' % (key), value)
+            listitem.setProperty(f"{key}", value)
         listitem.setProperty("index", str(count))
         itemlist.append(listitem)
     return itemlist

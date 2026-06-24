@@ -67,7 +67,7 @@ class Main:
         #utils.log(f'default.Main setting setting_update is {addon.bool_setting("setting_update_6.0.9")}')
         if not addon.bool_setting("setting_update_6.0.9"):
             addon.update_lang_setting()
-        utils.log(f'default.Main setting LanguageIDv2 after update {addon.setting("LanguageIDv2")}')
+        utils.log(f'default.Main setting LanguageIDv2 after update {addon.setting("LanguageIDv2")}', adb=True)
         self._parse_argv()
         for info in self.infos:
             listitems = process.start_info_actions(info, self.params)
@@ -91,7 +91,7 @@ class Main:
         """
         self.infos: list[str] = []
         self.params: dict[str, str] = {"handle": None}
-        utils.log(f'default._parse_argv argv[1:] {sys.argv[1:]}')
+        utils.log(f'default._parse_argv argv[1:] {sys.argv[1:]}', adb=True)
         for arg in sys.argv[1:]:
             #utils.log(f'default._parse_argv arg is {arg}')
             param = arg.replace('"', '').replace("'", " ")
@@ -102,7 +102,7 @@ class Main:
                 try:
                     self.params[param.split('=', maxsplit=1)[0].lower()] = "=".join(
                         param.split("=")[1:]).strip()
-                    utils.log(f'default._parse_argv self.params {self.params}')
+                    utils.log(f'default._parse_argv self.params {self.params}', adb=True)
                 except Exception:
                     pass
         utils.log(f'default._parse_argv final self.infos {self.infos} self.params {self.params}')

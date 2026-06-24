@@ -84,7 +84,7 @@ class LocalDB:
                                 "mood": " / ".join(item['mood']),
                                 "instrument": " / ".join(item['instrument']),
                                 "librarypath": 'musicdb://artists/%s/' % item['artistid']})
-        utils.log('%i of %i artists found in last.FM are in Kodi database' % (len(artists), len(simi_artists)))
+        utils.log(f'{len(artists)} of {len(simi_artists)} artists found in last.FM are in Kodi database')
         return artists
 
     def get_similar_movies(self, dbid):
