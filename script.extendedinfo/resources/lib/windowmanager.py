@@ -73,7 +73,7 @@ class WindowManager:
                                  id=movie_id,
                                  dbid=dbid)
         busy.hide_busy()
-        utils.log(f'wm.open_movie_info call open_infodialog for {type(dialog)}') #debug
+        utils.log(f'wm.open_movie_info call open_infodialog for {type(dialog)}', adb=True) #debug
         self.open_infodialog(dialog)
 
     def open_tvshow_info(self, tmdb_id=None, dbid=None, tvdb_id=None, imdb_id=None, name=None):
@@ -106,7 +106,7 @@ class WindowManager:
                                   tmdb_id=tmdb_id,
                                   dbid=dbid)
         busy.hide_busy()
-        utils.log(f'wm.open_tvshow_info call open_infodialog for {type(dialog)}') #debug
+        utils.log(f'wm.open_tvshow_info call open_infodialog for {type(dialog)}', adb=True) #debug
         self.open_infodialog(dialog)
 
     def open_season_info(self, tvshow_id=None, season:int=None, tvshow:str=None, dbid:str=None):
@@ -132,7 +132,7 @@ class WindowManager:
                                          cache_days=30)
                 if response["results"]:
                     tvshow_id = str(response['results'][0]['id'])
-        #utils.log(f'wm.open_season_info tvshowid {type(tvshow_id)} {tvshow_id} -- season {type(season)} {season} -- dbid {type(dbid)} {dbid}')
+        #utils.log(f'wm.open_season_info tvshowid {type(tvshow_id)} {tvshow_id} -- season {type(season)} {season} -- dbid {type(dbid)} {dbid}', adb=True)
         if tvshow_id:
             dialog = DialogSeasonInfo(INFO_XML,
                                     addon.PATH,
@@ -140,7 +140,7 @@ class WindowManager:
                                     season=max(0, int(season)),
                                     dbid=int(dbid) if dbid and int(dbid) > 0 else None)
             busy.hide_busy()
-            #utils.log(f'wm.open_season_info call open_infodialog for {type(dialog)} tvshow id {tvshow_id} season {season} dbid {dbid}') #debug
+            #utils.log(f'wm.open_season_info call open_infodialog for {type(dialog)} tvshow id {tvshow_id} season {season} dbid {dbid}', adb=True) #debug
             self.open_infodialog(dialog)
         else:
             busy.hide_busy()
@@ -162,7 +162,7 @@ class WindowManager:
                                    season=max(0, season),
                                    episode=episode,
                                    dbid=int(dbid) if dbid and int(dbid) > 0 else None)
-        #utils.log(f'wm.open_episode_info call open_infodialog for {type(dialog)}') #debug
+        #utils.log(f'wm.open_episode_info call open_infodialog for {type(dialog)}', adb=True) #debug
         self.open_infodialog(dialog)
 
     def open_actor_info(self, actor_id: int=None, name: str=None):
@@ -223,7 +223,7 @@ class WindowManager:
         """
         from .dialogs import dialogvideolist
         Browser = dialogvideolist.get_window(windows.DialogXML)
-        utils.log(f'WindowManager.open_video_list Browser class mro {Browser.mro()}')
+        utils.log(f'WindowManager.open_video_list Browser class mro {Browser.mro()}', adb=True) #debug
         dialog = Browser(LIST_XML,
                          addon.PATH,
                          listitems=listitems,
@@ -234,7 +234,7 @@ class WindowManager:
                          filter_label=filter_label,
                          search_str=search_str,
                          type=media_type)
-        utils.log(f'WM.open_video_list got new Browser as dialog, call open_dialog with {type(dialog)}') #debug
+        utils.log(f'WM.open_video_list got new Browser as dialog, call open_dialog with {type(dialog)}', adb=True) #debug
         self.open_dialog(dialog)
 
     def open_youtube_list(self, search_str="", filters=None, filter_label="", media_type="video"):
@@ -248,7 +248,7 @@ class WindowManager:
                          search_str=search_str,
                          filters=[] if not filters else filters,
                          type=media_type)
-        utils.log(f'wm.open_youtube_list call open_dialog for Youtube {type(dialog)}') #debug
+        utils.log(f'wm.open_youtube_list call open_dialog for Youtube {type(dialog)}', adb=True) #debug
         self.open_dialog(dialog)
 
     def open_infodialog(self, dialog):
@@ -260,7 +260,7 @@ class WindowManager:
             dialog.info is a kutils131.VideoItem or AudioItem to display in dialog
         """
         if dialog.info:
-            utils.log(f'wm.open_infodialog self.open_dialog with info {type(dialog.info)}') #debug
+            utils.log(f'wm.open_infodialog self.open_dialog with info {type(dialog.info)}', adb=True) #debug
             self.open_dialog(dialog)
         else:
             self.active_dialog = None
@@ -273,9 +273,9 @@ class WindowManager:
             dialog (DialogVideoList | DialogYoutubeList | Dialog*Info): a Kodi xml dialog window
         """
         if self.active_dialog:
-            utils.log(f'wm.open_dialog save active_dialog to stack and close {self.active_dialog}') #debug
+            utils.log(f'wm.open_dialog save active_dialog to stack and close {self.active_dialog}', adb=True) #debug
             self.window_stack.append(self.active_dialog)
-            utils.log('wm.open_dialog close active_dialog')
+            utils.log('wm.open_dialog close active_dialog', adb=True)
             self.active_dialog.close()
         utils.check_version()
         if not addon.setting("first_start_infodialog"):
@@ -283,24 +283,24 @@ class WindowManager:
             xbmcgui.Dialog().ok(heading=addon.NAME,
                                 message=addon.LANG(32140) + '[CR]' + addon.LANG(32141))
         self.active_dialog = dialog
-        utils.log(f'wm.open_dialog ready to open doModal on active_dialog {dialog}') #debug
+        utils.log(f'wm.open_dialog ready to open doModal on active_dialog {dialog}', adb=True) #debug
         try:
             dialog.doModal()
         except SystemExit:
-            utils.log('wm.open_dialog fails to open or forced closed') #debug
+            utils.log('wm.open_dialog fails to open or forced closed', adb=True)
 #        if dialog.canceled:
 #            addon.set_global("infobackground", self.saved_background)
 #            self.window_stack = []
 #            return None
-        utils.log('WM.open_dialog return from dialog.doModal') #debug
+        utils.log('WM.open_dialog return from dialog.doModal', adb=True) #debug
 #
 #        if self.window_stack and not self.window_monitor.abortRequested():
 #
         if self.window_stack:
-            utils.log(f'windowmanager.WM.open_dialog wait for video player status to pop and domodal last dialog started: {player.started} stopped/fail to play: {player.stopped} ')  #debug
+            utils.log(f'windowmanager.WM.open_dialog wait for video player status to pop and domodal last dialog started: {player.started} stopped/fail to play: {player.stopped}', adb=True)  #debug
             while not self.window_monitor.abortRequested() and player.started and not player.stopped:
                 self.window_monitor.waitForAbort(2)
-            utils.log(f'windowmanager.WM.open_dialog player stopped status: {player.stopped} Pop dialog from stack, set as active and open doModal')  #debug
+            utils.log(f'windowmanager.WM.open_dialog player stopped status: {player.stopped} Pop dialog from stack, set as active and open doModal', adb=True)  #debug
             self.active_dialog = self.window_stack.pop()
             xbmc.sleep(300)
             try:
@@ -315,20 +315,20 @@ class WindowManager:
         play youtube vid with info from *listitem
         """
         if self.active_dialog and self.active_dialog.window_type == "dialog":
-            utils.log(f'wm.play_youtube_video close the {type(self.active_dialog)} dialog and movieinfo')
+            utils.log(f'wm.play_youtube_video close the {type(self.active_dialog)} dialog and movieinfo', adb=True)
             self.active_dialog.close()
         xbmc.executebuiltin("Dialog.Close(movieinformation)")
         xbmc.executebuiltin("PlayMedia(plugin://plugin.video.youtube/play/?video_id=" +
                             youtube_id + "&screensaver=true&incognito=true)")
         if self.active_dialog and self.active_dialog.window_type == "dialog":
-            utils.log('wm play_youtube_video while active dialog wait for start')
+            utils.log('wm play_youtube_video while active dialog wait for start', adb=True)
             player.wait_for_video_start() #poll youtube try_play win property
-            utils.log('wm play_youtube_video while active dialog video started or failed/timed out')
+            utils.log('wm play_youtube_video while active dialog video started or failed/timed out', adb=True)
             player.wait_for_video_end() #method returns when video ends or failed/timed out
-            utils.log('wm.play_youtube_video exited (player stopped)')
+            utils.log('wm.play_youtube_video exited (player stopped)', adb=True)
             if not self.window_monitor.abortRequested():
                 #xbmc.Monitor().waitForAbort(1.0)
-                utils.log(f'wm.play_youtube_video YT player end restore {type(self.active_dialog)} doModal')
+                utils.log(f'wm.play_youtube_video YT player end restore {type(self.active_dialog)} doModal', adb=True)
                 self.active_dialog.doModal()
 
 

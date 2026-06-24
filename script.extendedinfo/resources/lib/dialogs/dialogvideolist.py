@@ -103,7 +103,7 @@ def get_window(window_type):
         def __init__(self, *args, **kwargs):
             self.type = kwargs.get('type', "movie")
             self.list_id = kwargs.get("list_id", False)
-            #utils.log('DialogVideoList check login status')
+            #utils.log('DialogVideoList check login status', adb=True) #debug
             self.logged_in = tmdb.tmdb_login.check_login()
             super().__init__(*args, **kwargs)
 
@@ -202,24 +202,24 @@ def get_window(window_type):
 
         @ch.click(ID_BUTTON_SORT)
         def get_sort_type(self, control_id):
-            #utils.log(f'DialogVideoList.get_sort_type for sort_key {self.sort_key} with current sort_label {self.sort_label}')
+            #utils.log(f'DialogVideoList.get_sort_type for sort_key {self.sort_key} with current sort_label {self.sort_label}', adb=True) #debug
             if self.sort_label and (self.sort_label == "Vote average"):
                 update_filter_vote = True
             else:
                 update_filter_vote = False
             if not self.choose_sort_method(self.sort_key):
                 return None
-            #utils.log(f'DialogVideoList.get_sort_type new sort is {self.sort} and sort label is {self.sort_label}')
+            #utils.log(f'DialogVideoList.get_sort_type new sort is {self.sort} and sort label is {self.sort_label}', adb=True)
             if self.sort == "vote_average":
                 self.add_filter(key="vote_count.gte",
                                 value="10",
                                 label="10",
                                 reset=False)
             elif update_filter_vote:
-                #utils.log(f'DialogVideoList.get_sort_type need to remove vote average filter for {self.sort}')
+                #utils.log(f'DialogVideoList.get_sort_type need to remove vote average filter for {self.sort}', adb=True)
                 self.remove_filter(key="vote_count.gte")
             else:
-                utils.log('DialogVideoList.get_sort_type no need to remove vote_count filter')
+                utils.log('DialogVideoList.get_sort_type no need to remove vote_count filter', adb=True)
             self.update()
 
         def add_filter(self, **kwargs):
@@ -237,12 +237,12 @@ def get_window(window_type):
 
             kwargs[key] (str):  the filter key to be removed
             """
-            #utils.log(f'DialogVideoList.remove_filter to remove {kwargs["key"]}')
+            #utils.log(f'DialogVideoList.remove_filter to remove {kwargs["key"]}', adb=True)
             if kwargs["key"] == 'vote_count.gte':
-                #utils.log('DialogVideoList.remove_filter removing vote_count.gte')
+                #utils.log('DialogVideoList.remove_filter removing vote_count.gte', adb=True)
                 super().remove_filter(kwargs["key"])
             else:
-                utils.log('DialogVideoList.remove_filter not needed to remove')
+                utils.log('DialogVideoList.remove_filter not needed to remove', adb=True)
 
         @ch.click(ID_BUTTON_ORDER)
         def toggle_order(self, control_id):
@@ -497,7 +497,7 @@ def get_window(window_type):
                                                   page=self.page,
                                                   cache_days=0)
             else:  #self.mode == "filter"
-                utils.log(f'DialogVideoList.fetch_data called to update content set filter label')
+                utils.log(f'DialogVideoList.fetch_data called to update content set filter label', adb=True) #debug
                 self.set_filter_label()
                 params = {"sort_by": sort_by,
                           "language": addon.setting("LanguageIDv2"),

@@ -119,7 +119,7 @@ class DialogBaseList:
         """
         save viewtype and last focusposition
         """
-        utils.log('dialogbaselist.DialogBaseList close')
+        utils.log('dialogbaselist.DialogBaseList close', adb=True)
         addon.set_setting("viewtype_selection", str(self.getCurrentContainerId()))
         self.last_position = self.getCurrentListPosition()
         xbmc.executebuiltin("Container.SetViewMode(%s)" % self.cur_viewtype)
@@ -247,14 +247,14 @@ class DialogBaseList:
             filter_label = item["label"].replace("|", " | ").replace(",", " + ")
             filters.append(f"[COLOR FFAAAAAA]{item['typelabel']}:[/COLOR] {filter_label}")
             self.filter_label: str = "  -  ".join(filters)
-        utils.log(f'DialogBaseList.set_filter_label new label is {self.filter_label if self.filter_label else "None"}')
+        utils.log(f'DialogBaseList.set_filter_label new label is {self.filter_label if self.filter_label else "None"}', adb=True)
 
     def update_content(self, force_update:bool=False):
         """
         fetch listitems and pagination info based on current state
         """
         self.data = self.fetch_data(force=force_update)
-        utils.log(f'DialogBaseList.update_content self.data {self.data}')
+        utils.log(f'DialogBaseList.update_content self.data {self.data}', adb=True)
         if not self.data:
             return None
         self.listitems = self.data
@@ -267,7 +267,7 @@ class DialogBaseList:
         """
         add listitems to list, set focusposition, set window properties
         """
-        utils.log('DialogBaseList.update_ui')
+        utils.log('DialogBaseList.update_ui', adb=True)
         if not self.listitems and self.getFocusId() == self.getCurrentContainerId():
             self.setFocusId(ID_BUTTON_SEARCH)
         self.clearList()
@@ -280,7 +280,7 @@ class DialogBaseList:
             if self.column is not None:
                 self.setCurrentListPosition(self.column)
         # self.setContent(self.listitems.content_type)
-        utils.log(f'DialogBaseList.update_ui updating property from filter label {self.filter_label}')
+        utils.log(f'DialogBaseList.update_ui updating property from filter label {self.filter_label}', adb=True)
         self.setProperty("TotalPages", str(self.total_pages))
         self.setProperty("TotalItems", str(self.total_items))
         self.setProperty("CurrentPage", str(self.page))
@@ -295,7 +295,7 @@ class DialogBaseList:
         """
         resets the container to its default mode and updates
         """
-        utils.log('DialogBaseList start a reset')
+        utils.log('DialogBaseList start a reset', adb=True)
         self.page = 1
         self.mode = mode
         self.verify_sort()
@@ -335,7 +335,7 @@ class DialogBaseList:
         """
         complete refresh of both content and ui
         """
-        utils.log('DialogBaseList.update')
+        utils.log('DialogBaseList.update', adb=True)
         self.update_content(force_update=force_update)
         self.update_ui()
 
