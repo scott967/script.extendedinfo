@@ -34,10 +34,13 @@ def _handle_videos(results: list[dict], extended=False, api_key='') -> ItemList:
     for item in results:
         snippet = item["snippet"]
         thumb = snippet["thumbnails"]["high"]["url"] if "thumbnails" in snippet else ""
+        utils.log(f'kutil131.youtube._handle_videos yt result item {item["id"]}')
+        utils.log(f'kutil131.youtube._handle_videos yt result snippet {snippet}')
         try:
             video_id = item["id"]["videoId"]
         except (AttributeError, KeyError):
-            video_id = snippet["resourceId"]["videoId"]
+            utils.log(f'kutil131.youtube._handle_videos unable to get videoId from {item}')
+            continue
         video = VideoItem(label=html.unescape(snippet["title"]),
                           path=f'{PLUGIN_BASE}youtubevideo&&id={video_id}')
         video.set_infos({'plot': html.unescape(snippet["description"]),
@@ -227,7 +230,7 @@ def _get_data(method: str, params: dict = None, cache_days: float = 0.5) -> dict
 
 
 def search(search_str="", hd="", orderby="relevance", limit=40, extended=True,
-           page="", filters: dict = None, media_type="video", api_key="") -> ItemList:
+           page="", filters: dict = None, media_type="video", api_key="") -> ItemList | None:
     """Runs youtube search method using parameters and filters
 
     Args:
