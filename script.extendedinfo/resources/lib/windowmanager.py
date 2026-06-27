@@ -207,6 +207,25 @@ class WindowManager:
         busy.hide_busy()
         self.open_infodialog(dialog)
 
+    def open_artist_info(self, artist_info:ItemList=None):
+        """opens info dialog window for an artist, deals with window stack
+        If an artist name is passed, it is passed to a new dialog instance of
+        DialogActorInfo class.
+
+        Args:
+            artist_info (dict): a dictionary containing artist information.
+
+        Returns:
+            None: if no artist info could be found
+        """
+        from resources.lib.dialogs.dialogartistinfo import DialogArtistInfo
+        busy.show_busy()
+        dialog = DialogArtistInfo(ACTOR_XML,
+                                  addon.PATH,
+                                  artist_data=artist_info)
+        busy.hide_busy()
+        self.open_infodialog(dialog)
+
     def open_video_list(self, listitems=None, filters=None, mode="filter", list_id=False,
                         filter_label="", force=False, media_type="movie", search_str=""):
         """opens video list  deals with window stack items

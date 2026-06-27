@@ -51,15 +51,23 @@ def _handle_artists(results) -> ItemList:
     artists = ItemList(content_type="artists")
     if not results:
         return artists
-    for artist in results['artist']:
-        if 'name' not in artist:
-            continue
-        artist = {'title': artist['name'],
-                  'label': artist['name'],
+    if results and "artist" in results:
+        for artist in results['artist']:
+            if 'name' not in artist:
+                continue
+            artist = {'title': artist['name'],
+                    'label': artist['name'],
+                    'mediatype': "artist",
+                    'mbid': artist.get('mbid'),
+                    'thumb': artist['image'][-1]['#text'],
+                    'Listeners': format(int(artist.get('listeners', 0)), ",d")}
+            artists.append(artist)
+    elif results and "name" in results:
+        artist = {'title': results['name'],
+                  'label': results['name'],
                   'mediatype': "artist",
-                  'mbid': artist.get('mbid'),
-                  'thumb': artist['image'][-1]['#text'],
-                  'Listeners': format(int(artist.get('listeners', 0)), ",d")}
+                  'mbid': results.get('mbid'),
+                  'thumb': results.get('image', ""),}
         artists.append(artist)
     return artists
 
@@ -128,7 +136,7 @@ def get_track_info(artist_name="", track="") -> dict:
             'summary': clean_text(summary)}
 
 
-def get_artist_info(artist_name="", artist_mbid="") -> dict:
+def get_artist_info(artist_name="", artist_mbid="") -> ItemList:
     """ Queries MB api for artist info
 
     Args:
@@ -136,29 +144,28 @@ def get_artist_info(artist_name="", artist_mbid="") -> dict:
         artist_mbid (str, optional): The musicbrainz id for the artist. Defaults to "".
 
     Returns:
-        dict: The artist info.
+        ItemList: The artist info.
     """
     if not artist_name and not artist_mbid:
-        return {}
+        return ItemList(content_type="artists")
     params = {}
     if not artist_mbid:
-        #params["artist"] = artist_name
-        #results = get_data(method="artist_search", params=params)
         artist_mbid = utils.fetch_musicbrainz_id(artist_name, headers=HEADERS)
     if artist_mbid:
         params["mbid"] = artist_mbid
     else:
-        return {}
+        return ItemList(content_type="artists")
     results = get_data(method="artist.getInfo", params=params)
     if not results[0] or "artist" not in results:
-        return {}
+        return ItemList(content_type="artists")
     artist_data = results[0]["artist"]
-    return {
+    utils.log(f"Musicbrainz artist info: {artist_data}", adb=True)
+    return _handle_artists({
         "name": artist_data.get("name", ""),
         "mbid": artist_data.get("id", ""),
         "bio": clean_text(artist_data.get("bio", {}).get("summary", "")),
         "image": artist_data.get("image", [{}])[0].get("url", "") if artist_data.get("image") else ""
-    }
+        })
 
 
 def get_data(method: str, params=None, cache_days=10) -> list[dict]:

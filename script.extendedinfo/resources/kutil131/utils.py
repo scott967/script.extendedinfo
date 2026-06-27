@@ -513,8 +513,8 @@ def get_JSON_response(url="", cache_days=7.0, folder="", headers=None) -> list[d
         try:
             prop = json.loads(addon.get_global(hashed_url))
             if prop:
-                #log(f'kutil131.utils.get_JSON_repsonse got kodi window hashed_url prop {prop}') #debug
-                return prop
+                log(f'kutil131.utils.get_JSON_repsonse got kodi window hashed_url prop {prop}', adb=True) #debug
+                return prop if isinstance(prop, list) else [prop]
         except Exception:
             log(f"could not load window prop data for {url}", adb=True) #debug
             pass
@@ -634,6 +634,7 @@ def fetch_musicbrainz_id(artist, headers=None) -> str:
                                 cache_days=30,
                                 folder="MusicBrainz",
                                 headers=headers)
+    log(f'kutil131.utils.fetch_mbid results for {artist}: {results}', adb=True) #debug
     if results and len(results[0]["artists"]) > 0:
         #log(f'kutil131.utils.fetch_mbid found artist id for {artist}: {results["artists"][0]["id"]}', adb=True) #debug
         return results[0]["artists"][0]["id"]

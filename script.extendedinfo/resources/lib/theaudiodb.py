@@ -137,6 +137,7 @@ def extended_artist_info(results: dict) -> dict:
     Returns:
         dict: artist details using Kodi properties keywords
     """
+    results = results[0] if isinstance(results, list) else results
     if not results.get('artists'):
         return {}
     local_bio = 'strBiography' + addon.setting("LanguageIDv2").upper().split('-', maxsplit=1)[0]

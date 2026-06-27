@@ -259,7 +259,8 @@ class LoginProvider:
         response = get_data(url="account",
                             params={"session_id": session_id},
                             cache_days=999999)
-        #utils.log(f'tmdb.LoginProvider.test_session_id returns as {type(response.get("id"))} {response and response.get("id")}')
+        utils.log(f'tmdb.LoginProvider.test_session_id returns as {response}', adb=True)
+        response = response if isinstance(response, dict) else response[0]
         return response and response.get("id")
 
     def get_session_id(self, cache_days=999) -> str:

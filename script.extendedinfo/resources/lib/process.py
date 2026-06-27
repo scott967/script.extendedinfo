@@ -23,6 +23,7 @@ from resources.kutil131 import addon, busy, kodijson
 
 from resources.kutil131 import favs, local_db, utils, youtube
 from resources.lib import lastfm
+from resources.lib import musicbrainz
 from resources.lib import theaudiodb as AudioDB
 from resources.lib import themoviedb as tmdb
 from resources.lib import trakt
@@ -430,7 +431,19 @@ def start_info_actions(info: str, params: dict[str, str]):
             utils.dict_to_windowprops(album_details, params.get("prefix", ""))
     elif info == 'artistdetails':
         artist_details = AudioDB.get_artist_details(params["artistname"])
+        utils.log(f"process.start_info_actions artistdetails got {artist_details if artist_details else 'no details'}")
+        if not artist_details:
+            artist_details = musicbrainz.get_artist_info(artist_name=params["artistname"],
+                                                         artist_mbid=params.get("artist_mbid", ""))
         utils.dict_to_windowprops(artist_details, params.get("prefix", ""))
+        if addon.get_global('infodialogs.active'):
+            utils.log('process already running wait for complete', adb=True)  #debug
+            return None
+        addon.set_global('infodialogs.active', "true")
+        try:
+            wm.open_artist_info(artist_info=artist_details)
+        finally:
+            addon.clear_global('infodialogs.active')
     elif info == 'ratemedia':
         media_type = params.get("type")
         if not media_type:
