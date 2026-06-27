@@ -486,18 +486,20 @@ def delete(url:str, values:dict, headers:str) ->dict | None:
     return json.loads(request.text) if request else None
 
 
-def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> list[dict] | dict:
+def get_JSON_response(url="", cache_days=7.0, folder="", headers=None) -> list[dict]:
     """gets JSON response for *url, makes use of prop and file cache.
 
     Args:
         url (str, optional): search query URL. Defaults to "".
         cache_days (float, optional): Number of days to determine cache is stale. Defaults to 7.0.
-        folder (bool, optional): folder on local system to cache query results. Defaults to False.
-        headers (bool, optional): headers to use in https request. Defaults to False.
+        folder (str, optional): folder on local system to cache query results. Defaults to "".
+        headers (dict, optional): headers to use in https request. Defaults to None.
 
     Returns:
         list[dict]: a deserialized JSON query response or None
     """
+    if not headers:
+        headers = {}
     now = time.time()
     hashed_url = hashlib.md5(url.encode("utf-8", "ignore")).hexdigest()
     cache_path = translate_path(addon.DATA_PATH, folder) if folder else translate_path(addon.DATA_PATH)
@@ -526,6 +528,7 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> li
         #log(f'kutil131.utils.get_JSON_response get_http headers {headers}', adb=True) #debug
         #  data not cached query online source
         response = get_http(url, headers)
+        response = response if response else ""
         #log(f'kutil131.utils.get_JSON_response get_http response from online {type(response)} {response}', adb=True) #debug
         try:
             results = json.loads(response)
@@ -547,9 +550,10 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> li
             results = read_from_file(path) if xbmcvfs.exists(path) else []
     #log(f'kutil131.utils.get_JSON_response response (local cache or online) type {type(results)} -- {results}', adb=True) #debug
     if not results:
-        return None
+        return []
     addon.set_global(hashed_url + "_timestamp", str(now))
     addon.set_global(hashed_url, json.dumps(results))
+    results = results if isinstance(results, list) else [results]
     return results
 
 
@@ -611,21 +615,30 @@ def get_file(url):
         return ""
 
 
-def fetch_musicbrainz_id(artist, artist_id=-1):
+def fetch_musicbrainz_id(artist, headers=None) -> str:
+    """Gets the musicbrainz ID from artist name
+
+    Args:
+        artist (str): artist name
+        headers (dict, optional): musicbraize query headers. Defaults to None.
+
+    Returns:
+        str: the musicxbrainz id or ''
     """
-    fetches MusicBrainz ID for given *artist and returns it
-    uses musicbrainz.org
-    """
+    if not headers:
+        headers = {'Content-Type': 'application/json',
+            'User-Agent': 'Kodi script.extendedinfo/6.1 ( https://github.com/xbmc/script.extendedinfo )'}
     base_url = "http://musicbrainz.org/ws/2/artist/?fmt=json"
     url = f'&query=artist:{urllib.parse.quote_plus(artist.encode("utf-8"))}'
     results = get_JSON_response(url=base_url + url,
                                 cache_days=30,
-                                folder="MusicBrainz")
-    if results and len(results["artists"]) > 0:
+                                folder="MusicBrainz",
+                                headers=headers)
+    if results and len(results[0]["artists"]) > 0:
         #log(f'kutil131.utils.fetch_mbid found artist id for {artist}: {results["artists"][0]["id"]}', adb=True) #debug
-        return results["artists"][0]["id"]
+        return results[0]["artists"][0]["id"]
     else:
-        return None
+        return ""
 
 
 class FunctionThread(threading.Thread):

@@ -553,7 +553,7 @@ def handle_multi_search(results):
     return listitems
 
 
-def handle_movies(results: list[dict], local_first=True, sortkey="year") ->ItemList[VideoItem]:
+def handle_movies(results: list[dict], local_first=True, sortkey="year") ->ItemList:
     """takes a list of movies (dicts) and adds local db data and then sorts as an ItemList
     The tmdb movie keys are converted to extendedinfo keys and genre ids converted
     to localized text strings, then a VideoItem is created for each movie.  The

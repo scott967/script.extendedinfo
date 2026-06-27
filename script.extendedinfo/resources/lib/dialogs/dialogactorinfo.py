@@ -67,7 +67,7 @@ class DialogActorInfo(DialogBaseInfo):
         data: tuple = tmdb.extended_actor_info(actor_id=kwargs.get('id'))
         if not data:
             return None
-        self.info, self.lists = data #VideoItem, dict[str, ItemList], dict 
+        self.info, self.lists = data #VideoItem, dict[str, ItemList], dict
         self.info.update_properties(
             imagetools.blur(self.info.get_art("thumb")))
 

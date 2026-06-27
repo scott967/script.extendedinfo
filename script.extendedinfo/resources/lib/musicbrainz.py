@@ -1,35 +1,28 @@
-# Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
-# Modifications copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
+# Copyright (C) 2022 - Scott Smart <scott967@kodi.tv>
 # This program is Free Software see LICENSE file for details
-"""Uses LastFM API  to query data from LastFM.
+"""Uses Musicbrainz API  to query data from  Musicbrainz.
 
-The get_* functions are called to query LastFM API.
+The get_* functions are called to query Musicbrainz API.
 
 """
 
 import re
-import urllib.error
-import urllib.parse
-import urllib.request
-from typing import Optional
 
-from resources.kutil131 import ItemList
+from resources.kutil131 import ItemList, utils
 
-from resources.kutil131 import utils
-
-LAST_FM_API_KEY = 'd942dd5ca4c9ee5bd821df58cf8130d4'
-GOOGLE_MAPS_KEY = 'AIzaSyBESfDvQgWtWLkNiOYXdrA9aU-2hv_eprY'
-BASE_URL = 'http://ws.audioscrobbler.com/2.0/?'
+BASE_URL = 'https://musicbrainz.org/ws/2/'
+HEADERS = {'Content-Type': 'application/json',
+           'User-Agent': 'Kodi script.extendedinfo/6.1 ( https://github.com/xbmc/script.extendedinfo )'}
 
 
-def _handle_albums(results: dict) -> ItemList:
-    """Converts TADB query results to kutils131 ItemList
+def _handle_albums(results: list[dict]) -> ItemList:
+    """Converts MB query results to kutil131 ItemList
 
     Args:
-        results (dict): TADB albums for an artist
+        results (dict): MB albums for an artist
 
     Returns:
-        ItemList: a kutils131 ItemList od dicts
+        ItemList: a kutil131 ItemList od dicts
     """
     albums = ItemList(content_type="albums")
     if not results:
@@ -47,13 +40,13 @@ def _handle_albums(results: dict) -> ItemList:
 
 
 def _handle_artists(results) -> ItemList:
-    """Converts TADB artist query to kutils131 ItemList
+    """Converts MB artist query to kutil131 ItemList
 
     Args:
         results (_type_): _description_
 
     Returns:
-        ItemList: a kutils131 ItemList of artist info as dicts
+        ItemList: a kutil131 ItemList of artist info as dicts
     """
     artists = ItemList(content_type="artists")
     if not results:
@@ -71,20 +64,8 @@ def _handle_artists(results) -> ItemList:
     return artists
 
 
-def get_top_artists() -> ItemList:
-    """Queries LastFM api chart.getTopArtists method for top 100 artists
-
-    Returns:
-        ItemList: a kutils131 object that wraps a list of artist
-        info dicts
-    """
-    results: Optional[dict] = get_data(method="chart.getTopArtists",
-                       params={"limit": "100"})
-    return _handle_artists(results['artists'])
-
-
 def get_artist_albums(artist_mbid: str) -> ItemList:
-    """Queries LastFM api artist.getTopAlbums method for an artist
+    """Queries MB api artist.getTopAlbums method for an artist
 
     Gets 50 albums with title, mbid, and cover image
 
@@ -92,7 +73,7 @@ def get_artist_albums(artist_mbid: str) -> ItemList:
         artist_mbid (str): The musicbrainz id for the artist
 
     Returns:
-        ItemList: a kutils131object that wraps a list of albums
+        ItemList: a kutil131object that wraps a list of albums
         info dicts
     """
     if not artist_mbid:
@@ -103,7 +84,7 @@ def get_artist_albums(artist_mbid: str) -> ItemList:
 
 
 def get_similar_artists(artist_mbid: str) -> ItemList:
-    """Queries LastFM api artist.getsimilar for artists
+    """Queries MB api artist.getsimilar for artists
 
    Gets name, mbid, and thumb image of similar artists
 
@@ -111,7 +92,7 @@ def get_similar_artists(artist_mbid: str) -> ItemList:
         artist_mbid (str): The musicbrainz id for the artist
 
     Returns:
-        ItemList: a kutils131 object that wraps a list of artists info dicts
+        ItemList: a kutil131 object that wraps a list of artists info dicts
     """
     if not artist_mbid:
         return ItemList(content_type="artists")
@@ -124,21 +105,21 @@ def get_similar_artists(artist_mbid: str) -> ItemList:
 
 
 def get_track_info(artist_name="", track="") -> dict:
-    """ Queries LastFM api
+    """ Queries MB api
 
     Args:
         artist_name (str, optional): The artist name. Defaults to "".
         track (str, optional): The track name. Defaults to "".
 
     Returns:
-        dict: LastFM info including scrobles of a song.
+        dict: MB info including scrobles of a song.
     """
     if not artist_name or not track:
         return {}
     params = {"artist": artist_name,
               "track": track}
-    results: Optional[dict] = get_data(method="track.getInfo",
-                       params=params)
+    results: list[dict] = get_data(method="track.getInfo",
+                                       params=params)
     if not results:
         return {}
     summary = results['track']['wiki']['summary'] if "wiki" in results['track'] else ""
@@ -147,26 +128,65 @@ def get_track_info(artist_name="", track="") -> dict:
             'summary': clean_text(summary)}
 
 
-def get_data(method: str, params=None, cache_days=0.5) -> dict:
+def get_artist_info(artist_name="", artist_mbid="") -> dict:
+    """ Queries MB api for artist info
+
+    Args:
+        artist_name (str, optional): The artist name. Defaults to "".
+        artist_mbid (str, optional): The musicbrainz id for the artist. Defaults to "".
+
+    Returns:
+        dict: The artist info.
+    """
+    if not artist_name and not artist_mbid:
+        return {}
+    params = {}
+    if not artist_mbid:
+        #params["artist"] = artist_name
+        #results = get_data(method="artist_search", params=params)
+        artist_mbid = utils.fetch_musicbrainz_id(artist_name, headers=HEADERS)
+    if artist_mbid:
+        params["mbid"] = artist_mbid
+    else:
+        return {}
+    results = get_data(method="artist.getInfo", params=params)
+    if not results[0] or "artist" not in results:
+        return {}
+    artist_data = results[0]["artist"]
+    return {
+        "name": artist_data.get("name", ""),
+        "mbid": artist_data.get("id", ""),
+        "bio": clean_text(artist_data.get("bio", {}).get("summary", "")),
+        "image": artist_data.get("image", [{}])[0].get("url", "") if artist_data.get("image") else ""
+    }
+
+
+def get_data(method: str, params=None, cache_days=10) -> list[dict]:
     """helper function runs query including using local cache
 
     Args:
-        method (str): LastFM api method
-        params (dict, optional): LastFM method parameters.  Defaults to None.
-        cache_days (float, optional): Days to use cache/query. Defaults to 0.5.
+        method (str): MB api method
+        params (dict, optional): MB method parameters.  Defaults to None.
+        cache_days (float, optional): Days to use cache/query. Defaults to 10.
 
     Returns:
         dict:  The json.loads results from the query
     """
-    params = params if params else {}
-    params["method"] = method
-    params["api_key"] = LAST_FM_API_KEY
-    params["format"] = "json"
-    params = {k: str(v) for k, v in params.items() if v}
-    url = f"{BASE_URL}{urllib.parse.urlencode(params)}"
-    return utils.get_JSON_response(url=url,
-                                   cache_days=cache_days,
-                                   folder="LastFM")
+    if params is None:
+        params = {}
+    if method == "artist.getInfo" and "mbid" in params:
+        url = f"{BASE_URL}artist/?{params['mbid']}&fmt=json"
+        return utils.get_JSON_response(url=url,
+                                       cache_days=cache_days,
+                                       folder="MusicBrainz",
+                                       headers=HEADERS)
+    elif method == "artist.getTopAlbums" and "mbid" in params:
+        url = f"{BASE_URL}artist/{params['mbid']}/release-groups?fmt=json&limit=50&type=album"
+        return utils.get_JSON_response(url=url,
+                                       cache_days=cache_days,
+                                       folder="MusicBrainz",
+                                       headers=HEADERS)
+    return []
 
 
 def clean_text(text) -> str:
