@@ -170,7 +170,7 @@ class LoginProvider:
         """
         cls.LOGIN_VALID = status
 
-    def __init__(self, *args, **kwargs) -> LoginProvider:
+    def __init__(self, *args, **kwargs):
         """Creates a new user for accessing tmdb
 
         Returns:
@@ -553,7 +553,7 @@ def handle_multi_search(results):
     return listitems
 
 
-def handle_movies(results: list[dict], local_first=True, sortkey="year") ->ItemList[VideoItem]:
+def handle_movies(results: list[dict], local_first=True, sortkey="year") ->ItemList:
     """takes a list of movies (dicts) and adds local db data and then sorts as an ItemList
     The tmdb movie keys are converted to extendedinfo keys and genre ids converted
     to localized text strings, then a VideoItem is created for each movie.  The
@@ -657,7 +657,7 @@ def handle_tvshows(results:list[dict], local_first=True, sortkey="year"):
     return tvshows
 
 
-def handle_episodes(results:list[dict]) -> ItemList[VideoItem]:
+def handle_episodes(results:list[dict]) -> ItemList:
     """Creates an ItemList of VideoItems for episodes
 
     Args:
@@ -690,7 +690,7 @@ def handle_episodes(results:list[dict]) -> ItemList[VideoItem]:
     return listitems
 
 
-def handle_release_dates(results:list[dict]) -> ItemList[VideoItem]:
+def handle_release_dates(results:list[dict]) -> ItemList:
     """Creates ItemList of video mpaa cert and dates as VideoItems
 
     Args:
@@ -728,7 +728,7 @@ def handle_release_dates(results:list[dict]) -> ItemList[VideoItem]:
     return listitems
 
 
-def handle_content_ratings(results:list[dict]) -> ItemList[VideoItem]:
+def handle_content_ratings(results:list[dict]) -> ItemList:
     listitems = ItemList()
     for item in results:
         listitem = VideoItem(label=item['rating'])
@@ -738,7 +738,7 @@ def handle_content_ratings(results:list[dict]) -> ItemList[VideoItem]:
     return listitems
 
 
-def handle_reviews(results:list[dict]) -> ItemList[VideoItem]:
+def handle_reviews(results:list[dict]) -> ItemList:
     """Creates an ItemList of VideoItems for tmdb reviews
 
     Args:
@@ -758,7 +758,7 @@ def handle_reviews(results:list[dict]) -> ItemList[VideoItem]:
     return listitems
 
 
-def handle_text(results:list[dict]) -> ItemList[VideoItem]:
+def handle_text(results:list[dict]) -> ItemList:
     """Converts list of textual info (genres, countries) to ItemList
 
     Args:
@@ -775,7 +775,7 @@ def handle_text(results:list[dict]) -> ItemList[VideoItem]:
     return listitems
 
 
-def handle_lists(results:list[dict]) -> ItemList[VideoItem]:
+def handle_lists(results:list[dict]) -> ItemList:
     """Converts various tmdb user movie lists to ItemList
 
     Args:
@@ -801,7 +801,7 @@ def handle_lists(results:list[dict]) -> ItemList[VideoItem]:
     return listitems
 
 
-def handle_seasons(results:list[dict]) -> ItemList[VideoItem]:
+def handle_seasons(results:list[dict]) -> ItemList:
     """Creates an ItemList of VideoItems for seasons
 
     Args:
@@ -824,7 +824,7 @@ def handle_seasons(results:list[dict]) -> ItemList[VideoItem]:
     return listitems
 
 
-def handle_videos(results:list[dict]) -> ItemList[VideoItem]:
+def handle_videos(results:list[dict]) -> ItemList:
     """Creates an ItemList of video clips/trailers as VideoItems
 
     Args:
@@ -849,7 +849,7 @@ def handle_videos(results:list[dict]) -> ItemList[VideoItem]:
     return listitems
 
 
-def handle_people(results:list[dict], select: bool = False) -> ItemList[VideoItem]:
+def handle_people(results:list[dict], select: bool = False) -> ItemList:
     """converts list of tmdb people into kutils131 videoitems
     The VideoItem properties are tmdb query results
 
@@ -892,7 +892,7 @@ def handle_people(results:list[dict], select: bool = False) -> ItemList[VideoIte
     return people
 
 
-def handle_images(results:list[dict]) -> ItemList[VideoItem]:
+def handle_images(results:list[dict]) -> ItemList:
     """creates VideoItems of images and returns an ItemList
 
     Args:
@@ -923,7 +923,7 @@ def handle_images(results:list[dict]) -> ItemList[VideoItem]:
     return images
 
 
-def handle_companies(results:list[dict]) -> ItemList[VideoItem]:
+def handle_companies(results:list[dict]) -> ItemList:
     """Converts list of studios from tmdb to ItemList of VideoItems
 
     Args:
@@ -1544,7 +1544,7 @@ def get_movie_lists(movie_id) -> ItemList:
     return handle_lists(data["lists"]["results"])
 
 
-def get_rated_media_items(media_type:str, sort_by:str='', page:int=1, cache_days:int=0) -> ItemList[VideoItem]:
+def get_rated_media_items(media_type:str, sort_by:str='', page:int=1, cache_days:int=0) -> ItemList:
     '''
     takes "tv/episodes", "tv" or "movies"
     '''
