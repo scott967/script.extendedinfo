@@ -11,7 +11,6 @@ import traceback
 from functools import wraps
 
 import xbmc
-import xbmcgui
 
 from resources.kutil131 import utils
 
