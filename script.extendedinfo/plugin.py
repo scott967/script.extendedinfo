@@ -11,9 +11,7 @@ import sys
 import routing
 import xbmcgui
 import xbmcplugin
-from resources.kutil131 import addon
-
-from resources.kutil131 import utils
+from resources.kutil131 import addon, utils
 from resources.lib import process
 
 MOVIEDB_IMAGE = os.path.join(addon.MEDIA_PATH, "moviedb.png")

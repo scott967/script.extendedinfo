@@ -2,6 +2,7 @@
 # This program is Free Software see LICENSE file for details
 
 import json
+
 import xbmc
 
 

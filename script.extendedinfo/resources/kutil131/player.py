@@ -4,9 +4,9 @@
 """
 
 import xbmc
-
 from resources.kutil131 import busy, utils
 from resources.kutil131.kodimonitor import Xbmcmonitor
+
 
 class VideoPlayer(xbmc.Player):
     """Helper class for xbmc.Player

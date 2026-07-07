@@ -12,9 +12,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from resources.kutil131 import ItemList
-
-from resources.kutil131 import VideoItem, utils
+from resources.kutil131 import ItemList, VideoItem, utils
 
 # TVRAGE_KEY = 'VBp9BuIr5iOiBeWCFRMG'
 API_KEY = ''

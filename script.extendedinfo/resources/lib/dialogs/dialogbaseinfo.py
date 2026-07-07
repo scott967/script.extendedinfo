@@ -10,12 +10,12 @@ import traceback
 
 import xbmc
 import xbmcgui
-from resources.kutil131 import (ActionHandler, addon, kodijson, selectdialog, slideshow,
-                    windows)
-from resources.kutil131 import VideoItem, utils, youtube
+from resources.kutil131 import (ActionHandler, VideoItem, addon, kodijson,
+                                selectdialog, slideshow, utils, windows,
+                                youtube)
 from resources.lib import themoviedb as tmdb
-from resources.lib.windowmanager import wm
 from resources.lib.dialogs.dialogconstants import ACTION_LIST, XML_ITEM_DICT
+from resources.lib.windowmanager import wm
 
 ch = ActionHandler()
 

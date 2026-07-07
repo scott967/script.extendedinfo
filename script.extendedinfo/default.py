@@ -8,9 +8,7 @@ from __future__ import annotations
 
 import sys
 
-from resources.kutil131 import addon
-
-from resources.kutil131 import utils
+from resources.kutil131 import addon, utils
 from resources.lib import process
 
 

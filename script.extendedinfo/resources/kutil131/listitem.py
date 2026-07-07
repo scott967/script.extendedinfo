@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import xbmc
 import xbmcgui
-
 from resources.kutil131 import utils
 
 INFOTAG_DISPATCHER = {

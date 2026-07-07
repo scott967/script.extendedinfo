@@ -82,8 +82,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from resources.kutil131 import (ItemList, VideoItem, addon, kodiaddon, kodijson, local_db,
-                                selectdialog, utils)
+from resources.kutil131 import (ItemList, VideoItem, addon, kodiaddon,
+                                kodijson, local_db, selectdialog, utils)
 
 TMDB_TOKEN = ('wpjCrsKBwpjClnvCmsKiwoDCmcKCf8KFwrB8ZsKFwpl-bWXCnsKqesKgwprCh8K'
               'HwpzChMKgesKhwoJ7wqXCmn3CssKIwpzChcKHwpjCscKJwojCisKiwofCm37CoMK'

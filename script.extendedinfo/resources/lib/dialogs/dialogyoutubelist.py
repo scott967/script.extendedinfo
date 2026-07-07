@@ -7,9 +7,8 @@ from __future__ import annotations
 import datetime
 
 import xbmcgui
-from resources.kutil131 import ActionHandler, DialogBaseList, addon, busy, windows
-
-from resources.kutil131 import utils, youtube
+from resources.kutil131 import (ActionHandler, DialogBaseList, addon, busy,
+                                utils, windows, youtube)
 from resources.lib.windowmanager import wm
 
 ch = ActionHandler()

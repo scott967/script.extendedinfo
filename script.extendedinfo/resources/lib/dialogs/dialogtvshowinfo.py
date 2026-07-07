@@ -4,9 +4,7 @@
 
 import xbmc
 import xbmcgui
-from resources.kutil131 import ActionHandler, addon
-
-from resources.kutil131 import imagetools, utils
+from resources.kutil131 import ActionHandler, addon, imagetools, utils
 from resources.lib import themoviedb as tmdb
 from resources.lib.windowmanager import wm
 
