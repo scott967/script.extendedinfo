@@ -3,7 +3,6 @@
 
 import xbmc
 import xbmcgui
-
 from resources.kutil131 import addon
 
 ID_BUTTON_YES = 11

@@ -13,9 +13,7 @@ import urllib.parse
 import urllib.request
 from typing import Optional
 
-from resources.kutil131 import ItemList
-
-from resources.kutil131 import utils
+from resources.kutil131 import ItemList, utils
 
 LAST_FM_API_KEY = 'd942dd5ca4c9ee5bd821df58cf8130d4'
 GOOGLE_MAPS_KEY = 'AIzaSyBESfDvQgWtWLkNiOYXdrA9aU-2hv_eprY'

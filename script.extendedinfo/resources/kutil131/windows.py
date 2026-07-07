@@ -1,10 +1,10 @@
 # Copyright (C) 2015 - Philipp Temminghoff <phil65@kodi.tv>
 # This program is Free Software see LICENSE file for details
 
-import xbmcgui
 import xbmc
-
+import xbmcgui
 from resources.kutil131 import utils
+
 
 class WindowMixin:
 
