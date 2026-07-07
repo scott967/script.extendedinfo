@@ -597,4 +597,3 @@ class GameItem(ListItem):
     def __init__(self, *args, **kwargs):
         self.type = "game"
         super().__init__(*args, **kwargs)
-
