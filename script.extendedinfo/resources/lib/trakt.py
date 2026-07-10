@@ -77,6 +77,10 @@ def get_episodes(content:str) -> ItemList:
         label = f'{tv["title"]} - {ep["season"]}x{ep["number"]}. {title}'
         show = VideoItem(label=label,
                             path=f'{PLUGIN_BASE}extendedtvinfo&&tvdb_id={tv["ids"]["tvdb"]}')
+        if "runtime" not in tv or not tv["runtime"]:
+            duration = 0
+        else:
+            duration = int(tv["runtime"]) * 60
         show.set_infos({'title': title,
                         'aired': air_date,
                         'season': ep["season"],
@@ -84,7 +88,7 @@ def get_episodes(content:str) -> ItemList:
                         'tvshowtitle': tv["title"],
                         'mediatype': "episode",
                         'year': tv.get("year"),
-                        'duration': tv.get("runtime", 0) * 60,
+                        'duration': duration,
                         'studio': tv["network"],
                         'plot': tv["overview"],
                         'country': tv["country"],
@@ -129,7 +133,7 @@ def handle_movies(results:list[dict]) -> ItemList:
         movie = VideoItem(label=item["title"],
                           path=PLUGIN_BASE + path % item["ids"]["tmdb"])
         movie.set_infos({'title': item.get("title", ""),
-                         'duration': item["runtime"] * 60 if item["runtime"] else "",
+                         'duration': int(item.get("runtime", 0)) * 60 if item.get("runtime") else "",
                          'tagline': item.get("tagline", ""),
                          'mediatype': "movie",
                          'trailer': trailer,
@@ -179,7 +183,7 @@ def handle_tvshows(results):
                          path=f'{PLUGIN_BASE}extendedtvinfo&&tvdb_id={item["ids"]["tvdb"]}')
         show.set_infos({'mediatype': "tvshow",
                         'title': item.get("title", ""),
-                        'duration': item["runtime"] * 60 if item["runtime"] else "",
+                        'duration': int(item.get("runtime", 0)) * 60 if item.get("runtime") else "",
                         'year': item["year"],
                         'premiered': item["first_aired"][:10],
                         'country': item.get("country", ""),
