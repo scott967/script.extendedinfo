@@ -434,7 +434,7 @@ def get_http(url:str, headers:dict|None=None) -> str | None:
     while (succeed < 2) and (not xbmc.Monitor().abortRequested()):
         try:
             #log(f'kutil131.utils.get_http headers {headers}', adb=True)  #debug
-            request = requests.get(url, headers=headers, timeout=20)
+            request = requests.get(url, headers=headers, timeout=(20 if "omdbapi" not in url else 60))
             #log(f'kutil131.utils.get_http response from online {request.text}', adb=True)  #debug
             return request.text
         except requests.exceptions.RequestException as err:
@@ -463,7 +463,7 @@ def post(url:str, values:dict, headers:str) -> dict | None:
                                 headers=headers,
                                 timeout=10)
     except requests.exceptions.RequestException as err:
-        log(f"get_http: could not get data from {url} exception {err}")
+        log(f"http_post: could not get data from {url} exception {err}")
     #log(f'utils.post post returns text {type(json.loads(request.text))} {json.loads(request.text)}', adb=True) #debug
     #log(f'utils.post post returns headers {type(request.headers)} {request.headers}', adb=True)
     return json.loads(request.text) if request else None
@@ -481,7 +481,7 @@ def delete(url:str, values:dict, headers:str) ->dict | None:
                                 headers=headers,
                                 timeout=10)
     except requests.exceptions.RequestException as err:
-        log(f"get_http: could not get data from {url} exception {err}")
+        log(f"http_delete: could not get data from {url} exception {err}")
     #log(f'utils.delete returns {type(json.loads(request.text))} {json.loads(request.text)}', adb=True) #debug
     return json.loads(request.text) if request else None
 
