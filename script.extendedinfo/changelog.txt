@@ -1,3 +1,11 @@
+v6.0.12
+- updated trakt api key data
+- relaxed timing for omdbapi requests
+- new addon setting for enhanced debug logging
+- guard for error when youtube returns a channel when video expected
+- update python pil interface for recent python changes (gaussianblur/Lazcos filter)
+- improve type annotations and import sorting in source code (ongoing)
+
 v6.0.9
 - language handling improved for tmdb.  New language settings for 
 			<lang code>-<country code> used by tmdb
