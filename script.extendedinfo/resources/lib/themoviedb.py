@@ -19,13 +19,13 @@ Public functions:
     change_list_status:  Adds or removes a video item from user's TMDB list
     get_account_lists:  gets the user's TMDB lists
     get_certification_list:  gets the TMDB certifications ("MPAA")
-    handle_movies/tvshows/episodes:  creates a kutils131 ItemList instance
-        of kutils131 VideoItems instances with Kodi listitem properties for the
+    handle_movies/tvshows/episodes:  creates a kutil131 ItemList instance
+        of kutil131 VideoItems instances with Kodi listitem properties for the
         video media type to display as Kodi container content items
-    handle_lists:  adds user TMDB lists to kutils131 ItemList instance for display
+    handle_lists:  adds user TMDB lists to kutil131 ItemList instance for display
         in Kodi cantainer content
-    handle_seasons:  adds seasons to kutils131 ItemList instance
-    handle_videos:  adds video clips as kutils131 VideoItems to kutils131 ItemList instance
+    handle_seasons:  adds seasons to kutil131 ItemList instance
+    handle_videos:  adds video clips as kutil131 VideoItems to kutil131 ItemList instance
     search_companies:  gets the TMDB company ID for company (studio) name string
     multi_search:  performs TMDB multisearch "Multi search currently supports
         searching for movies, tv shows and people in a single request."
@@ -59,7 +59,7 @@ Public functions:
     extended_actor_info:  sets Kodi listitem properties as a kutils
         VideoItem instance and additionally returns a dict of kutil itemlists
         instances
-    get_movie_lists:  gets kutils131 ItemList instance for movie lists
+    get_movie_lists:  gets kutil131 ItemList instance for movie lists
     get_rated_media_items:  queries TMDB for user media ratings
     get_fav_items:  queries TMDB for user favorites
     get_movies_from_list:  queries TMDB for movie list
@@ -566,7 +566,7 @@ def handle_movies(results: list[dict], local_first=True, sortkey="year") ->ItemL
         sortkey (str, optional): key to sort the movies. Defaults to "year".
 
     Returns:
-        ItemList:  a kutils131 ItemList of the movies to display in a Kodi container
+        ItemList:  a kutil131 ItemList of the movies to display in a Kodi container
     """
     response: dict = get_data(url="genre/movie/list",
                               params={"language": addon.setting("LanguageIDv2")},
@@ -664,7 +664,7 @@ def handle_episodes(results:list[dict]) -> ItemList:
         results (_type_): tmdb episode details
 
     Returns:
-        _type_: Kutils131 ItemList of episode VideoItmes
+        _type_: kutil131 ItemList of episode VideoItmes
     """
     listitems = ItemList(content_type="episodes")
     for item in results:
@@ -745,7 +745,7 @@ def handle_reviews(results:list[dict]) -> ItemList:
         results (_type_): tmdb review details
 
     Returns:
-        ItemList: Kutils131 ItemList of review VideoItmes
+        ItemList: kutil131 ItemList of review VideoItmes
     """
     listitems = ItemList()
     for item in results:
@@ -808,7 +808,7 @@ def handle_seasons(results:list[dict]) -> ItemList:
         results (_type_): tmdb season details
 
     Returns:
-        ItemList: Kutils131 ItemList of season VideoItmes
+        ItemList: kutil131 ItemList of season VideoItmes
     """
     listitems = ItemList(content_type="seasons")
     for item in results:
@@ -850,7 +850,7 @@ def handle_videos(results:list[dict]) -> ItemList:
 
 
 def handle_people(results:list[dict], select: bool = False) -> ItemList:
-    """converts list of tmdb people into kutils131 videoitems
+    """converts list of tmdb people into kutil131 videoitems
     The VideoItem properties are tmdb query results
 
     Args:
@@ -858,7 +858,7 @@ def handle_people(results:list[dict], select: bool = False) -> ItemList:
         select (bool): True if people are to be added to select dialog listing
 
     Returns:
-        ItemList: A kutils131 ItemList of VideoItems for tmdb persons
+        ItemList: A kutil131 ItemList of VideoItems for tmdb persons
     """
     people = ItemList(content_type="actors")
     for item in results:
@@ -899,7 +899,7 @@ def handle_images(results:list[dict]) -> ItemList:
         results (list[dict]): image list
 
     Returns:
-        ItemList: kutils131 itemlist of the images as VideoItems type 'music'?
+        ItemList: kutil131 itemlist of the images as VideoItems type 'music'?
     """
     images = ItemList(content_type="images")
     for item in results:
@@ -1220,8 +1220,8 @@ def extended_movie_info(movie_id=None, dbid=None, cache_days=14) -> tuple[VideoI
         cache_days (int, optional): Days to use cached info. Defaults to 14.
 
     Returns:
-        tuple:  kutils131 VideoItem of movie info
-                dict of key str value kutils131 ItemList
+        tuple:  kutil131 VideoItem of movie info
+                dict of key str value kutil131 ItemList
                 dict of account states
     """
     #utils.log(f'tmdb.extended_movie_info for {movie_id}', adb=True)  #debug
@@ -1487,8 +1487,8 @@ def extended_actor_info(actor_id: int) -> tuple[VideoItem, dict[str, ItemList]]:
 
     Returns:
         info[VideoItem]: a populated Kodi listitem
-        lists[dict]: a dict of kutils131 Itemlists (one per category) Itemlist is sequence
-                     of kutils131 VideoItems
+        lists[dict]: a dict of kutil131 Itemlists (one per category) Itemlist is sequence
+                     of kutil131 VideoItems
         None: if no results from tmdb
     """
     if not actor_id:
