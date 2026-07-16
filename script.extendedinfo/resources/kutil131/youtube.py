@@ -32,6 +32,8 @@ def _handle_videos(results: list[dict], extended=False, api_key='') -> ItemList:
     """
     videos: ItemList = ItemList(content_type="videos")
     for item in results:
+        if item["id"]["kind"] != "youtube#video":
+            continue
         snippet = item["snippet"]
         thumb = snippet["thumbnails"]["high"]["url"] if "thumbnails" in snippet else ""
         utils.log(f'kutil131.youtube._handle_videos yt result item {item["id"]}', adb=True)
