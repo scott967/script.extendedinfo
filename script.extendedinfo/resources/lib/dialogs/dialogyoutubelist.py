@@ -137,7 +137,7 @@ ISO_639_1_CODES = {
 }
 
 
-def get_window(window_type:type[xbmcgui.WindowXML]) -> type[DialogBaseList]:
+def get_window(window_type: xbmcgui.WindowXML) -> DialogBaseList:
     """Creates a DialogYoutubeList class inheriting from window_type class
 
     Args:
@@ -408,7 +408,7 @@ def get_window(window_type:type[xbmcgui.WindowXML]) -> type[DialogBaseList]:
 
 def open(self, search_str="", filters=None, sort="relevance", filter_label="", media_type="video"):
     """
-    open video list, deal with window stack
+    open youtube list, deal with window stack
     """
     YouTube = get_window(windows.DialogXML)
     dialog = YouTube(f'script-{addon.NAME}-YoutubeList.xml', addon.PATH,

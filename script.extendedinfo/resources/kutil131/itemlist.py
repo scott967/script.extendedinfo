@@ -142,7 +142,7 @@ class ItemList:
         """
         return [item.get_listitem() for item in self._items] if self._items else []
 
-    def set_plugin_list(self, handle):
+    def set_plugin_list(self, handle:int) -> None:
         """
         populate plugin list with *handle, set sorts and content
         """

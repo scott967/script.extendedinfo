@@ -28,7 +28,12 @@ def _handle_videos(results: list[dict], extended=False, api_key='') -> ItemList:
     """
     Process video api results to ItemList
 
-    :param api_key: api_key to pass to YouTube
+    Args:
+        results (list[dict]): a list of youtube vids retrieved based on seaech
+        extended (bool, optional): use extended youtube metadata. Defaults to False.
+        api_key (str, optional): user api key.  No key no results
+    Returns:
+        ItemList[VideoItem]: kutil131 ItemList to load into dialog
     """
     videos: ItemList = ItemList(content_type="videos")
     for item in results:
@@ -266,7 +271,7 @@ def search(search_str="", hd="", orderby="relevance", limit=40, extended=True,
     if results and ('error' in results.keys()):
         utils.log(
             f'youtube _get_data ERROR: {results.get("error").get("message")}')
-    if not results or 'items' not in results.keys():
+    if not results or 'items' not in results.keys() or len(results['items']) == 0:
         return None
 
         # Give initial value to keep IDE happy as well as in case we drop through all

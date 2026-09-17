@@ -126,7 +126,7 @@ class FilterImageThread(threading.Thread):
     """
 
     def __init__(self, image="", radius=25):
-        super().__init__()
+        super().__init__(daemon=True)
         self.image = image
         self.radius = radius
         self.info = {}

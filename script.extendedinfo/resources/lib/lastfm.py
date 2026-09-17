@@ -181,7 +181,7 @@ def clean_text(text) -> str:
     text = re.sub(
         '(From Wikipedia, the free encyclopedia)|(Description above from the Wikipedia.*?Wikipedia)', '', text)
     text = re.sub('<(.|\n|\r)*?>', '', text)
-    text = text.replace('<br \/>', '[CR]')
+    text = re.sub(r"<br\s*/?>", "[CR]", text)
     text = text.replace('<em>', '[I]').replace('</em>', '[/I]')
     text = text.replace('&amp;', '&')
     text = text.replace('&gt;', '>').replace('&lt;', '<')
