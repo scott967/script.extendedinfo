@@ -25,7 +25,7 @@ class Main:
     """
 
     def __init__(self):
-        """Constructor gets actions from args to create the
+        """initialize object with actions from args to create the
         plugin list
         """
         utils.log(f"plugin version {addon.VERSION} started")
@@ -102,6 +102,7 @@ def tmdb():
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
+'''
 @plugin.route('/trakt')
 def trakt():
     """sets category options form trakt
@@ -133,18 +134,19 @@ def trakt():
                                     isFolder=True)
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_LABEL)
     xbmcplugin.endOfDirectory(plugin.handle)
+'''
 
 
 @plugin.route('/')
 def root():
     """Sets root plugin folder for TMDB and Trakt
     """
-    traktitem = xbmcgui.ListItem(label="Trakt")
-    traktitem.setArt({'thumb': TRAKT_IMAGE})
+    #traktitem = xbmcgui.ListItem(label="Trakt")
+    #traktitem.setArt({'thumb': TRAKT_IMAGE})
     tmdbitem = xbmcgui.ListItem(label="TheMovieDB")
     tmdbitem.setArt({'thumb': MOVIEDB_IMAGE})
     items = [
-        (plugin.url_for(trakt), traktitem, True),
+        #(plugin.url_for(trakt), traktitem, True),
         (plugin.url_for(tmdb), tmdbitem, True),
     ]
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_LABEL)
