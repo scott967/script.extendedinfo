@@ -130,7 +130,9 @@ Available Art:
 - 'Fanart':      TVShow Fanart
 
 
-### Trakt.tv
+### Trakt.tv  
+
+IMPORTANT -- AS OF SEPTEMER 2026 TRAKT.TV REQUIRES A VIP SUPSCRIPTION TO REGISTER AN ADDON TO USE ITS API.  TRAKT IS UNAVAILABLE. 
 
 ```
 RunScript(script.extendedinfo,info=trendingmovies)  --> TrendingMovies.%d
