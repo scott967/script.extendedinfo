@@ -288,7 +288,7 @@ class SetItemsThread(threading.Thread):
         """Creates a new SetItemsThread instance to run async
             returns: SetItemsThread instance
         """
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, daemon=True)
         self.set_id = set_id
         self.listitems = []
         self.setinfo = {}

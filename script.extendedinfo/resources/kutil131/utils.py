@@ -215,7 +215,8 @@ def run_async(func):
     def async_func(*args, **kwargs):
         func_hl = threading.Thread(target=func,
                                    args=args,
-                                   kwargs=kwargs)
+                                   kwargs=kwargs,
+                                   daemon=True)
         func_hl.start()
         return func_hl
 
@@ -518,15 +519,16 @@ def get_JSON_response(url="", cache_days=7.0, folder=False, headers=False) -> li
             pass
     # get data from local disk cache file
     path = os.path.join(cache_path, hashed_url + ".txt")
+    results = None
     if xbmcvfs.exists(path) and ((now - os.path.getmtime(path)) < cache_seconds):
         results = read_from_file(path)
         #for trakt acticipatedmovies results is list of dict per movie
         #log(f"kutil131.utils.get_JSON_response loaded local file for {url}. time: {(time.time() - now):f} and results {results}", adb=True) #debug
     else:
-        #log(f'kutil131.utils.get_JSON_response get_http headers {headers}', adb=True) #debug
+        log(f'kutil131.utils.get_JSON_response get_http headers {headers}', adb=True) #debug
         #  data not cached query online source
         response = get_http(url, headers)
-        #log(f'kutil131.utils.get_JSON_response get_http response from online {type(response)} {response}', adb=True) #debug
+        log(f'kutil131.utils.get_JSON_response get_http response from online {type(response)} {response}', adb=True) #debug
         try:
             results = json.loads(response)
             if folder == 'TheMovieDB':
@@ -631,7 +633,7 @@ def fetch_musicbrainz_id(artist, artist_id=-1):
 class FunctionThread(threading.Thread):
 
     def __init__(self, function=None, param=None):
-        super().__init__()
+        super().__init__(daemon=True)
         self.function = function
         self.param = param
         self.name = self.function.__name__ if self.function else ""
