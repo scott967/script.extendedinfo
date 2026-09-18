@@ -12,6 +12,7 @@ import sys
 import routing
 import xbmcgui
 import xbmcplugin
+
 from resources.kutil131 import addon, utils
 from resources.lib import process
 
@@ -31,10 +32,11 @@ class Main:
         """
         utils.log(f"plugin version {addon.VERSION} started")
         addon.set_global("extendedinfo_running", "true")
-        #utils.log(f'default.Main setting LanguageIDv2 {addon.setting("LanguageIDv2")}', adb=True)
+        # utils.log(f'default.Main setting LanguageIDv2 {addon.setting("LanguageIDv2")}', adb=True)
         if not addon.bool_setting("setting_update_6.0.9"):
             addon.update_lang_setting()
-        utils.log(f'default.Main setting after update LanguageIDv2 {addon.setting("LanguageIDv2")}', adb=True)
+        utils.log(
+            f'default.Main setting after update LanguageIDv2 {addon.setting("LanguageIDv2")}', adb=True)
         self._parse_argv()
         for info in self.infos:
             listitems = process.start_info_actions(info, self.params)
@@ -142,12 +144,12 @@ def trakt():
 def root():
     """Sets root plugin folder for TMDB (and formerly trakt).
     """
-    #traktitem = xbmcgui.ListItem(label="Trakt")
-    #traktitem.setArt({'thumb': TRAKT_IMAGE})
+    # traktitem = xbmcgui.ListItem(label="Trakt")
+    # traktitem.setArt({'thumb': TRAKT_IMAGE})
     tmdbitem = xbmcgui.ListItem(label="TheMovieDB")
     tmdbitem.setArt({'thumb': MOVIEDB_IMAGE})
     items = [
-        #(plugin.url_for(trakt), traktitem, True),
+        # (plugin.url_for(trakt), traktitem, True),
         (plugin.url_for(tmdb), tmdbitem, True),
     ]
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_LABEL)
