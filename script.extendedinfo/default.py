@@ -9,7 +9,6 @@ from __future__ import annotations
 from resources.kutil131 import utils
 from resources.lib.scriptmain import Main
 
-
 if (__name__ == "__main__"):
     #utils.log(f'syspath is {sys.path}') #debug
     Main()

@@ -2,6 +2,7 @@
 # This program is Free Software see LICENSE file for details
 
 import xbmcplugin
+
 from resources.kutil131 import addon, utils
 
 SORTS = {"none": xbmcplugin.SORT_METHOD_NONE,
