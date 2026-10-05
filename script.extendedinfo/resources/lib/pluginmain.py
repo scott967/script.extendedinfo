@@ -12,7 +12,6 @@ import sys
 import routing
 import xbmcgui
 import xbmcplugin
-
 from resources.kutil131 import addon, utils
 from resources.lib import process
 

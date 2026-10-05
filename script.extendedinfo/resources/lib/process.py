@@ -19,7 +19,6 @@ import time
 import xbmc
 import xbmcgui
 import xbmcplugin
-
 from resources.kutil131 import (addon, busy, favs, kodijson, local_db, utils,
                                 youtube)
 from resources.lib import lastfm

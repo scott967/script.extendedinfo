@@ -3,7 +3,6 @@
 # This program is Free Software see LICENSE file for details
 
 import xbmc
-
 from resources.kutil131 import ActionHandler, addon, busy, imagetools
 from resources.lib import themoviedb as tmdb
 from resources.lib.windowmanager import wm

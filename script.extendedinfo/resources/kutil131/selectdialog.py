@@ -3,7 +3,6 @@
 
 import xbmc
 import xbmcgui
-
 from resources.kutil131 import addon
 
 C_LABEL_HEADER = 1

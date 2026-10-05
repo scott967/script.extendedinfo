@@ -4,7 +4,6 @@
 
 import xbmc
 import xbmcgui
-
 from resources.kutil131 import ActionHandler, addon, utils
 from resources.lib import themoviedb as tmdb
 

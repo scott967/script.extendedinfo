@@ -30,7 +30,6 @@ import urllib.parse
 import urllib.request
 
 import xbmc
-
 from resources.kutil131 import ItemList, VideoItem, addon, local_db, utils
 from resources.lib import themoviedb as tmdb
 

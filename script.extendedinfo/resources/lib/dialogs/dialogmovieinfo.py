@@ -8,7 +8,6 @@ import threading
 
 import xbmc
 import xbmcgui
-
 from resources.kutil131 import (ActionHandler, addon, busy, imagetools,
                                 kodijson, utils)
 from resources.lib import omdb

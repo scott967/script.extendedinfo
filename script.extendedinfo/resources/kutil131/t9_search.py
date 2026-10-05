@@ -10,7 +10,6 @@ from threading import Timer
 import AutoCompletion
 import xbmc
 import xbmcgui
-
 from resources.kutil131 import ActionHandler, addon, utils
 
 ch = ActionHandler()

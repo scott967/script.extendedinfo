@@ -11,7 +11,6 @@ import PIL.Image
 import PIL.ImageFilter
 import xbmc
 import xbmcvfs
-
 from resources.kutil131 import addon, utils
 
 THUMBS_CACHE_PATH = utils.translate_path("special://profile/Thumbnails/Video")

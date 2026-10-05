@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import xbmc
 import xbmcgui
-
 from resources.kutil131 import ActionHandler, addon, busy, utils
 from resources.kutil131.t9_search import T9Search
 

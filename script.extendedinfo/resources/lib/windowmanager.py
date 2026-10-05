@@ -15,7 +15,6 @@ import re
 import xbmc
 import xbmcgui
 import xbmcvfs
-
 from resources.kutil131 import addon, busy, local_db, player, utils, windows
 from resources.lib import themoviedb as tmdb
 
